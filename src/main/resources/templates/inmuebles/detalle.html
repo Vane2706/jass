@@ -1,0 +1,1463 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Detalle del inmueble')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Detalle del inmueble')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --property-primary: #4f7cff;
+                --property-primary-dark: #416ce5;
+                --property-primary-soft: #eef4ff;
+
+                --property-cyan: #39b8c9;
+                --property-cyan-soft: #ecfbfd;
+
+                --property-green: #3aaa83;
+                --property-green-soft: #edf9f5;
+
+                --property-amber: #dca84f;
+                --property-amber-soft: #fff8e8;
+
+                --property-dark: #172033;
+                --property-text: #536176;
+                --property-muted: #8491a5;
+
+                --property-border: #e8edf5;
+                --property-bg: #f7f9fc;
+                --property-surface: rgba(255, 255, 255, .96);
+
+                --property-shadow: 0 10px 35px rgba(55, 73, 107, .07);
+                --property-shadow-hover: 0 16px 42px rgba(55, 73, 107, .11);
+            }
+
+            body {
+                background:
+                    radial-gradient(circle at 7% 4%, rgba(79, 124, 255, .07), transparent 26%),
+                    radial-gradient(circle at 94% 8%, rgba(57, 184, 201, .06), transparent 25%),
+                    var(--property-bg) !important;
+            }
+
+            .property-page {
+                animation: propertyFadeUp .45s ease both;
+            }
+
+            @keyframes propertyFadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* =========================================================
+               ENCABEZADO
+            ========================================================= */
+
+            .property-header {
+                position: relative;
+                overflow: hidden;
+                padding: 1.35rem 1.45rem;
+                margin-bottom: 1.25rem;
+                border: 1px solid var(--property-border);
+                border-radius: 22px;
+                background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255, 255, 255, .98),
+                        rgba(247, 250, 255, .96)
+                    );
+                box-shadow: var(--property-shadow);
+            }
+
+            .property-header::before {
+                content: "";
+                position: absolute;
+                width: 190px;
+                height: 190px;
+                right: -75px;
+                top: -110px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .055);
+                pointer-events: none;
+            }
+
+            .property-header::after {
+                content: "";
+                position: absolute;
+                width: 105px;
+                height: 105px;
+                right: 85px;
+                bottom: -80px;
+                border-radius: 50%;
+                background: rgba(57, 184, 201, .05);
+                pointer-events: none;
+            }
+
+            .property-header-content {
+                position: relative;
+                z-index: 2;
+            }
+
+            .property-heading {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 0;
+            }
+
+            .back-button {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #69778d;
+                background: #fff;
+                border: 1px solid var(--property-border);
+                border-radius: 13px;
+                box-shadow: 0 5px 14px rgba(55, 73, 107, .06);
+                transition:
+                    transform .2s ease,
+                    color .2s ease,
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .back-button:hover {
+                color: var(--property-primary);
+                border-color: rgba(79, 124, 255, .22);
+                transform: translateX(-2px);
+                box-shadow: 0 8px 20px rgba(55, 73, 107, .09);
+            }
+
+            .property-eyebrow {
+                display: block;
+                margin-bottom: .2rem;
+                color: var(--property-primary);
+                font-size: .67rem;
+                font-weight: 750;
+                letter-spacing: .07em;
+                text-transform: uppercase;
+            }
+
+            .property-title {
+                margin: 0;
+                color: var(--property-dark);
+                font-size: 1.48rem;
+                font-weight: 760;
+                letter-spacing: -.035em;
+                line-height: 1.2;
+            }
+
+            .property-actions {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: .6rem;
+            }
+
+            .property-button {
+                min-height: 42px;
+                padding: .58rem 1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .45rem;
+                border-radius: 12px;
+                font-size: .78rem;
+                font-weight: 680;
+                text-decoration: none;
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease,
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .property-button:hover {
+                transform: translateY(-2px);
+            }
+
+            .property-button-primary {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--property-primary),
+                        #638dff
+                    );
+                border: 1px solid var(--property-primary);
+                box-shadow: 0 7px 18px rgba(79, 124, 255, .18);
+            }
+
+            .property-button-primary:hover {
+                color: #fff;
+                box-shadow: 0 10px 23px rgba(79, 124, 255, .25);
+            }
+
+            .property-button-secondary {
+                color: var(--property-primary);
+                background: var(--property-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .15);
+            }
+
+            .property-button-secondary:hover {
+                color: var(--property-primary-dark);
+                background: #e7f0ff;
+                box-shadow: 0 8px 20px rgba(79, 124, 255, .1);
+            }
+
+            /* =========================================================
+               SUPERFICIES
+            ========================================================= */
+
+            .property-surface {
+                position: relative;
+                overflow: hidden;
+                background: var(--property-surface);
+                border: 1px solid var(--property-border);
+                border-radius: 20px;
+                box-shadow: var(--property-shadow);
+                transition:
+                    transform .22s ease,
+                    box-shadow .22s ease,
+                    border-color .22s ease;
+            }
+
+            .property-surface:hover {
+                border-color: rgba(79, 124, 255, .12);
+                box-shadow: var(--property-shadow-hover);
+            }
+
+            /* =========================================================
+               RESUMEN DEL INMUEBLE
+            ========================================================= */
+
+            .property-profile {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .property-profile::before {
+                content: "";
+                position: absolute;
+                width: 135px;
+                height: 135px;
+                right: -55px;
+                top: -75px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .045);
+                pointer-events: none;
+            }
+
+            .property-profile::after {
+                content: "";
+                position: absolute;
+                width: 80px;
+                height: 80px;
+                left: -45px;
+                bottom: -45px;
+                border-radius: 50%;
+                background: rgba(57, 184, 201, .04);
+                pointer-events: none;
+            }
+
+            .property-main-icon {
+                width: 68px;
+                height: 68px;
+                margin: 0 auto 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--property-primary);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--property-primary-soft),
+                        #f8fbff
+                    );
+                border: 1px solid rgba(79, 124, 255, .1);
+                border-radius: 21px;
+                box-shadow: 0 9px 22px rgba(79, 124, 255, .09);
+                font-size: 1.55rem;
+            }
+
+            .property-code {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: .42rem .75rem;
+                color: var(--property-primary);
+                background: var(--property-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 10px;
+                font-family: var(--bs-font-monospace);
+                font-size: .76rem;
+                font-weight: 750;
+                letter-spacing: .025em;
+            }
+
+            .property-state {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                padding: .38rem .67rem;
+                color: #27866a;
+                background: var(--property-green-soft);
+                border: 1px solid rgba(58, 170, 131, .12);
+                border-radius: 999px;
+                font-size: .67rem;
+                font-weight: 750;
+            }
+
+            .property-address {
+                position: relative;
+                z-index: 1;
+                max-width: 290px;
+                margin: 1rem auto 0;
+                color: #778499;
+                font-size: .73rem;
+                line-height: 1.55;
+            }
+
+            /* =========================================================
+               UBICACIÓN
+            ========================================================= */
+
+            .location-card {
+                padding: 1.25rem;
+            }
+
+            .section-heading {
+                display: flex;
+                align-items: center;
+                gap: .65rem;
+                margin-bottom: .9rem;
+            }
+
+            .section-icon {
+                width: 37px;
+                height: 37px;
+                min-width: 37px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--property-primary);
+                background: var(--property-primary-soft);
+                border-radius: 11px;
+                font-size: .9rem;
+            }
+
+            .section-title {
+                margin: 0;
+                color: var(--property-dark);
+                font-size: .88rem;
+                font-weight: 720;
+            }
+
+            .location-list {
+                margin: 0;
+            }
+
+            .location-item {
+                padding: .76rem 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                border-bottom: 1px dashed #e7ecf2;
+            }
+
+            .location-item:last-child {
+                border-bottom: 0;
+            }
+
+            .location-label {
+                display: flex;
+                align-items: center;
+                gap: .48rem;
+                color: #8a96a8;
+                font-size: .71rem;
+                white-space: nowrap;
+            }
+
+            .location-label i {
+                width: 18px;
+                color: #94a1b3;
+                text-align: center;
+            }
+
+            .location-value {
+                min-width: 0;
+                color: #3d495d;
+                font-size: .74rem;
+                font-weight: 650;
+                text-align: right;
+            }
+
+            .location-reference {
+                display: block;
+            }
+
+            .reference-value {
+                display: block;
+                margin-top: .55rem;
+                padding: .72rem .8rem;
+                color: #536176;
+                background: #f7f9fc;
+                border: 1px solid #edf1f5;
+                border-radius: 11px;
+                font-size: .72rem;
+                font-weight: 600;
+                line-height: 1.5;
+                text-align: left;
+            }
+
+            /* =========================================================
+               PANEL DE INFORMACIÓN
+            ========================================================= */
+
+            .property-information {
+                min-height: 100%;
+            }
+
+            /* =========================================================
+               TABS
+            ========================================================= */
+
+            .property-tabs {
+                padding: 1rem 1rem 0;
+                border-bottom: 1px solid var(--property-border);
+                gap: .35rem;
+            }
+
+            .property-tabs .nav-item {
+                margin-bottom: -1px;
+            }
+
+            .property-tabs .nav-link {
+                position: relative;
+                min-height: 43px;
+                padding: .65rem .85rem .72rem;
+                display: inline-flex;
+                align-items: center;
+                gap: .45rem;
+                color: #7a879b;
+                background: transparent;
+                border: 0;
+                border-radius: 11px 11px 0 0;
+                font-size: .74rem;
+                font-weight: 650;
+                transition:
+                    color .2s ease,
+                    background-color .2s ease;
+            }
+
+            .property-tabs .nav-link::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 0;
+                width: 0;
+                height: 2px;
+                border-radius: 999px;
+                background: var(--property-primary);
+                transform: translateX(-50%);
+                transition: width .22s ease;
+            }
+
+            .property-tabs .nav-link:hover {
+                color: var(--property-primary);
+                background: #f8faff;
+            }
+
+            .property-tabs .nav-link.active {
+                color: var(--property-primary);
+                background: var(--property-primary-soft);
+            }
+
+            .property-tabs .nav-link.active::after {
+                width: 58%;
+            }
+
+            .tab-counter {
+                min-width: 22px;
+                height: 22px;
+                padding: 0 .4rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 999px;
+                font-size: .63rem;
+                font-weight: 750;
+            }
+
+            .tab-counter-primary {
+                color: var(--property-primary);
+                background: #fff;
+                border: 1px solid rgba(79, 124, 255, .1);
+            }
+
+            .tab-counter-cyan {
+                color: #2692a2;
+                background: var(--property-cyan-soft);
+                border: 1px solid rgba(57, 184, 201, .1);
+            }
+
+            .property-tab-content {
+                padding-top: .5rem;
+            }
+
+            .tab-pane.fade {
+                transition: opacity .18s linear;
+            }
+
+            /* =========================================================
+               TABLAS
+            ========================================================= */
+
+            .property-table {
+                margin: 0;
+            }
+
+            .property-table thead th {
+                padding: .8rem 1rem;
+                color: #8491a5;
+                background: #fbfcfe;
+                border-bottom: 1px solid #edf1f6;
+                font-size: .65rem;
+                font-weight: 750;
+                letter-spacing: .055em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .property-table tbody td {
+                padding: .9rem 1rem;
+                color: var(--property-text);
+                border-color: #f0f3f7;
+                font-size: .76rem;
+                vertical-align: middle;
+            }
+
+            .property-table tbody tr {
+                transition:
+                    background-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .property-table tbody tr:not(.empty-row):hover {
+                background: #f8fbff;
+                box-shadow: inset 3px 0 0 var(--property-primary);
+            }
+
+            /* =========================================================
+               TITULAR
+            ========================================================= */
+
+            .owner-cell {
+                display: inline-flex;
+                align-items: center;
+                gap: .65rem;
+            }
+
+            .owner-avatar {
+                width: 34px;
+                height: 34px;
+                min-width: 34px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--property-primary);
+                background: var(--property-primary-soft);
+                border-radius: 10px;
+                font-size: .83rem;
+            }
+
+            .owner-name {
+                color: #354157;
+                font-size: .74rem;
+                font-weight: 680;
+                white-space: nowrap;
+            }
+
+            /* =========================================================
+               FECHAS Y ESTADOS
+            ========================================================= */
+
+            .date-value {
+                display: inline-flex;
+                align-items: center;
+                gap: .38rem;
+                color: #5b687c;
+                white-space: nowrap;
+            }
+
+            .date-value i {
+                color: #98a4b4;
+            }
+
+            .current-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: .3rem;
+                padding: .33rem .55rem;
+                color: #27866a;
+                background: var(--property-green-soft);
+                border: 1px solid rgba(58, 170, 131, .1);
+                border-radius: 8px;
+                font-size: .66rem;
+                font-weight: 650;
+            }
+
+            .badge-state {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: .36rem .62rem;
+                border-radius: 999px;
+                border: 1px solid transparent;
+                font-size: .66rem;
+                font-weight: 750;
+            }
+
+            .badge-state.ok {
+                color: #27866a;
+                background: var(--property-green-soft);
+                border-color: rgba(58, 170, 131, .12);
+            }
+
+            .badge-state.warn {
+                color: #b57d25;
+                background: var(--property-amber-soft);
+                border-color: rgba(220, 168, 79, .14);
+            }
+
+            /* =========================================================
+               SERVICIOS
+            ========================================================= */
+
+            .service-code {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                padding: .35rem .58rem;
+                color: var(--property-primary);
+                background: var(--property-primary-soft);
+                border-radius: 9px;
+                font-size: .7rem;
+                font-weight: 720;
+                text-decoration: none;
+                white-space: nowrap;
+                transition:
+                    background-color .18s ease,
+                    transform .18s ease;
+            }
+
+            .service-code:hover {
+                color: var(--property-primary-dark);
+                background: #e5efff;
+                transform: translateY(-1px);
+            }
+
+            .service-type {
+                display: inline-flex;
+                align-items: center;
+                padding: .34rem .55rem;
+                color: #536176;
+                background: #f5f7fa;
+                border: 1px solid #e8edf2;
+                border-radius: 8px;
+                font-size: .67rem;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            /* =========================================================
+               ESTADO VACÍO
+            ========================================================= */
+
+            .empty-state {
+                padding: 3rem 1rem !important;
+                color: var(--property-muted);
+                text-align: center;
+            }
+
+            .empty-icon-wrap {
+                width: 51px;
+                height: 51px;
+                margin: 0 auto .8rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #9ba7b7;
+                background: #f3f6f9;
+                border-radius: 15px;
+                font-size: 1.25rem;
+            }
+
+            .empty-state p {
+                margin: 0;
+                color: #8995a7 !important;
+                font-size: .74rem;
+                font-weight: 550;
+            }
+
+            /* =========================================================
+               RESPONSIVE
+            ========================================================= */
+
+            @media (max-width: 991.98px) {
+                .property-information {
+                    min-height: auto;
+                }
+            }
+
+            @media (max-width: 767.98px) {
+                .property-header {
+                    padding: 1.1rem;
+                    border-radius: 18px;
+                }
+
+                .property-header-content {
+                    align-items: stretch !important;
+                }
+
+                .property-title {
+                    font-size: 1.25rem;
+                }
+
+                .property-actions {
+                    width: 100%;
+                }
+
+                .property-button {
+                    flex: 1;
+                }
+
+                .property-tabs {
+                    overflow-x: auto;
+                    flex-wrap: nowrap;
+                    scrollbar-width: none;
+                }
+
+                .property-tabs::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .property-tabs .nav-link {
+                    white-space: nowrap;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .property-heading {
+                    align-items: flex-start;
+                }
+
+                .back-button {
+                    width: 40px;
+                    height: 40px;
+                    min-width: 40px;
+                }
+
+                .property-actions {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                }
+
+                .property-button {
+                    width: 100%;
+                }
+
+                .property-profile,
+                .location-card {
+                    padding: 1.1rem;
+                }
+
+                .location-item {
+                    align-items: flex-start;
+                }
+
+                .location-value {
+                    max-width: 55%;
+                }
+
+                .property-table thead th,
+                .property-table tbody td {
+                    padding-left: .8rem;
+                    padding-right: .8rem;
+                }
+            }
+        </style>
+
+
+        <div class="property-page">
+
+            <!-- =========================================================
+                 ENCABEZADO
+            ========================================================= -->
+
+            <div class="property-header">
+
+                <div class="property-header-content d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center gap-3">
+
+                    <div class="property-heading">
+
+                        <a th:href="@{/inmuebles}"
+                           class="back-button"
+                           title="Volver al listado">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                        </a>
+
+
+                        <div>
+
+                            <span class="property-eyebrow">
+                                Ficha de Predio
+                            </span>
+
+                            <h2 class="property-title"
+                                th:text="${inmueble.codigoInmueble}">
+                                INM-000
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="property-actions">
+
+                        <a class="property-button property-button-primary"
+                           th:href="@{/inmuebles/{id}/titular(id=${inmueble.idInmueble})}">
+
+                            <i class="bi bi-person-gear"></i>
+
+                            <span>
+                                Asignar / Cambiar titular
+                            </span>
+
+                        </a>
+
+
+                        <a class="property-button property-button-secondary"
+                           th:href="@{/inmuebles/{id}/editar(id=${inmueble.idInmueble})}">
+
+                            <i class="bi bi-pencil-square"></i>
+
+                            <span>
+                                Editar
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-4">
+
+                <!-- =====================================================
+                     COLUMNA IZQUIERDA
+                ====================================================== -->
+
+                <div class="col-lg-4">
+
+                    <!-- RESUMEN -->
+
+                    <div class="property-surface property-profile mb-4">
+
+                        <div class="property-main-icon">
+                            <i class="bi bi-house-door"></i>
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <span class="property-code"
+                                  th:text="${inmueble.codigoInmueble}">
+                                INM-000
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <span class="property-state">
+
+                                <i class="bi bi-house-check-fill"></i>
+
+                                <span>
+                                    REGISTRADO
+                                </span>
+
+                            </span>
+
+                        </div>
+
+
+                        <p class="property-address"
+                           th:text="${inmueble.direccion}">
+                            Dirección Principal
+                        </p>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         DATOS DE UBICACIÓN
+                    ================================================== -->
+
+                    <div class="property-surface location-card">
+
+                        <div class="section-heading">
+
+                            <div class="section-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+
+                            <h5 class="section-title">
+                                Datos de Ubicación
+                            </h5>
+
+                        </div>
+
+
+                        <div class="location-list">
+
+                            <!-- DISTRITO -->
+
+                            <div class="location-item">
+
+                                <span class="location-label">
+                                    <i class="bi bi-map"></i>
+                                    Distrito
+                                </span>
+
+                                <strong class="location-value"
+                                        th:text="${inmueble.distrito ?: '—'}">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <!-- SECTOR -->
+
+                            <div class="location-item">
+
+                                <span class="location-label">
+                                    <i class="bi bi-pin-map"></i>
+                                    Sector
+                                </span>
+
+                                <span class="location-value"
+                                      th:text="${inmueble.sector ?: '—'}">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <!-- MANZANA / LOTE -->
+
+                            <div class="location-item">
+
+                                <span class="location-label">
+                                    <i class="bi bi-grid-3x3"></i>
+                                    Mz. / Lote
+                                </span>
+
+                                <span class="location-value font-monospace"
+                                      th:text="${(inmueble.manzana ?: '—') + ' / ' + (inmueble.numeroLote ?: '—')}">
+                                    — / —
+                                </span>
+
+                            </div>
+
+
+                            <!-- REFERENCIA -->
+
+                            <div class="location-item location-reference">
+
+                                <span class="location-label">
+                                    <i class="bi bi-info-circle"></i>
+                                    Referencia
+                                </span>
+
+                                <span class="reference-value"
+                                      th:text="${inmueble.referencia ?: 'Sin referencias adicionales'}">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     COLUMNA DERECHA
+                ====================================================== -->
+
+                <div class="col-lg-8">
+
+                    <div class="property-surface property-information">
+
+                        <!-- =============================================
+                             PESTAÑAS
+                        ============================================== -->
+
+                        <ul class="nav property-tabs"
+                            id="inmuebleTab"
+                            role="tablist">
+
+                            <!-- TITULARIDADES -->
+
+                            <li class="nav-item"
+                                role="presentation">
+
+                                <button class="nav-link active"
+                                        id="titularidades-tab"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#titularidades-panel"
+                                        type="button"
+                                        role="tab"
+                                        aria-controls="titularidades-panel"
+                                        aria-selected="true">
+
+                                    <i class="bi bi-people"></i>
+
+                                    <span>
+                                        Titularidades
+                                    </span>
+
+                                    <span class="tab-counter tab-counter-primary"
+                                          th:text="${#lists.size(titularidades)}">
+                                        0
+                                    </span>
+
+                                </button>
+
+                            </li>
+
+
+                            <!-- SERVICIOS -->
+
+                            <li class="nav-item"
+                                role="presentation">
+
+                                <button class="nav-link"
+                                        id="servicios-tab"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#servicios-panel"
+                                        type="button"
+                                        role="tab"
+                                        aria-controls="servicios-panel"
+                                        aria-selected="false">
+
+                                    <i class="bi bi-lightning-charge"></i>
+
+                                    <span>
+                                        Servicios Inst.
+                                    </span>
+
+                                    <span class="tab-counter tab-counter-cyan"
+                                          th:text="${#lists.size(servicios)}">
+                                        0
+                                    </span>
+
+                                </button>
+
+                            </li>
+
+                        </ul>
+
+
+                        <!-- =============================================
+                             CONTENIDO
+                        ============================================== -->
+
+                        <div class="tab-content property-tab-content"
+                             id="inmuebleTabContent">
+
+
+                            <!-- =========================================
+                                 TITULARIDADES
+                            ========================================== -->
+
+                            <div class="tab-pane fade show active"
+                                 id="titularidades-panel"
+                                 role="tabpanel"
+                                 aria-labelledby="titularidades-tab">
+
+                                <div class="table-responsive">
+
+                                    <table class="table property-table align-middle">
+
+                                        <thead>
+
+                                        <tr>
+
+                                            <th class="ps-4">
+                                                Asociado Titular
+                                            </th>
+
+                                            <th>
+                                                Fecha Inicio
+                                            </th>
+
+                                            <th>
+                                                Fecha Fin
+                                            </th>
+
+                                            <th>
+                                                Estado
+                                            </th>
+
+                                            <th class="text-end pe-4">
+                                                Acción
+                                            </th>
+
+                                        </tr>
+
+                                        </thead>
+
+
+                                        <tbody>
+
+                                        <tr th:each="t : ${titularidades}">
+
+                                            <!-- TITULAR -->
+
+                                            <td class="ps-4">
+
+                                                <div class="owner-cell">
+
+                                                    <div class="owner-avatar">
+                                                        <i class="bi bi-person"></i>
+                                                    </div>
+
+                                                    <span class="owner-name"
+                                                          th:text="${t.asociado.nombres + ' ' + (t.asociado.apellidoPaterno ?: '')}">
+                                                        Nombre del Asociado
+                                                    </span>
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <!-- FECHA INICIO -->
+
+                                            <td>
+
+                                                <span class="date-value">
+
+                                                    <i class="bi bi-calendar-event"></i>
+
+                                                    <span th:text="${t.fechaInicio != null ? #temporals.format(t.fechaInicio, 'dd/MM/yyyy') : '—'}">
+                                                        01/01/2026
+                                                    </span>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- FECHA FIN -->
+
+                                            <td>
+
+                                                <span th:if="${t.fechaFin != null}"
+                                                      class="date-value">
+
+                                                    <i class="bi bi-calendar-check"></i>
+
+                                                    <span th:text="${#temporals.format(t.fechaFin, 'dd/MM/yyyy')}">
+                                                        31/12/2026
+                                                    </span>
+
+                                                </span>
+
+
+                                                <span th:unless="${t.fechaFin != null}"
+                                                      class="current-badge">
+
+                                                    <i class="bi bi-check2-circle"></i>
+
+                                                    Vigente
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- ESTADO -->
+
+                                            <td>
+
+                                                <span class="badge-state"
+                                                      th:classappend="${t.estado == 'ACTIVO' or t.estado == 'VIGENTE'} ? ' ok' : ' warn'"
+                                                      th:text="${t.estado}">
+                                                    ESTADO
+                                                </span>
+
+                                            </td>
+
+                                            <td class="text-end pe-4">
+
+                                                <form th:if="${t.estado == 'ACTIVO' or t.estado == 'VIGENTE'}"
+                                                      method="post"
+                                                      th:action="@{/inmuebles/{idInmueble}/titularidad/{idTitularidad}/finalizar(
+              idInmueble=${inmueble.idInmueble},
+              idTitularidad=${t.idTitularidad}
+          )}">
+
+                                                    <button type="submit"
+                                                            class="btn btn-danger btn-sm">
+
+                                                        <i class="bi bi-person-dash"></i>
+                                                        Finalizar
+
+                                                    </button>
+
+                                                </form>
+
+                                            </td>
+
+
+
+                                        </tr>
+
+
+                                        <!-- SIN TITULARES -->
+
+                                        <tr th:if="${#lists.isEmpty(titularidades)}"
+                                            class="empty-row">
+
+                                            <td colspan="5"
+                                                class="empty-state">
+
+                                                <div class="empty-icon-wrap">
+                                                    <i class="bi bi-person-x"></i>
+                                                </div>
+
+                                                <p>
+                                                    No hay titulares asignados a este inmueble.
+                                                </p>
+
+                                            </td>
+
+                                        </tr>
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =========================================
+                                 SERVICIOS
+                            ========================================== -->
+
+                            <div class="tab-pane fade"
+                                 id="servicios-panel"
+                                 role="tabpanel"
+                                 aria-labelledby="servicios-tab">
+
+                                <div class="table-responsive">
+
+                                    <table class="table property-table align-middle">
+
+                                        <thead>
+
+                                        <tr>
+
+                                            <th class="ps-4">
+                                                Código Servicio
+                                            </th>
+
+                                            <th>
+                                                Tipo de Servicio
+                                            </th>
+
+                                            <th>
+                                                Fecha Alta
+                                            </th>
+
+                                            <th class="text-end pe-4">
+                                                Estado
+                                            </th>
+
+                                        </tr>
+
+                                        </thead>
+
+
+                                        <tbody>
+
+                                        <tr th:each="s : ${servicios}">
+
+                                            <!-- CÓDIGO -->
+
+                                            <td class="ps-4">
+
+                                                <a th:href="@{/servicios/{id}(id=${s.idServicio})}"
+                                                   class="service-code">
+
+                                                    <i class="bi bi-hash"></i>
+
+                                                    <span th:text="${s.codigoServicio}">
+                                                        SRV-000
+                                                    </span>
+
+                                                </a>
+
+                                            </td>
+
+
+                                            <!-- TIPO -->
+
+                                            <td>
+
+                                                <span class="service-type"
+                                                      th:text="${s.tipoServicio.nombre}">
+                                                    Agua Potable
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- FECHA -->
+
+                                            <td>
+
+                                                <span class="date-value">
+
+                                                    <i class="bi bi-calendar-event"></i>
+
+                                                    <span th:text="${s.fechaAlta != null ? #temporals.format(s.fechaAlta, 'dd/MM/yyyy') : '—'}">
+                                                        01/01/2026
+                                                    </span>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- ESTADO -->
+
+                                            <td class="text-end pe-4">
+
+                                                <span class="badge-state"
+                                                      th:classappend="${s.estado == 'ACTIVO'} ? ' ok' : ' warn'"
+                                                      th:text="${s.estado}">
+                                                    ACTIVO
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+
+                                        <!-- SIN SERVICIOS -->
+
+                                        <tr th:if="${#lists.isEmpty(servicios)}"
+                                            class="empty-row">
+
+                                            <td colspan="4"
+                                                class="empty-state">
+
+                                                <div class="empty-icon-wrap">
+                                                    <i class="bi bi-plugin"></i>
+                                                </div>
+
+                                                <p>
+                                                    No hay servicios registrados para este predio.
+                                                </p>
+
+                                            </td>
+
+                                        </tr>
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab');
+
+        if (activeTab === 'servicios') {
+            const serviciosTab = new bootstrap.Tab(
+                document.querySelector('#servicios-tab')
+            );
+
+            serviciosTab.show();
+        }
+
+    });
+</script>
+
+</body>
+</html>

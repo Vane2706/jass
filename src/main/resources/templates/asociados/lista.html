@@ -1,0 +1,1816 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Asociados')}"></head>
+
+<body class="bg-body-tertiary">
+
+<style>
+
+    /* =========================================================
+       VARIABLES
+       ========================================================= */
+
+    :root {
+        --aso-primary: #2563eb;
+        --aso-primary-dark: #1d4ed8;
+        --aso-primary-soft: #eff6ff;
+
+        --aso-success: #16a34a;
+        --aso-success-soft: #f0fdf4;
+
+        --aso-warning: #d97706;
+        --aso-warning-soft: #fffbeb;
+
+        --aso-text: #172033;
+        --aso-muted: #718096;
+        --aso-border: #e8edf4;
+        --aso-bg: #f7f9fc;
+        --aso-white: #ffffff;
+
+        --aso-radius: 18px;
+
+        --aso-shadow:
+            0 1px 2px rgba(15, 23, 42, .02),
+            0 6px 20px rgba(15, 23, 42, .045);
+
+        --aso-shadow-hover:
+            0 14px 35px rgba(15, 23, 42, .08);
+    }
+
+
+    /* =========================================================
+       BASE
+       ========================================================= */
+
+    body {
+        background:
+            radial-gradient(
+                circle at 95% 5%,
+                rgba(37, 99, 235, .045),
+                transparent 25%
+            ),
+            var(--aso-bg);
+
+        color: var(--aso-text);
+    }
+
+
+    /* =========================================================
+       ANIMACIONES
+       ========================================================= */
+
+    @keyframes fadeUp {
+
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    @keyframes spin {
+
+        to {
+            transform: rotate(360deg);
+        }
+
+    }
+
+
+    .animate-in {
+        animation: fadeUp .45s ease both;
+    }
+
+
+    /* =========================================================
+       CABECERA
+       ========================================================= */
+
+    .associates-header {
+        position: relative;
+        overflow: hidden;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255,255,255,.98),
+                rgba(239,246,255,.92)
+            );
+
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 22px;
+
+        padding: 1.55rem 1.7rem;
+
+        box-shadow:
+            0 8px 30px rgba(15,23,42,.035);
+
+        margin-bottom: 1.25rem;
+    }
+
+
+    .associates-header::before {
+        content: "";
+
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+
+        border-radius: 50%;
+
+        right: -65px;
+        top: -100px;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(37,99,235,.10),
+                transparent 68%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .header-icon {
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+
+        border-radius: 14px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: var(--aso-primary);
+
+        background:
+            linear-gradient(
+                135deg,
+                #eff6ff,
+                #dbeafe
+            );
+
+        border: 1px solid #dbeafe;
+
+        font-size: 1.25rem;
+    }
+
+
+    .page-eyebrow {
+        color: var(--aso-primary);
+
+        font-size: .71rem;
+        font-weight: 750;
+
+        text-transform: uppercase;
+        letter-spacing: .09em;
+
+        margin-bottom: .15rem;
+    }
+
+
+    .page-title {
+        color: var(--aso-text);
+
+        font-weight: 750;
+        letter-spacing: -.025em;
+
+        margin: 0;
+    }
+
+
+    /* =========================================================
+       BOTÓN NUEVO ASOCIADO
+       ========================================================= */
+
+    .btn-new-associate {
+        position: relative;
+        overflow: hidden;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .55rem;
+
+        min-height: 44px;
+
+        padding: .68rem 1.2rem;
+
+        border: none;
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #3b82f6,
+                #2563eb
+            );
+
+        color: white;
+
+        font-size: .9rem;
+        font-weight: 650;
+
+        box-shadow:
+            0 7px 18px rgba(37,99,235,.18);
+
+        transition:
+            transform .22s ease,
+            box-shadow .22s ease,
+            background .22s ease;
+    }
+
+
+    .btn-new-associate:hover {
+        color: white;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 11px 25px rgba(37,99,235,.24);
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #1d4ed8
+            );
+    }
+
+
+    .btn-new-associate:active {
+        transform: translateY(0);
+    }
+
+
+    .btn-new-icon {
+        width: 26px;
+        height: 26px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+
+        background: rgba(255,255,255,.14);
+    }
+
+
+    /* =========================================================
+       PANEL PRINCIPAL
+       ========================================================= */
+
+    .associates-panel {
+        background: rgba(255,255,255,.94);
+
+        border: 1px solid var(--aso-border);
+        border-radius: 22px;
+
+        box-shadow: var(--aso-shadow);
+
+        overflow: hidden;
+
+        animation: fadeUp .5s ease both;
+    }
+
+
+    /* =========================================================
+       TOOLBAR
+       ========================================================= */
+
+    .associates-toolbar {
+        padding: 1.15rem 1.35rem;
+
+        border-bottom: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(255,255,255,1),
+                rgba(250,252,255,.9)
+            );
+    }
+
+
+    /* =========================================================
+       BUSCADOR
+       ========================================================= */
+
+    .search-box {
+        position: relative;
+        max-width: 580px;
+    }
+
+
+    .search-box-icon {
+        position: absolute;
+
+        left: 16px;
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        color: #94a3b8;
+
+        z-index: 3;
+
+        pointer-events: none;
+
+        transition: color .2s ease;
+    }
+
+
+    .search-box .form-control {
+        height: 46px;
+
+        padding-left: 45px;
+        padding-right: 45px;
+
+        border: 1px solid #e2e8f0;
+        border-radius: 13px;
+
+        background: #f8fafc;
+
+        color: var(--aso-text);
+
+        font-size: .9rem;
+
+        box-shadow: none;
+
+        transition:
+            border-color .22s ease,
+            box-shadow .22s ease,
+            background .22s ease;
+    }
+
+
+    .search-box .form-control::placeholder {
+        color: #a0aec0;
+    }
+
+
+    .search-box .form-control:hover {
+        border-color: #cbd5e1;
+        background: white;
+    }
+
+
+    .search-box .form-control:focus {
+        background: white;
+
+        border-color: rgba(37,99,235,.55);
+
+        box-shadow:
+            0 0 0 4px rgba(37,99,235,.07);
+    }
+
+
+    .search-box:focus-within .search-box-icon {
+        color: var(--aso-primary);
+    }
+
+
+    .search-spinner {
+        position: absolute;
+
+        right: 16px;
+        top: 50%;
+
+        margin-top: -8px;
+
+        width: 16px;
+        height: 16px;
+
+        border-width: 2px;
+
+        color: var(--aso-primary);
+    }
+
+
+    /* =========================================================
+       CONTADOR
+       ========================================================= */
+
+    .results-chip {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .5rem;
+
+        min-height: 38px;
+
+        padding: .45rem .8rem;
+
+        border-radius: 11px;
+
+        background: #f8fafc;
+
+        border: 1px solid #edf1f6;
+
+        color: #64748b;
+
+        font-size: .79rem;
+        font-weight: 550;
+
+        white-space: nowrap;
+    }
+
+
+    .results-chip-icon {
+        color: var(--aso-primary);
+        font-size: .85rem;
+    }
+
+
+    /* =========================================================
+       TABLA
+       ========================================================= */
+
+    .associates-table {
+        margin: 0;
+
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+
+    .associates-table thead th {
+        padding: .85rem 1rem;
+
+        border: none;
+        border-bottom: 1px solid #edf1f6;
+
+        background: #f8fafc;
+
+        color: #718096;
+
+        font-size: .69rem;
+        font-weight: 750;
+
+        text-transform: uppercase;
+        letter-spacing: .055em;
+
+        white-space: nowrap;
+    }
+
+
+    .associates-table tbody td {
+        padding: .95rem 1rem;
+
+        border: none;
+        border-bottom: 1px solid #f0f3f7;
+
+        background: white;
+
+        vertical-align: middle;
+
+        transition:
+            background .2s ease;
+    }
+
+
+    .associates-table tbody tr {
+        position: relative;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .associates-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    .associates-table tbody tr:hover td {
+        background: #fbfdff;
+    }
+
+
+    .associates-table tbody tr:hover td:first-child {
+        box-shadow:
+            inset 3px 0 0 rgba(37,99,235,.75);
+    }
+
+
+    /* =========================================================
+       CÓDIGO
+       ========================================================= */
+
+    .associate-code {
+        display: inline-flex;
+        align-items: center;
+
+        padding: .38rem .62rem;
+
+        border-radius: 8px;
+
+        background: #f8fafc;
+
+        border: 1px solid #e7ecf2;
+
+        color: #475569;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            "Liberation Mono",
+            monospace;
+
+        font-size: .76rem;
+        font-weight: 650;
+    }
+
+
+    /* =========================================================
+       ASOCIADO
+       ========================================================= */
+
+    .associate-profile {
+        display: flex;
+        align-items: center;
+
+        gap: .75rem;
+    }
+
+
+    .associate-avatar {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 12px;
+
+        color: #2563eb;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eff6ff,
+                #dbeafe
+            );
+
+        border: 1px solid #dbeafe;
+
+        font-size: .95rem;
+        font-weight: 750;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .associates-table tbody tr:hover
+    .associate-avatar {
+        transform: scale(1.04);
+
+        box-shadow:
+            0 5px 12px rgba(37,99,235,.10);
+    }
+
+
+    .associate-name {
+        display: block;
+
+        max-width: 260px;
+
+        color: #263348;
+
+        font-size: .89rem;
+        font-weight: 650;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+    .associate-email {
+        display: flex;
+        align-items: center;
+
+        gap: .3rem;
+
+        max-width: 260px;
+
+        margin-top: .16rem;
+
+        color: #8a97a8;
+
+        font-size: .74rem;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+
+    .associate-email i {
+        color: #93c5fd;
+        font-size: .7rem;
+    }
+
+
+    /* =========================================================
+       DOCUMENTO / TELÉFONO
+       ========================================================= */
+
+    .document-value {
+        color: #536174;
+
+        font-size: .82rem;
+        font-weight: 550;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+    }
+
+
+    .phone-value {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .4rem;
+
+        color: #475569;
+
+        font-size: .84rem;
+        font-weight: 550;
+    }
+
+
+    .phone-icon {
+        width: 27px;
+        height: 27px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+
+        background: #f0f9ff;
+
+        color: #0284c7;
+
+        font-size: .72rem;
+    }
+
+
+    /* =========================================================
+       ESTADO
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .38rem;
+
+        padding: .37rem .65rem;
+
+        border-radius: 50rem;
+
+        font-size: .71rem;
+        font-weight: 650;
+
+        border: 1px solid transparent;
+    }
+
+
+    .status-badge.active {
+        color: #15803d;
+
+        background: #f0fdf4;
+
+        border-color: #dcfce7;
+    }
+
+
+    .status-badge.inactive {
+        color: #b45309;
+
+        background: #fffbeb;
+
+        border-color: #fef3c7;
+    }
+
+
+    .status-dot {
+        width: 6px;
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+
+    /* =========================================================
+       ACCIÓN
+       ========================================================= */
+
+    .detail-button {
+        width: 35px;
+        height: 35px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 10px;
+
+        border: 1px solid #e7ecf2;
+
+        background: white;
+
+        color: #64748b;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 1px 2px rgba(15,23,42,.02);
+
+        transition:
+            transform .2s ease,
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .detail-button:hover {
+        color: white;
+
+        background: var(--aso-primary);
+
+        border-color: var(--aso-primary);
+
+        transform: translateX(2px);
+
+        box-shadow:
+            0 5px 12px rgba(37,99,235,.18);
+    }
+
+
+    /* =========================================================
+       ESTADO VACÍO
+       ========================================================= */
+
+    .empty-state {
+        padding: 3.7rem 1rem;
+    }
+
+
+    .empty-state-icon {
+        width: 62px;
+        height: 62px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 1rem;
+
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eff6ff,
+                #f0f9ff
+            );
+
+        color: #3b82f6;
+
+        border: 1px solid #dbeafe;
+
+        font-size: 1.55rem;
+    }
+
+
+    /* =========================================================
+       FOOTER TABLA
+       ========================================================= */
+
+    .table-footer {
+        padding: .95rem 1.35rem;
+
+        border-top: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfcfe
+            );
+    }
+
+
+    .table-counter {
+        color: #7c8999;
+        font-size: .78rem;
+    }
+
+
+    .table-counter strong {
+        color: #334155;
+        font-weight: 650;
+    }
+
+
+    /* =========================================================
+       PAGINACIÓN
+       ========================================================= */
+
+    .modern-pagination {
+        gap: .25rem;
+    }
+
+
+    .modern-pagination .page-link {
+        min-width: 33px;
+        height: 33px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0 .55rem;
+
+        border: 1px solid transparent;
+        border-radius: 9px !important;
+
+        background: transparent;
+
+        color: #64748b;
+
+        font-size: .78rem;
+        font-weight: 600;
+
+        box-shadow: none !important;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease,
+            border-color .2s ease;
+    }
+
+
+    .modern-pagination
+    .page-link:hover {
+        color: var(--aso-primary);
+
+        background: #eff6ff;
+
+        border-color: #dbeafe;
+
+        transform: translateY(-1px);
+    }
+
+
+    .modern-pagination
+    .page-item.active
+    .page-link {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #3b82f6,
+                #2563eb
+            );
+
+        border-color: #2563eb;
+
+        box-shadow:
+            0 4px 10px rgba(37,99,235,.18) !important;
+    }
+
+
+    .modern-pagination
+    .page-item.disabled
+    .page-link {
+        color: #c1c9d4;
+        background: transparent;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .associates-header {
+            padding: 1.3rem;
+        }
+
+        .associates-toolbar {
+            padding: 1rem;
+        }
+
+        .search-box {
+            max-width: none;
+        }
+
+        .associate-name,
+        .associate-email {
+            max-width: 210px;
+        }
+
+    }
+
+
+    @media (max-width: 767.98px) {
+
+        .associates-header {
+            border-radius: 18px;
+        }
+
+        .associates-panel {
+            border-radius: 18px;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .btn-new-associate {
+            width: 100%;
+        }
+
+        .results-chip {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .table-footer {
+            padding: 1rem;
+        }
+
+    }
+
+</style>
+
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+
+<main class="app-main">
+
+
+    <!-- ===================================================== -->
+    <!-- TOPBAR -->
+    <!-- ===================================================== -->
+
+    <div th:replace="~{fragments/layout :: topbar('Asociados')}"></div>
+
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+
+        <div class="associates-header animate-in">
+
+            <div class="d-flex
+                        flex-column flex-md-row
+                        align-items-md-center
+                        justify-content-between
+                        gap-3">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="header-icon">
+
+                        <i class="bi bi-people-fill"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="page-eyebrow">
+                            Gestión de asociados
+                        </div>
+
+                        <h2 class="page-title h4">
+                            Asociados
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="header-actions">
+
+                    <a class="btn-new-associate"
+                       th:href="@{/asociados/nuevo}">
+
+                        <span class="btn-new-icon">
+
+                            <i class="bi bi-person-plus-fill"></i>
+
+                        </span>
+
+                        <span>
+                            Nuevo asociado
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- PANEL PRINCIPAL -->
+        <!-- ================================================= -->
+
+        <div class="associates-panel">
+
+
+            <!-- ================================================= -->
+            <!-- BUSCADOR -->
+            <!-- ================================================= -->
+
+            <div class="associates-toolbar">
+
+                <div class="row
+                            align-items-center
+                            justify-content-between
+                            g-3">
+
+
+                    <div class="col-lg-7 col-xl-6">
+
+                        <div class="search-box">
+
+                            <i class="bi bi-search search-box-icon"></i>
+
+
+                            <input id="buscadorAsociados"
+
+                                   class="form-control"
+
+                                   type="search"
+
+                                   autocomplete="off"
+
+                                   th:value="${q}"
+
+                                   placeholder="Buscar por código, nombre, DNI o teléfono…">
+
+
+                            <span id="searchSpinner"
+
+                                  class="spinner-border
+                                         spinner-border-sm
+                                         search-spinner
+                                         d-none"
+
+                                  role="status">
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-lg-auto">
+
+                        <div class="results-chip">
+
+                            <i class="bi bi-people
+                                      results-chip-icon"></i>
+
+
+                            <span th:if="${totalRegistros == 1}">
+                                1 asociado encontrado
+                            </span>
+
+
+                            <span th:if="${totalRegistros != 1}"
+                                  th:text="${totalRegistros
+                                      + ' asociados encontrados'}">
+
+                                0 asociados encontrados
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TABLA -->
+            <!-- ================================================= -->
+
+            <div class="table-responsive">
+
+                <table class="table
+                              associates-table
+                              align-middle
+                              mb-0">
+
+
+                    <thead>
+
+                    <tr>
+                        <th class="ps-4">
+                            Código
+                        </th>
+
+                        <th>
+                            Asociado
+                        </th>
+
+                        <th>
+                            DNI / RUC
+                        </th>
+
+                        <th>
+                            Contacto
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acción
+                        </th>
+
+                    </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <!-- ========================================= -->
+                    <!-- ASOCIADOS -->
+                    <!-- ========================================= -->
+
+                    <tr th:each="a : ${asociados}">
+
+                        <!-- CÓDIGO -->
+
+                        <td class="ps-4">
+
+                            <span class="associate-code"
+                                  th:text="${a.codigoAsociado}">
+
+                                ASO-000
+
+                            </span>
+
+                        </td>
+
+                        <!-- ASOCIADO -->
+
+                        <td>
+
+                            <div class="associate-profile">
+
+
+                                <div class="associate-avatar"
+
+                                     th:text="${#strings.substring(
+                                         a.nombres,
+                                         0,
+                                         1
+                                     )}">
+
+                                    A
+
+                                </div>
+
+
+                                <div class="overflow-hidden">
+
+
+                                    <span class="associate-name"
+
+                                          th:text="${a.nombres
+                                              + ' '
+                                              + (a.apellidoPaterno ?: '')
+                                              + ' '
+                                              + (a.apellidoMaterno ?: '')}">
+
+                                        Asociado
+
+                                    </span>
+
+
+                                    <span class="associate-email"
+
+                                          th:if="${a.correo != null
+                                              and !a.correo.isEmpty()}">
+
+                                        <i class="bi bi-envelope"></i>
+
+                                        <span class="text-truncate"
+                                              th:text="${a.correo}">
+
+                                            correo@ejemplo.com
+
+                                        </span>
+
+                                    </span>
+
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <!-- DOCUMENTO -->
+
+                        <td>
+
+                            <span class="document-value"
+                                  th:text="${a.documento ?: '—'}">
+
+                                —
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- CONTACTO -->
+
+                        <td>
+
+
+                            <span class="phone-value"
+
+                                  th:if="${a.telefono != null
+                                      and !a.telefono.isEmpty()}">
+
+
+                                <span class="phone-icon">
+
+                                    <i class="bi bi-telephone-fill"></i>
+
+                                </span>
+
+
+                                <span th:text="${a.telefono}">
+
+                                    —
+
+                                </span>
+
+
+                            </span>
+
+
+                            <span class="text-muted"
+
+                                  th:unless="${a.telefono != null
+                                      and !a.telefono.isEmpty()}">
+
+                                —
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ESTADO -->
+
+                        <td>
+
+
+                            <span class="status-badge"
+
+                                  th:classappend="${a.estado == 'ACTIVO'}
+                                      ? ' active'
+                                      : ' inactive'">
+
+
+                                <span class="status-dot"></span>
+
+
+                                <span th:text="${a.estado}">
+
+                                    ESTADO
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ACCIÓN -->
+
+                        <td class="text-end pe-4">
+
+
+                            <a class="detail-button"
+
+                               th:href="@{/asociados/{id}(
+                                    id=${a.idAsociado}
+                               )}"
+
+                               title="Ver detalle"
+
+                               aria-label="Ver detalle">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    <!-- ========================================= -->
+                    <!-- ESTADO VACÍO -->
+                    <!-- ========================================= -->
+
+                    <tr th:if="${#lists.isEmpty(asociados)}">
+
+
+                        <td colspan="6"
+                            class="border-0 text-center">
+
+
+                            <div class="empty-state">
+
+
+                                <div class="empty-state-icon">
+
+                                    <i class="bi bi-people"></i>
+
+                                </div>
+
+
+                                <h6 class="fw-bold
+                                           text-dark
+                                           mb-1">
+
+                                    No se encontraron asociados
+
+                                </h6>
+
+
+                                <p class="text-muted
+                                          small
+                                          mb-0">
+
+                                    Intenta buscando con otro término.
+
+                                </p>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FOOTER / PAGINACIÓN -->
+            <!-- ================================================= -->
+
+            <div class="table-footer
+                        d-flex
+                        flex-column flex-md-row
+                        justify-content-between
+                        align-items-center
+                        gap-3"
+
+                 th:if="${totalPaginas > 0}">
+
+
+                <!-- CONTADOR -->
+
+                <div class="table-counter">
+
+
+                    <span th:if="${totalRegistros > 0}">
+
+
+                        Mostrando
+
+
+                        <strong th:text="${paginaActual * 5 + 1}">
+                            1
+                        </strong>
+
+
+                        –
+
+
+                        <strong th:text="${paginaActual * 5
+                            + asociados.size()}">
+                            5
+                        </strong>
+
+
+                        de
+
+
+                        <strong th:text="${totalRegistros}">
+                            0
+                        </strong>
+
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- PAGINACIÓN -->
+
+                <nav th:if="${totalPaginas > 1}"
+                     aria-label="Paginación de asociados">
+
+
+                    <ul class="pagination
+                               pagination-sm
+                               modern-pagination
+                               mb-0">
+
+
+                        <!-- ANTERIOR -->
+
+                        <li class="page-item"
+
+                            th:classappend="${esPrimera}
+                                ? ' disabled'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="${esPrimera}
+                                   ? '#'
+                                   : @{/asociados(
+                                        pagina=${paginaActual - 1},
+                                        q=${q}
+                                     )}"
+
+                               aria-label="Página anterior">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- PRIMERA PÁGINA -->
+
+                        <li class="page-item"
+
+                            th:classappend="${paginaActual == 0}
+                                ? ' active'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="@{/asociados(
+                                    pagina=0,
+                                    q=${q}
+                               )}">
+
+                                1
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- ... IZQUIERDA -->
+
+                        <li class="page-item disabled"
+
+                            th:if="${paginaActual > 3}">
+
+
+                            <span class="page-link">
+                                …
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- PÁGINAS INTERMEDIAS -->
+
+                        <th:block
+
+                                th:if="${totalPaginas > 2}"
+
+                                th:each="i : ${#numbers.sequence(
+                                    T(java.lang.Math).max(
+                                        1,
+                                        paginaActual - 2
+                                    ),
+                                    T(java.lang.Math).min(
+                                        totalPaginas - 2,
+                                        paginaActual + 2
+                                    )
+                                )}">
+
+
+                            <li class="page-item"
+
+                                th:classappend="${i == paginaActual}
+                                    ? ' active'
+                                    : ''">
+
+
+                                <a class="page-link"
+
+                                   th:href="@{/asociados(
+                                        pagina=${i},
+                                        q=${q}
+                                   )}"
+
+                                   th:text="${i + 1}">
+
+                                    2
+
+                                </a>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- ... DERECHA -->
+
+                        <li class="page-item disabled"
+
+                            th:if="${paginaActual
+                                < totalPaginas - 4}">
+
+
+                            <span class="page-link">
+                                …
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- ÚLTIMA PÁGINA -->
+
+                        <li class="page-item"
+
+                            th:if="${totalPaginas > 1}"
+
+                            th:classappend="${paginaActual
+                                == totalPaginas - 1}
+                                ? ' active'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="@{/asociados(
+                                    pagina=${totalPaginas - 1},
+                                    q=${q}
+                               )}"
+
+                               th:text="${totalPaginas}">
+
+                                10
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- SIGUIENTE -->
+
+                        <li class="page-item"
+
+                            th:classappend="${esUltima}
+                                ? ' disabled'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="${esUltima}
+                                   ? '#'
+                                   : @{/asociados(
+                                        pagina=${paginaActual + 1},
+                                        q=${q}
+                                     )}"
+
+                               aria-label="Página siguiente">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </li>
+
+
+                    </ul>
+
+
+                </nav>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ========================================================= -->
+<!-- SCRIPTS -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<!-- ========================================================= -->
+<!-- BUSCADOR -->
+<!-- ========================================================= -->
+
+<script>
+
+    (() => {
+
+        const buscador =
+            document.getElementById(
+                'buscadorAsociados'
+            );
+
+
+        const spinner =
+            document.getElementById(
+                'searchSpinner'
+            );
+
+
+        if (!buscador) {
+            return;
+        }
+
+
+        let temporizador;
+
+
+        buscador.addEventListener(
+            'input',
+            function () {
+
+
+                if (spinner) {
+
+                    spinner.classList.remove(
+                        'd-none'
+                    );
+
+                }
+
+
+                clearTimeout(
+                    temporizador
+                );
+
+
+                const texto =
+                    this.value.trim();
+
+
+                temporizador =
+                    setTimeout(
+                        () => {
+
+
+                            const parametros =
+                                new URLSearchParams();
+
+
+                            if (texto.length > 0) {
+
+                                parametros.set(
+                                    'q',
+                                    texto
+                                );
+
+                            }
+
+
+                            parametros.set(
+                                'pagina',
+                                '0'
+                            );
+
+
+                            window.location.href =
+                                '/asociados?'
+                                + parametros.toString();
+
+
+                        },
+                        350
+                    );
+
+            }
+        );
+
+    })();
+
+</script>
+
+
+</body>
+</html>

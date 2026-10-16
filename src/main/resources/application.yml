@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: agua
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/agua?serverTimezone=America/Lima&useSSL=TRUE
+    #url: ${MYSQLHOST}
+    username: root
+    #username: ${MYSQLUSER}
+    password: raticate2024
+    #password: ${MYSQLPASSWORD}
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 3000
+  #port: ${PORT}
+
+logging:
+  level:
+    org.hibernate.sql: debug

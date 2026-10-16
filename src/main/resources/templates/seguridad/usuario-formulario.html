@@ -1,0 +1,1129 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Nuevo usuario')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Nuevo usuario')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+
+        <style>
+            :root {
+                --user-primary: #4f7cff;
+                --user-primary-dark: #416ce5;
+                --user-primary-soft: #eef4ff;
+
+                --user-cyan: #39b8c9;
+                --user-cyan-soft: #ecfbfd;
+
+                --user-violet: #7b78d9;
+                --user-violet-soft: #f2f1ff;
+
+                --user-red: #d96c75;
+                --user-red-soft: #fff0f2;
+
+                --user-dark: #172033;
+                --user-text: #536176;
+                --user-muted: #8491a5;
+
+                --user-border: #e8edf5;
+                --user-bg: #f7f9fc;
+            }
+
+
+            /* =====================================================
+               BASE
+            ===================================================== */
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 8% 5%,
+                        rgba(79, 124, 255, .065),
+                        transparent 26%
+                    ),
+                    radial-gradient(
+                        circle at 94% 8%,
+                        rgba(57, 184, 201, .05),
+                        transparent 24%
+                    ),
+                    var(--user-bg) !important;
+            }
+
+            .user-form-page {
+                width: 100%;
+                max-width: 1040px;
+                margin: 0 auto;
+
+                animation:
+                    userPageAppear .4s ease both;
+            }
+
+            @keyframes userPageAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+
+            /* =====================================================
+               ENCABEZADO
+            ===================================================== */
+
+            .user-page-header {
+                position: relative;
+                overflow: hidden;
+
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                margin-bottom: 1rem;
+                padding: 1.15rem 1.25rem;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(248, 250, 255, .98)
+                    );
+
+                border: 1px solid var(--user-border);
+                border-radius: 18px;
+
+                box-shadow:
+                    0 7px 24px rgba(55, 73, 107, .05);
+            }
+
+            .user-page-header::after {
+                content: "";
+
+                position: absolute;
+
+                width: 150px;
+                height: 150px;
+
+                top: -100px;
+                right: -45px;
+
+                border-radius: 50%;
+
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(79, 124, 255, .075),
+                        transparent 68%
+                    );
+
+                pointer-events: none;
+            }
+
+            .user-header-content {
+                position: relative;
+                z-index: 2;
+
+                display: flex;
+                align-items: center;
+                gap: .8rem;
+            }
+
+            .user-header-icon {
+                width: 45px;
+                height: 45px;
+                min-width: 45px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                color: var(--user-primary);
+
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--user-primary-soft),
+                        #fafcff
+                    );
+
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 13px;
+
+                font-size: .95rem;
+
+                box-shadow:
+                    0 5px 14px rgba(79, 124, 255, .055);
+
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .user-page-header:hover
+            .user-header-icon {
+                transform: translateY(-2px) rotate(-2deg);
+
+                box-shadow:
+                    0 8px 18px rgba(79, 124, 255, .09);
+            }
+
+            .user-page-title {
+                margin: 0 0 .15rem;
+
+                color: var(--user-dark);
+
+                font-size: 1.08rem;
+                font-weight: 780;
+                letter-spacing: -.025em;
+            }
+
+            .user-page-description {
+                margin: 0;
+
+                color: var(--user-muted);
+
+                font-size: .62rem;
+                font-weight: 500;
+            }
+
+
+            /* =====================================================
+               FORMULARIO
+            ===================================================== */
+
+            .user-form-card {
+                position: relative;
+                overflow: hidden;
+
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .995),
+                        rgba(252, 253, 255, .99)
+                    );
+
+                border: 1px solid var(--user-border);
+                border-radius: 20px;
+
+                box-shadow:
+                    0 12px 36px rgba(55, 73, 107, .065);
+
+                transition:
+                    transform .22s ease,
+                    border-color .22s ease,
+                    box-shadow .22s ease;
+            }
+
+            .user-form-card:hover {
+                transform: translateY(-1px);
+
+                border-color:
+                    rgba(79, 124, 255, .11);
+
+                box-shadow:
+                    0 17px 44px rgba(55, 73, 107, .085);
+            }
+
+            .user-form-card::before {
+                content: "";
+
+                position: absolute;
+
+                width: 190px;
+                height: 190px;
+
+                right: -110px;
+                bottom: -125px;
+
+                border-radius: 50%;
+
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(57, 184, 201, .045),
+                        transparent 70%
+                    );
+
+                pointer-events: none;
+            }
+
+
+            /* =====================================================
+               CABECERA DEL FORMULARIO
+            ===================================================== */
+
+            .form-card-header {
+                position: relative;
+                z-index: 2;
+
+                display: flex;
+                align-items: center;
+                gap: .65rem;
+
+                padding: 1rem 1.2rem;
+
+                background:
+                    linear-gradient(
+                        90deg,
+                        #fbfcff,
+                        #f8fbff
+                    );
+
+                border-bottom:
+                    1px solid var(--user-border);
+            }
+
+            .form-card-icon {
+                width: 34px;
+                height: 34px;
+                min-width: 34px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                color: var(--user-primary);
+
+                background:
+                    var(--user-primary-soft);
+
+                border:
+                    1px solid rgba(79, 124, 255, .10);
+
+                border-radius: 9px;
+
+                font-size: .73rem;
+            }
+
+            .form-card-title {
+                margin: 0;
+
+                color: var(--user-dark);
+
+                font-size: .75rem;
+                font-weight: 750;
+            }
+
+
+            /* =====================================================
+               CUERPO
+            ===================================================== */
+
+            .user-form-body {
+                position: relative;
+                z-index: 2;
+
+                padding: 1.25rem;
+            }
+
+            .field-group {
+                height: 100%;
+            }
+
+            .field-label {
+                display: flex;
+                align-items: center;
+                gap: .32rem;
+
+                margin-bottom: .4rem;
+
+                color: #5b687c;
+
+                font-size: .59rem;
+                font-weight: 700;
+            }
+
+            .field-label i {
+                color: #8795a9;
+                font-size: .65rem;
+            }
+
+            .required-mark {
+                color: var(--user-red);
+            }
+
+
+            /* =====================================================
+               INPUTS
+            ===================================================== */
+
+            .input-shell {
+                position: relative;
+
+                display: flex;
+                align-items: center;
+
+                min-height: 44px;
+
+                background: #fafbfd;
+
+                border: 1px solid #e3e8f0;
+                border-radius: 11px;
+
+                transition:
+                    background-color .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease,
+                    transform .18s ease;
+            }
+
+            .input-shell:hover {
+                background: #fff;
+
+                border-color: #d8e0ea;
+            }
+
+            .input-shell:focus-within {
+                background: #fff;
+
+                border-color:
+                    rgba(79, 124, 255, .48);
+
+                box-shadow:
+                    0 0 0 3px rgba(79, 124, 255, .07),
+                    0 5px 14px rgba(55, 73, 107, .04);
+
+                transform: translateY(-1px);
+            }
+
+            .input-shell-icon {
+                position: absolute;
+
+                left: .78rem;
+
+                width: 16px;
+                height: 16px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                color: #9aa6b6;
+
+                font-size: .7rem;
+
+                pointer-events: none;
+
+                transition:
+                    color .18s ease;
+            }
+
+            .input-shell:focus-within
+            .input-shell-icon {
+                color: var(--user-primary);
+            }
+
+            .user-control {
+                width: 100%;
+                min-height: 42px;
+
+                padding:
+                    .58rem .75rem .58rem 2.25rem;
+
+                color: #3f4d62;
+
+                background: transparent !important;
+
+                border: 0 !important;
+                border-radius: 11px !important;
+
+                box-shadow: none !important;
+                outline: none !important;
+
+                font-size: .68rem;
+                font-weight: 580;
+            }
+
+            .user-control::placeholder {
+                color: #abb5c3;
+            }
+
+
+            /* =====================================================
+               SELECT
+            ===================================================== */
+
+            .select-shell {
+                background:
+                    linear-gradient(
+                        135deg,
+                        #fafbfd,
+                        #f9f9ff
+                    );
+            }
+
+            .select-shell:focus-within {
+                border-color:
+                    rgba(123, 120, 217, .38);
+
+                box-shadow:
+                    0 0 0 3px rgba(123, 120, 217, .065);
+            }
+
+            .select-shell
+            .input-shell-icon {
+                color: var(--user-violet);
+            }
+
+            .user-select {
+                cursor: pointer;
+            }
+
+
+            /* =====================================================
+               CONTRASEÑA
+            ===================================================== */
+
+            .password-control {
+                padding-right: 3rem;
+            }
+
+            .password-toggle {
+                position: absolute;
+
+                right: .42rem;
+
+                width: 32px;
+                height: 32px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                padding: 0;
+
+                color: #95a1b2;
+
+                background: transparent;
+
+                border: 0;
+                border-radius: 8px;
+
+                font-size: .72rem;
+
+                cursor: pointer;
+
+                transition:
+                    color .18s ease,
+                    background-color .18s ease,
+                    transform .18s ease;
+            }
+
+            .password-toggle:hover {
+                color: var(--user-primary);
+
+                background:
+                    var(--user-primary-soft);
+
+                transform: scale(1.03);
+            }
+
+
+            /* =====================================================
+               ERROR
+            ===================================================== */
+
+            .user-error {
+                position: relative;
+
+                display: flex;
+                align-items: center;
+                gap: .55rem;
+
+                margin-bottom: 1rem;
+                padding: .68rem .75rem;
+
+                color: #a95059;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        #fff9fa,
+                        var(--user-red-soft)
+                    );
+
+                border:
+                    1px solid rgba(217, 108, 117, .14);
+                border-radius: 11px;
+
+                font-size: .61rem;
+                font-weight: 600;
+            }
+
+            .user-error i {
+                width: 28px;
+                height: 28px;
+                min-width: 28px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                color: var(--user-red);
+
+                background:
+                    rgba(217, 108, 117, .08);
+
+                border-radius: 8px;
+
+                font-size: .7rem;
+            }
+
+
+            /* =====================================================
+               ACCIONES
+            ===================================================== */
+
+            .user-form-actions {
+                position: relative;
+                z-index: 2;
+
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+
+                padding: .9rem 1.2rem;
+
+                background:
+                    #fbfcfe;
+
+                border-top:
+                    1px solid var(--user-border);
+            }
+
+            .btn-create-user {
+                min-height: 40px;
+
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .42rem;
+
+                padding:
+                    .55rem 1rem;
+
+                color: #fff;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--user-primary),
+                        #5b88f6
+                    );
+
+                border: 1px solid var(--user-primary);
+                border-radius: 10px;
+
+                box-shadow:
+                    0 7px 17px rgba(79, 124, 255, .17);
+
+                font-size: .66rem;
+                font-weight: 700;
+
+                cursor: pointer;
+
+                transition:
+                    transform .18s ease,
+                    box-shadow .18s ease,
+                    background .18s ease;
+            }
+
+            .btn-create-user:hover {
+                color: #fff;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--user-primary-dark),
+                        var(--user-primary)
+                    );
+
+                transform: translateY(-1px);
+
+                box-shadow:
+                    0 10px 22px rgba(79, 124, 255, .23);
+            }
+
+            .btn-create-user i {
+                transition:
+                    transform .18s ease;
+            }
+
+            .btn-create-user:hover i {
+                transform: translateX(2px);
+            }
+
+            .btn-create-user:active {
+                transform: translateY(0);
+            }
+
+
+            /* =====================================================
+               RESPONSIVE
+            ===================================================== */
+
+            @media (max-width: 767.98px) {
+
+                .user-page-header {
+                    padding: 1rem;
+
+                    border-radius: 16px;
+                }
+
+                .user-form-card {
+                    border-radius: 17px;
+                }
+
+                .user-form-body {
+                    padding: 1rem;
+                }
+
+                .form-card-header {
+                    padding:
+                        .9rem 1rem;
+                }
+
+                .user-form-actions {
+                    padding:
+                        .85rem 1rem;
+                }
+
+                .btn-create-user {
+                    width: 100%;
+                }
+            }
+
+
+            @media (max-width: 575.98px) {
+
+                .user-page-title {
+                    font-size: .98rem;
+                }
+
+                .user-page-description {
+                    font-size: .57rem;
+                }
+
+                .user-header-icon {
+                    width: 41px;
+                    height: 41px;
+                    min-width: 41px;
+                }
+
+                .user-form-body {
+                    padding: .9rem;
+                }
+            }
+
+
+            /* =====================================================
+               MOVIMIENTO REDUCIDO
+            ===================================================== */
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .user-form-page,
+                .user-page-header,
+                .user-header-icon,
+                .user-form-card,
+                .input-shell,
+                .password-toggle,
+                .btn-create-user,
+                .btn-create-user i {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+        </style>
+
+
+        <div class="user-form-page">
+
+
+            <!-- ================================================= -->
+            <!-- ENCABEZADO -->
+            <!-- ================================================= -->
+
+            <div class="user-page-header page-actions">
+
+                <div class="user-header-content">
+
+                    <div class="user-header-icon">
+                        <i class="bi bi-person-plus"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="user-page-title">
+                            Crear usuario
+                        </h2>
+
+                        <p class="user-page-description">
+                            La contraseña se almacenará cifrada con BCrypt.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FORMULARIO -->
+            <!-- ================================================= -->
+
+            <form class="user-form-card"
+                  th:object="${usuario}"
+                  th:action="@{/seguridad/usuarios}"
+                  method="post">
+
+
+                <!-- CABECERA -->
+
+                <div class="form-card-header">
+
+                    <div class="form-card-icon">
+                        <i class="bi bi-person-gear"></i>
+                    </div>
+
+                    <h3 class="form-card-title">
+                        Datos del usuario
+                    </h3>
+
+                </div>
+
+
+                <!-- CUERPO -->
+
+                <div class="user-form-body">
+
+
+                    <!-- ERROR -->
+
+                    <div th:if="${error}"
+                         class="user-error">
+
+                        <i class="bi bi-exclamation-lg"></i>
+
+                        <span th:text="${error}"></span>
+
+                    </div>
+
+
+                    <div class="row g-3">
+
+
+                        <!-- ===================================== -->
+                        <!-- NOMBRES -->
+                        <!-- ===================================== -->
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+
+                                    <i class="bi bi-person"></i>
+
+                                    Nombres
+
+                                </label>
+
+
+                                <div class="input-shell">
+
+                                    <i class="bi bi-person input-shell-icon"></i>
+
+                                    <input class="form-control user-control"
+                                           th:field="*{nombres}"
+                                           required>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- APELLIDOS -->
+                        <!-- ===================================== -->
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+
+                                    <i class="bi bi-person-vcard"></i>
+
+                                    Apellidos
+
+                                </label>
+
+
+                                <div class="input-shell">
+
+                                    <i class="bi bi-person-vcard input-shell-icon"></i>
+
+                                    <input class="form-control user-control"
+                                           th:field="*{apellidos}">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- CORREO -->
+                        <!-- ===================================== -->
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+
+                                    <i class="bi bi-envelope"></i>
+
+                                    Correo
+
+                                </label>
+
+
+                                <div class="input-shell">
+
+                                    <i class="bi bi-envelope input-shell-icon"></i>
+
+                                    <input class="form-control user-control"
+                                           type="email"
+                                           th:field="*{correo}">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- ROL -->
+                        <!-- ===================================== -->
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+
+                                    <i class="bi bi-shield-check"></i>
+
+                                    Rol
+
+                                    <span class="required-mark">*</span>
+
+                                </label>
+
+
+                                <div class="input-shell select-shell">
+
+                                    <i class="bi bi-shield-check input-shell-icon"></i>
+
+                                    <select class="form-select user-control user-select"
+                                            name="idRol"
+                                            required>
+
+                                        <option value="">
+                                            Seleccione…
+                                        </option>
+
+                                        <option th:each="r : ${roles}"
+                                                th:value="${r.idRol}"
+                                                th:text="${r.nombre}">
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- USUARIO -->
+                        <!-- ===================================== -->
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+
+                                    <i class="bi bi-at"></i>
+
+                                    Usuario
+
+                                    <span class="required-mark">*</span>
+
+                                </label>
+
+
+                                <div class="input-shell">
+
+                                    <i class="bi bi-at input-shell-icon"></i>
+
+                                    <input class="form-control user-control"
+                                           th:field="*{username}"
+                                           autocomplete="off"
+                                           required>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ===================================== -->
+                        <!-- CONTRASEÑA -->
+                        <!-- ===================================== -->
+
+                        <div class="col-md-6">
+
+                            <div class="field-group">
+
+                                <label class="field-label">
+
+                                    <i class="bi bi-lock"></i>
+
+                                    Contraseña
+
+                                    <span class="required-mark">*</span>
+
+                                </label>
+
+
+                                <div class="input-shell">
+
+                                    <i class="bi bi-lock input-shell-icon"></i>
+
+                                    <input class="form-control user-control password-control"
+                                           id="userPassword"
+                                           type="password"
+                                           th:field="*{password}"
+                                           minlength="6"
+                                           autocomplete="new-password"
+                                           required>
+
+
+                                    <button type="button"
+                                            class="password-toggle"
+                                            id="toggleUserPassword"
+                                            aria-label="Mostrar u ocultar contraseña">
+
+                                        <i class="bi bi-eye"
+                                           id="passwordEyeIcon"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- ACCIONES -->
+                <!-- ================================================= -->
+
+                <div class="user-form-actions form-actions">
+
+                    <button class="btn-create-user"
+                            type="submit">
+
+                        <i class="bi bi-person-check"></i>
+
+                        <span>
+                            Crear usuario
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<script>
+    const userPassword =
+        document.getElementById('userPassword');
+
+    const toggleUserPassword =
+        document.getElementById('toggleUserPassword');
+
+    const passwordEyeIcon =
+        document.getElementById('passwordEyeIcon');
+
+
+    if (userPassword &&
+        toggleUserPassword &&
+        passwordEyeIcon) {
+
+        toggleUserPassword.addEventListener('click', () => {
+
+            const hidden =
+                userPassword.type === 'password';
+
+
+            userPassword.type =
+                hidden
+                    ? 'text'
+                    : 'password';
+
+
+            passwordEyeIcon.className =
+                hidden
+                    ? 'bi bi-eye-slash'
+                    : 'bi bi-eye';
+
+        });
+
+    }
+</script>
+
+</body>
+
+</html>

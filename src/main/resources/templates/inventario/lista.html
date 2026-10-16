@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inventario')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+<main class="app-main">
+    <div th:replace="~{fragments/layout :: topbar('Inventario')}"></div>
+    <section class="content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="page-actions">
+            <div><h2>Materiales y stock</h2>
+                <p>Consulta y administra la información registrada.</p></div>
+            <div><a class="btn btn-primary" th:href="@{/inventario/nuevo}">＋ Nuevo material</a></div>
+        </div>
+        <div class="surface">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Material</th>
+                        <th>Unidad</th>
+                        <th>Stock actual</th>
+                        <th>Stock mínimo</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="m:${materiales}">
+                        <td><b th:text="${m.codigo}"></b></td>
+                        <td th:text="${m.nombre}"></td>
+                        <td th:text="${m.unidadMedida}"></td>
+                        <td><b th:text="${m.stockActual}"></b></td>
+                        <td th:text="${m.stockMinimo}"></td>
+                        <td th:text="${m.estado}"></td>
+                        <td><a class="btn btn-sm btn-soft" th:href="@{/inventario/{id}(id=${m.idMaterial})}">Ver</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,2549 @@
+<!doctype html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Lecturas')}"></head>
+
+<body class="bg-body-tertiary">
+
+<style>
+
+    /* =========================================================
+       VARIABLES
+       ========================================================= */
+
+    :root {
+        --lec-primary: #168aad;
+        --lec-primary-dark: #0e7490;
+        --lec-primary-soft: #ecfeff;
+
+        --lec-blue: #3b82f6;
+        --lec-blue-soft: #eff6ff;
+
+        --lec-cyan: #22b8cf;
+        --lec-cyan-soft: #cffafe;
+
+        --lec-violet: #7c8cf8;
+        --lec-violet-soft: #f3f4ff;
+
+        --lec-success: #16a34a;
+        --lec-success-soft: #f0fdf4;
+
+        --lec-warning: #d97706;
+        --lec-warning-soft: #fffbeb;
+
+        --lec-text: #172033;
+        --lec-muted: #718096;
+        --lec-border: #e7edf3;
+        --lec-bg: #f7f9fc;
+
+        --lec-shadow:
+            0 1px 2px rgba(15,23,42,.02),
+            0 6px 20px rgba(15,23,42,.045);
+
+        --lec-shadow-hover:
+            0 14px 35px rgba(15,23,42,.08);
+    }
+
+
+    /* =========================================================
+       BASE
+       ========================================================= */
+
+    body {
+        background:
+            radial-gradient(
+                circle at 96% 5%,
+                rgba(34,184,207,.055),
+                transparent 25%
+            ),
+            radial-gradient(
+                circle at 68% 13%,
+                rgba(124,140,248,.025),
+                transparent 22%
+            ),
+            var(--lec-bg);
+
+        color: var(--lec-text);
+    }
+
+
+    /* =========================================================
+       ANIMACIONES
+       ========================================================= */
+
+    @keyframes fadeUp {
+
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    @keyframes gaugePulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.06);
+        }
+
+    }
+
+
+    .animate-in {
+        animation: fadeUp .45s ease both;
+    }
+
+
+    /* =========================================================
+       CABECERA
+       ========================================================= */
+
+    .readings-header {
+        position: relative;
+        overflow: hidden;
+
+        margin-bottom: 1.25rem;
+
+        padding: 1.55rem 1.7rem;
+
+        border: 1px solid rgba(226,232,240,.9);
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255,255,255,.98),
+                rgba(236,254,255,.88) 52%,
+                rgba(239,246,255,.82)
+            );
+
+        box-shadow:
+            0 8px 30px rgba(15,23,42,.035);
+    }
+
+
+    .readings-header::before {
+        content: "";
+
+        position: absolute;
+
+        width: 190px;
+        height: 190px;
+
+        right: -70px;
+        top: -110px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(34,184,207,.12),
+                transparent 68%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .readings-header::after {
+        content: "";
+
+        position: absolute;
+
+        width: 130px;
+        height: 130px;
+
+        right: 95px;
+        bottom: -105px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(124,140,248,.07),
+                transparent 70%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .header-icon {
+        position: relative;
+        z-index: 1;
+
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #ecfeff,
+                #dff8fb
+            );
+
+        border: 1px solid #cffafe;
+
+        color: var(--lec-primary);
+
+        font-size: 1.2rem;
+    }
+
+
+    .header-icon i {
+        animation: gaugePulse 3s ease-in-out infinite;
+    }
+
+
+    .page-eyebrow {
+        margin-bottom: .15rem;
+
+        color: var(--lec-primary);
+
+        font-size: .71rem;
+        font-weight: 750;
+
+        letter-spacing: .09em;
+        text-transform: uppercase;
+    }
+
+
+    .page-title {
+        margin: 0;
+
+        color: var(--lec-text);
+
+        font-weight: 750;
+        letter-spacing: -.025em;
+    }
+
+
+    /* =========================================================
+       NUEVA LECTURA
+       ========================================================= */
+
+    .btn-new-reading {
+        position: relative;
+        z-index: 2;
+        overflow: hidden;
+
+        min-height: 44px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .55rem;
+
+        padding: .68rem 1.2rem;
+
+        border: none;
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #22b8cf,
+                #168aad
+            );
+
+        color: white;
+
+        font-size: .9rem;
+        font-weight: 650;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 7px 18px rgba(22,138,173,.18);
+
+        transition:
+            transform .22s ease,
+            box-shadow .22s ease,
+            background .22s ease;
+    }
+
+
+    .btn-new-reading:hover {
+        color: white;
+
+        transform: translateY(-2px);
+
+        background:
+            linear-gradient(
+                135deg,
+                #168aad,
+                #0e7490
+            );
+
+        box-shadow:
+            0 11px 25px rgba(22,138,173,.24);
+    }
+
+
+    .btn-new-reading:active {
+        transform: translateY(0);
+    }
+
+
+    .btn-new-icon {
+        width: 26px;
+        height: 26px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+
+        background: rgba(255,255,255,.15);
+    }
+
+
+    /* =========================================================
+       PANEL
+       ========================================================= */
+
+    .readings-panel {
+        overflow: hidden;
+
+        border: 1px solid var(--lec-border);
+        border-radius: 22px;
+
+        background: rgba(255,255,255,.95);
+
+        box-shadow: var(--lec-shadow);
+
+        animation: fadeUp .5s ease both;
+    }
+
+
+    /* =========================================================
+       FILTROS
+       ========================================================= */
+
+    .filters-toolbar {
+        padding: 1.15rem 1.35rem;
+
+        border-bottom: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(255,255,255,1),
+                rgba(250,253,255,.94)
+            );
+    }
+
+
+    .period-select {
+        position: relative;
+
+        min-width: 250px;
+    }
+
+
+    .period-select-icon {
+        position: absolute;
+
+        left: 15px;
+        top: 50%;
+
+        z-index: 3;
+
+        transform: translateY(-50%);
+
+        color: var(--lec-primary);
+
+        pointer-events: none;
+
+        font-size: .9rem;
+    }
+
+
+    .period-select .form-select {
+        height: 43px;
+
+        padding-left: 42px;
+        padding-right: 38px;
+
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+
+        background-color: #f8fafc;
+
+        color: #475569;
+
+        font-size: .84rem;
+        font-weight: 550;
+
+        box-shadow: none;
+
+        cursor: pointer;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .period-select .form-select:hover {
+        background-color: white;
+
+        border-color: #cbd5e1;
+    }
+
+
+    .period-select .form-select:focus {
+        background-color: white;
+
+        border-color: rgba(22,138,173,.45);
+
+        box-shadow:
+            0 0 0 4px rgba(34,184,207,.07);
+    }
+
+
+    /* =========================================================
+       BOTÓN FILTRAR
+       ========================================================= */
+
+    .btn-filter {
+        height: 43px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .45rem;
+
+        padding: 0 .95rem;
+
+        border: 1px solid #d8e4eb;
+        border-radius: 11px;
+
+        background: white;
+
+        color: var(--lec-primary);
+
+        font-size: .82rem;
+        font-weight: 650;
+
+        transition:
+            transform .2s ease,
+            background .2s ease,
+            color .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .btn-filter:hover {
+        color: white;
+
+        background: var(--lec-primary);
+
+        border-color: var(--lec-primary);
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 5px 12px rgba(22,138,173,.15);
+    }
+
+
+    /* =========================================================
+       LIMPIAR
+       ========================================================= */
+
+    .btn-clear-filter {
+        height: 43px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .4rem;
+
+        padding: 0 .85rem;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 11px;
+
+        background: #f8fafc;
+
+        color: #718096;
+
+        font-size: .8rem;
+        font-weight: 550;
+
+        text-decoration: none;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease;
+    }
+
+
+    .btn-clear-filter:hover {
+        color: #475569;
+
+        background: #eef2f6;
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =========================================================
+       CONTADOR
+       ========================================================= */
+
+    .results-chip {
+        min-height: 38px;
+
+        display: inline-flex;
+        align-items: center;
+
+        gap: .5rem;
+
+        padding: .45rem .8rem;
+
+        border: 1px solid #edf1f6;
+        border-radius: 11px;
+
+        background: #f8fafc;
+
+        color: #64748b;
+
+        font-size: .79rem;
+        font-weight: 550;
+
+        white-space: nowrap;
+    }
+
+
+    .results-chip-icon {
+        width: 24px;
+        height: 24px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 7px;
+
+        background: #ecfeff;
+
+        color: var(--lec-primary);
+
+        font-size: .72rem;
+    }
+
+
+    /* =========================================================
+       TABLA
+       ========================================================= */
+
+    .readings-table {
+        margin: 0;
+
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+
+    .readings-table thead th {
+        padding: .85rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #edf1f6;
+
+        background: #f8fafc;
+
+        color: #718096;
+
+        font-size: .67rem;
+        font-weight: 750;
+
+        text-transform: uppercase;
+        letter-spacing: .05em;
+
+        white-space: nowrap;
+    }
+
+
+    .readings-table tbody td {
+        padding: .92rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #f0f3f7;
+
+        background: white;
+
+        vertical-align: middle;
+
+        transition:
+            background .2s ease;
+    }
+
+
+    .readings-table tbody tr {
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .readings-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    .readings-table tbody tr:hover td {
+        background: #fbfeff;
+    }
+
+
+    .readings-table tbody tr:hover td:first-child {
+        box-shadow:
+            inset 3px 0 0 rgba(34,184,207,.72);
+    }
+
+
+    /* =========================================================
+       FECHA
+       ========================================================= */
+
+    .reading-date {
+        display: flex;
+        align-items: center;
+
+        gap: .6rem;
+
+        white-space: nowrap;
+    }
+
+
+    .reading-date-icon {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 9px;
+
+        background: #f0f9ff;
+
+        color: #0ea5e9;
+
+        font-size: .78rem;
+
+        transition:
+            transform .2s ease,
+            background .2s ease;
+    }
+
+
+    .readings-table tbody tr:hover
+    .reading-date-icon {
+        transform: scale(1.05);
+
+        background: #e0f2fe;
+    }
+
+
+    .reading-date-value {
+        color: #475569;
+
+        font-size: .8rem;
+        font-weight: 600;
+    }
+
+
+    /* =========================================================
+       MEDIDOR
+       ========================================================= */
+
+    .meter-code {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .38rem;
+
+        padding: .37rem .6rem;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 8px;
+
+        background: #f8fafc;
+
+        color: #475569;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            "Liberation Mono",
+            monospace;
+
+        font-size: .75rem;
+        font-weight: 650;
+    }
+
+
+    .meter-code i {
+        color: var(--lec-primary);
+
+        font-size: .72rem;
+    }
+
+
+    /* =========================================================
+       PERIODO
+       ========================================================= */
+
+    .period-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .35rem;
+
+        padding: .37rem .6rem;
+
+        border: 1px solid #d9f2e1;
+        border-radius: 8px;
+
+        background: #f3fcf6;
+
+        color: #3c7651;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .75rem;
+        font-weight: 650;
+    }
+
+
+    .period-badge i {
+        font-family: inherit;
+
+        color: #65a87b;
+
+        font-size: .68rem;
+    }
+
+
+    /* =========================================================
+       VALORES DE LECTURA
+       ========================================================= */
+
+    .reading-value {
+        display: inline-flex;
+        align-items: baseline;
+
+        gap: .2rem;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .82rem;
+    }
+
+
+    .reading-value.previous {
+        color: #8a97a8;
+
+        font-weight: 550;
+    }
+
+
+    .reading-value.current {
+        color: #334155;
+
+        font-weight: 750;
+    }
+
+
+    /* =========================================================
+       CONSUMO
+       ========================================================= */
+
+    .consumption-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .42rem;
+
+        padding: .42rem .68rem;
+
+        border: 1px solid #bae6fd;
+        border-radius: 9px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f0f9ff,
+                #ecfeff
+            );
+
+        color: #087ea4;
+
+        font-size: .78rem;
+        font-weight: 700;
+
+        box-shadow:
+            0 1px 3px rgba(14,165,233,.04);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .consumption-badge i {
+        color: #22b8cf;
+    }
+
+
+    .readings-table tbody tr:hover
+    .consumption-badge {
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 4px 10px rgba(14,165,233,.08);
+    }
+
+
+    /* =========================================================
+       SINCRONIZACIÓN
+       ========================================================= */
+
+    .sync-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .4rem;
+
+        padding: .37rem .65rem;
+
+        border: 1px solid transparent;
+        border-radius: 50rem;
+
+        font-size: .7rem;
+        font-weight: 650;
+
+        white-space: nowrap;
+    }
+
+
+    .sync-badge.synced {
+        color: #15803d;
+
+        background: var(--lec-success-soft);
+
+        border-color: #dcfce7;
+    }
+
+
+    .sync-badge.pending {
+        color: #b45309;
+
+        background: var(--lec-warning-soft);
+
+        border-color: #fef3c7;
+    }
+
+
+    .sync-dot {
+        position: relative;
+
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+
+    .sync-badge.synced .sync-dot::after {
+        content: "";
+
+        position: absolute;
+        inset: -3px;
+
+        border: 1px solid currentColor;
+        border-radius: 50%;
+
+        opacity: .18;
+    }
+
+
+    /* =========================================================
+       ACCIÓN
+       ========================================================= */
+
+    .detail-button {
+        width: 35px;
+        height: 35px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 10px;
+
+        background: white;
+
+        color: #64748b;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 1px 2px rgba(15,23,42,.02);
+
+        transition:
+            transform .2s ease,
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .detail-button:hover {
+        color: white;
+
+        background: var(--lec-primary);
+
+        border-color: var(--lec-primary);
+
+        transform: translateX(2px);
+
+        box-shadow:
+            0 5px 12px rgba(22,138,173,.18);
+    }
+
+
+    /* =========================================================
+       ESTADO VACÍO
+       ========================================================= */
+
+    .empty-state {
+        padding: 3.7rem 1rem;
+    }
+
+
+    .empty-state-icon {
+        width: 62px;
+        height: 62px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 1rem;
+
+        border: 1px solid #cffafe;
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #ecfeff,
+                #eff6ff
+            );
+
+        color: var(--lec-primary);
+
+        font-size: 1.5rem;
+    }
+
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    .table-footer {
+        padding: .95rem 1.35rem;
+
+        border-top: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfcfe
+            );
+    }
+
+
+    .page-counter {
+        color: #7c8999;
+
+        font-size: .78rem;
+    }
+
+
+    .page-counter strong {
+        color: #334155;
+
+        font-weight: 650;
+    }
+
+
+    /* =========================================================
+       PAGINACIÓN
+       ========================================================= */
+
+    .modern-pagination {
+        gap: .25rem;
+    }
+
+
+    .modern-pagination .page-link {
+        min-width: 33px;
+        height: 33px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0 .55rem;
+
+        border: 1px solid transparent;
+        border-radius: 9px !important;
+
+        background: transparent;
+
+        color: #64748b;
+
+        font-size: .78rem;
+        font-weight: 600;
+
+        box-shadow: none !important;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease,
+            border-color .2s ease;
+    }
+
+
+    .modern-pagination
+    .page-link:hover {
+        color: var(--lec-primary);
+
+        background: #ecfeff;
+
+        border-color: #cffafe;
+
+        transform: translateY(-1px);
+    }
+
+
+    .modern-pagination
+    .page-item.active
+    .page-link {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #22b8cf,
+                #168aad
+            );
+
+        border-color: var(--lec-primary);
+
+        box-shadow:
+            0 4px 10px rgba(22,138,173,.18) !important;
+    }
+
+
+    .modern-pagination
+    .page-item.disabled
+    .page-link {
+        color: #c1c9d4;
+
+        background: transparent;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .readings-header {
+            padding: 1.3rem;
+        }
+
+        .filters-toolbar {
+            padding: 1rem;
+        }
+
+        .period-select {
+            min-width: 220px;
+        }
+
+    }
+
+
+    @media (max-width: 767.98px) {
+
+        .readings-header,
+        .readings-panel {
+            border-radius: 18px;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .btn-new-reading {
+            width: 100%;
+        }
+
+        .filter-actions {
+            width: 100%;
+        }
+
+        .period-select {
+            width: 100%;
+            min-width: 100%;
+        }
+
+        .period-select .form-select {
+            width: 100%;
+        }
+
+        .results-chip {
+            width: 100%;
+
+            justify-content: center;
+        }
+
+        .table-footer {
+            padding: 1rem;
+        }
+
+    }
+
+    /* =========================================================
+   AUTOCOMPLETADO DE DIRECCIONES
+   ========================================================= */
+
+.address-autocomplete {
+    position: relative;
+    width: 320px;
+    min-width: 280px;
+}
+
+.address-autocomplete .form-control {
+    height: 43px;
+
+    padding-left: 42px;
+    padding-right: 14px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    background-color: #f8fafc;
+
+    color: #475569;
+
+    font-size: .84rem;
+    font-weight: 550;
+
+    box-shadow: none;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.address-autocomplete .form-control:hover {
+    background-color: white;
+    border-color: #cbd5e1;
+}
+
+.address-autocomplete .form-control:focus {
+    background-color: white;
+
+    border-color: rgba(22,138,173,.45);
+
+    box-shadow:
+        0 0 0 4px rgba(34,184,207,.07);
+
+    outline: none;
+}
+
+.address-select-icon {
+    position: absolute;
+
+    left: 15px;
+    top: 50%;
+
+    z-index: 3;
+
+    transform: translateY(-50%);
+
+    color: var(--lec-primary);
+
+    pointer-events: none;
+
+    font-size: .9rem;
+}
+
+
+/* =========================================================
+   RESULTADOS DEL AUTOCOMPLETADO
+   ========================================================= */
+
+.autocomplete-results {
+    position: absolute;
+
+    top: calc(100% + 5px);
+
+    left: 0;
+    right: 0;
+
+    z-index: 1050;
+
+    display: none;
+
+    max-height: 260px;
+
+    overflow-y: auto;
+
+    padding: .35rem;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    background: white;
+
+    box-shadow:
+        0 12px 30px rgba(15,23,42,.12);
+}
+
+
+/* ITEM */
+
+.autocomplete-item {
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+
+    padding: .65rem .75rem;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: #334155;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background .15s ease;
+}
+
+.autocomplete-item:hover {
+    background: #ecfeff;
+}
+
+.autocomplete-item .address-main {
+    font-size: .82rem;
+    font-weight: 650;
+}
+
+.autocomplete-item .address-code {
+    color: #94a3b8;
+    font-size: .7rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .address-autocomplete {
+        width: 100%;
+        min-width: 100%;
+    }
+
+}
+
+</style>
+
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+
+<main class="app-main">
+
+
+    <!-- ===================================================== -->
+    <!-- TOPBAR -->
+    <!-- ===================================================== -->
+
+    <div th:replace="~{fragments/layout :: topbar('Lecturas')}"></div>
+
+
+    <section class="content px-3 px-lg-4 py-4">
+
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+
+        <div class="readings-header animate-in">
+
+
+            <div class="d-flex
+                        flex-column flex-md-row
+                        align-items-md-center
+                        justify-content-between
+                        gap-3">
+
+
+                <div class="d-flex
+                            align-items-center
+                            gap-3">
+
+
+                    <div class="header-icon">
+
+                        <i class="bi bi-speedometer2"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="page-eyebrow">
+                            Gestión de lecturas
+                        </div>
+
+                        <h2 class="page-title h4">
+                            Lecturas
+                        </h2>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="header-actions">
+
+
+                    <a class="btn-new-reading"
+                       th:href="@{/lecturas/nueva}">
+
+
+                        <span class="btn-new-icon">
+
+                            <i class="bi bi-plus-lg"></i>
+
+                        </span>
+
+
+                        <span>
+                            Nueva lectura
+                        </span>
+
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- PANEL -->
+        <!-- ================================================= -->
+
+        <div class="readings-panel">
+
+
+            <!-- ================================================= -->
+            <!-- FILTROS -->
+            <!-- ================================================= -->
+
+            <div class="filters-toolbar">
+
+
+                <form method="get"
+                      th:action="@{/lecturas}">
+
+
+                    <div class="d-flex
+                                flex-column flex-lg-row
+                                align-items-lg-center
+                                justify-content-between
+                                gap-3">
+
+
+                        <!-- FILTROS -->
+
+                        <div class="d-flex
+                                    flex-column flex-md-row
+                                    align-items-md-center
+                                    gap-2
+                                    filter-actions">
+
+
+                            <!-- SELECT -->
+
+                            <div class="period-select">
+
+
+                                <i class="bi bi-calendar3
+                                          period-select-icon">
+                                </i>
+
+
+                                <select
+                                        class="form-select"
+
+                                        id="idPeriodo"
+
+                                        name="idPeriodo">
+
+
+                                    <option value="">
+                                        Todos los periodos
+                                    </option>
+
+
+                                    <option
+                                            th:each="p : ${periodos}"
+
+                                            th:value="${p.idPeriodo}"
+
+                                            th:selected="${idPeriodo != null
+                                                and idPeriodo == p.idPeriodo}"
+
+                                            th:text="${#numbers.formatInteger(
+                                                p.mes,
+                                                2
+                                            ) + '/' + p.anio}">
+                                    </option>
+
+
+                                </select>
+
+
+                            </div>
+
+                            <!-- DIRECCIÓN -->
+
+                            <div class="address-autocomplete">
+
+                                <i class="bi bi-geo-alt address-select-icon"></i>
+
+                                <input
+                                        type="text"
+                                        id="direccionFiltro"
+                                        class="form-control"
+                                        placeholder="Buscar dirección..."
+                                        autocomplete="off"
+                                        th:value="${inmuebleSeleccionado != null
+                ? inmuebleSeleccionado.direccion
+                : ''}">
+
+                                <input
+                                        type="hidden"
+                                        id="idInmueble"
+                                        name="idInmueble"
+                                        th:value="${idInmueble}">
+
+                                <div
+                                        id="direccionesSugerencias"
+                                        class="autocomplete-results">
+                                </div>
+
+                            </div>
+
+
+                            <!-- FILTRAR -->
+
+                            <button type="submit"
+                                    class="btn-filter">
+
+
+                                <i class="bi bi-funnel"></i>
+
+
+                                <span>
+                                    Filtrar
+                                </span>
+
+
+                            </button>
+
+
+                            <!-- LIMPIAR -->
+
+                            <a class="btn-clear-filter"
+                               th:if="${idPeriodo != null or idInmueble != null}"
+                               th:href="@{/lecturas}">
+
+                                <i class="bi bi-x-lg"></i>
+
+                                <span>
+        Limpiar
+    </span>
+
+                            </a>
+
+
+                        </div>
+
+
+                        <!-- CONTADOR -->
+
+                        <div class="results-chip">
+
+
+                            <span class="results-chip-icon">
+
+                                <i class="bi bi-speedometer2"></i>
+
+                            </span>
+
+
+                            <span th:text="${totalRegistros
+                                + (totalRegistros == 1
+                                    ? ' lectura registrada'
+                                    : ' lecturas registradas')}">
+
+                                0 lecturas registradas
+
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <input type="hidden"
+                           name="pagina"
+                           value="0">
+
+
+                </form>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TABLA -->
+            <!-- ================================================= -->
+
+            <div class="table-responsive">
+
+
+                <table class="table
+                              readings-table
+                              align-middle
+                              mb-0">
+
+
+                    <thead>
+
+
+                    <tr>
+                        <th class="ps-4">
+                            Medidor
+                        </th>
+
+                        <th>
+                            Periodo
+                        </th>
+                        <th>
+                            Fecha y hora
+                        </th>
+
+                        <th>
+                            Consumo
+                        </th>
+                        <th>
+                            Asociado
+                        </th>
+
+                        <th>
+                            Sincronización
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <!-- ========================================= -->
+                    <!-- LECTURAS -->
+                    <!-- ========================================= -->
+
+                    <tr th:each="l : ${lecturas}">
+
+                        <!-- MEDIDOR -->
+
+                        <td>
+
+
+                            <span class="meter-code">
+
+
+                                <i class="bi bi-speedometer"></i>
+
+
+                                <span th:text="${l.medidor.numeroMedidor}">
+
+                                    MED-000
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- PERIODO -->
+
+                        <td>
+
+
+                            <span class="period-badge">
+
+
+                                <i class="bi bi-calendar2-week"></i>
+
+
+                                <span th:text="${#numbers.formatInteger(
+                                    l.periodo.mes,
+                                    2
+                                ) + '/' + l.periodo.anio}">
+
+                                    01/2026
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+                        <!-- FECHA -->
+
+                        <td class="ps-4">
+
+
+                            <div class="reading-date">
+
+
+                                <span class="reading-date-icon">
+
+                                    <i class="bi bi-clock-history"></i>
+
+                                </span>
+
+
+                                <span
+                                        class="reading-date-value"
+
+                                        th:text="${l.fechaLectura != null
+                                            ? #temporals.format(
+                                                l.fechaLectura,
+                                                'dd/MM/yyyy HH:mm'
+                                              )
+                                            : '—'}">
+
+                                    01/01/2026 00:00
+
+                                </span>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                        <!-- CONSUMO -->
+
+                        <td>
+
+
+                            <span class="consumption-badge">
+
+
+                                <i class="bi bi-droplet-fill"></i>
+
+
+                                <span th:text="${l.consumo + ' m³'}">
+
+                                    0 m³
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+                        <!-- ASOCIADO -->
+
+                        <td>
+
+                            <th:block
+                                    th:with="titular=${titularesPorInmueble[
+            l.medidor.servicio.inmueble.idInmueble
+        ]}">
+
+
+                                <!-- TIENE TITULAR ACTIVO -->
+
+                                <div th:if="${titular != null}"
+                                     class="d-flex align-items-center gap-2">
+
+
+                                    <div class="reading-date-icon">
+
+                                        <i class="bi bi-person-fill"></i>
+
+                                    </div>
+
+
+                                    <div class="overflow-hidden">
+
+
+                                        <!-- NOMBRE COMPLETO -->
+
+                                        <span class="reading-date-value"
+
+                                              th:text="${#strings.trim(
+                          (titular.nombres ?: '')
+                          + ' '
+                          + (titular.apellidoPaterno ?: '')
+                          + ' '
+                          + (titular.apellidoMaterno ?: '')
+                      )}">
+
+                    Nombre del asociado
+
+                </span>
+
+
+                                        <!-- CÓDIGO -->
+
+                                        <div class="small text-muted mt-1"
+
+                                             th:if="${titular.codigoAsociado != null
+                         and !#strings.isEmpty(
+                             titular.codigoAsociado
+                         )}">
+
+
+                                            <i class="bi bi-person-vcard me-1"></i>
+
+
+                                            <span th:text="${titular.codigoAsociado}">
+
+                        ASO-000
+
+                    </span>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <!-- SIN TITULAR -->
+
+                                <span th:unless="${titular != null}"
+                                      class="text-muted small">
+
+            <i class="bi bi-person-dash me-1"></i>
+
+            Sin titular asignado
+
+        </span>
+
+
+                            </th:block>
+
+                        </td>
+
+
+                        <!-- SINCRONIZACIÓN -->
+
+                        <td>
+
+
+                            <span class="sync-badge"
+
+                                  th:classappend="${l.estadoSincronizacion
+                                      == 'SINCRONIZADO'}
+                                      ? ' synced'
+                                      : ' pending'">
+
+
+                                <span class="sync-dot"></span>
+
+
+                                <span th:text="${l.estadoSincronizacion}">
+
+                                    ESTADO
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ACCIÓN -->
+
+                        <td class="text-end pe-4">
+
+
+                            <a class="detail-button"
+
+                               th:href="@{/lecturas/{id}(
+                                    id=${l.idLectura}
+                               )}"
+
+                               title="Ver detalle"
+
+                               aria-label="Ver detalle">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    <!-- ========================================= -->
+                    <!-- ESTADO VACÍO -->
+                    <!-- ========================================= -->
+
+                    <tr th:if="${#lists.isEmpty(lecturas)}">
+
+
+                        <td colspan="7"
+                            class="border-0 text-center">
+
+
+                            <div class="empty-state">
+
+
+                                <div class="empty-state-icon">
+
+                                    <i class="bi bi-speedometer"></i>
+
+                                </div>
+
+
+                                <h6 class="fw-bold
+                                           text-dark
+                                           mb-1">
+
+                                    No se encontraron lecturas
+
+                                </h6>
+
+
+                                <p class="text-muted small mb-0"
+                                   th:if="${idPeriodo != null and idInmueble != null}">
+
+                                    No existen lecturas para la dirección
+                                    y el periodo seleccionados.
+
+                                </p>
+
+                                <p class="text-muted small mb-0"
+                                   th:if="${idPeriodo != null and idInmueble == null}">
+
+                                    No existen lecturas registradas
+                                    para el periodo seleccionado.
+
+                                </p>
+
+                                <p class="text-muted small mb-0"
+                                   th:if="${idPeriodo == null and idInmueble != null}">
+
+                                    No existen lecturas registradas
+                                    para la dirección seleccionada.
+
+                                </p>
+
+                                <p class="text-muted small mb-0"
+                                   th:if="${idPeriodo == null and idInmueble == null}">
+
+                                    Aún no hay lecturas registradas
+                                    en el sistema.
+
+                                </p>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FOOTER / PAGINACIÓN -->
+            <!-- ================================================= -->
+
+            <div class="table-footer
+                        d-flex
+                        flex-column flex-md-row
+                        justify-content-between
+                        align-items-center
+                        gap-3"
+
+                 th:if="${totalPaginas > 0}">
+
+
+                <!-- CONTADOR -->
+
+                <div class="page-counter">
+
+
+                    <span>
+
+                        Página
+
+                        <strong th:text="${paginaActual + 1}">
+                            1
+                        </strong>
+
+                        de
+
+                        <strong th:text="${totalPaginas}">
+                            1
+                        </strong>
+
+                    </span>
+
+
+                </div>
+
+
+                <!-- PAGINACIÓN -->
+
+                <nav th:if="${totalPaginas > 1}"
+
+                     aria-label="Paginación de lecturas">
+
+
+                    <ul class="pagination
+                               pagination-sm
+                               modern-pagination
+                               mb-0">
+
+
+                        <!-- ANTERIOR -->
+
+                        <li class="page-item"
+
+                            th:classappend="${esPrimera}
+                                ? ' disabled'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="${esPrimera}
+                                   ? '#'
+                                   : @{/lecturas(
+                                        pagina=${paginaActual - 1},
+                                        idPeriodo=${idPeriodo}
+                                        idInmueble=${idInmueble}
+                                     )}"
+
+                               aria-label="Página anterior">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- PRIMERA -->
+
+                        <li class="page-item"
+
+                            th:classappend="${paginaActual == 0}
+                                ? ' active'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="@{/lecturas(
+    pagina=0,
+    idPeriodo=${idPeriodo},
+    idInmueble=${idInmueble}
+)}">
+
+                                1
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- SPREAD IZQUIERDO -->
+
+                        <li class="page-item disabled"
+
+                            th:if="${paginaActual > 5}">
+
+
+                            <span class="page-link">
+                                …
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- VENTANA CENTRAL -->
+
+                        <th:block th:if="${totalPaginas > 2}">
+
+
+                            <th:block
+
+                                    th:with="
+                                        inicio=${T(java.lang.Math).max(
+                                            1,
+                                            T(java.lang.Math).min(
+                                                paginaActual - 4,
+                                                totalPaginas - 10
+                                            )
+                                        )},
+                                        fin=${T(java.lang.Math).min(
+                                            totalPaginas - 2,
+                                            T(java.lang.Math).max(
+                                                paginaActual + 4,
+                                                9
+                                            )
+                                        )}">
+
+
+                                <li class="page-item"
+
+                                    th:each="n : ${#numbers.sequence(
+                                        inicio,
+                                        fin
+                                    )}"
+
+                                    th:classappend="${paginaActual == n}
+                                        ? ' active'
+                                        : ''">
+
+
+                                    <a class="page-link"
+
+                                       th:href="@{/lecturas(
+    pagina=${n},
+    idPeriodo=${idPeriodo},
+    idInmueble=${idInmueble}
+)}"
+
+                                       th:text="${n + 1}">
+
+                                        2
+
+                                    </a>
+
+
+                                </li>
+
+
+                            </th:block>
+
+
+                        </th:block>
+
+
+                        <!-- SPREAD DERECHO -->
+
+                        <li class="page-item disabled"
+
+                            th:if="${paginaActual
+                                < totalPaginas - 6}">
+
+
+                            <span class="page-link">
+                                …
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- ÚLTIMA -->
+
+                        <li class="page-item"
+
+                            th:if="${totalPaginas > 1}"
+
+                            th:classappend="${paginaActual
+                                == totalPaginas - 1}
+                                ? ' active'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="@{/lecturas(
+    pagina=${totalPaginas - 1},
+    idPeriodo=${idPeriodo},
+    idInmueble=${idInmueble}
+)}"
+
+                               th:text="${totalPaginas}">
+
+                                10
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- SIGUIENTE -->
+
+                        <li class="page-item"
+
+                            th:classappend="${esUltima}
+                                ? ' disabled'
+                                : ''">
+
+
+                            <a class="page-link"
+
+                               th:href="${esUltima}
+    ? '#'
+    : @{/lecturas(
+        pagina=${paginaActual + 1},
+        idPeriodo=${idPeriodo},
+        idInmueble=${idInmueble}
+    )}"
+
+                               aria-label="Página siguiente">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </li>
+
+
+                    </ul>
+
+
+                </nav>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ========================================================= -->
+<!-- SCRIPTS -->
+<!-- ========================================================= -->
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const input =
+                document.getElementById(
+                    "direccionFiltro"
+                );
+
+            const hidden =
+                document.getElementById(
+                    "idInmueble"
+                );
+
+            const resultados =
+                document.getElementById(
+                    "direccionesSugerencias"
+                );
+
+
+            if (!input || !hidden || !resultados) {
+                return;
+            }
+
+
+            let temporizador = null;
+
+
+            /* =====================================================
+               ESCRIBIR
+               ===================================================== */
+
+            input.addEventListener(
+                "input",
+                function () {
+
+                    clearTimeout(
+                        temporizador
+                    );
+
+
+                    /*
+                     * Al modificar manualmente
+                     * la dirección, eliminamos
+                     * la selección anterior.
+                     */
+
+                    hidden.value = "";
+
+
+                    const texto =
+                        input.value.trim();
+
+
+                    /*
+                     * Menos de 2 caracteres:
+                     * no hacemos consulta.
+                     */
+
+                    if (texto.length < 2) {
+
+                        ocultarResultados();
+
+                        return;
+                    }
+
+
+                    /*
+                     * Pequeño retraso para no
+                     * consultar la BD en cada
+                     * tecla inmediatamente.
+                     */
+
+                    temporizador =
+                        setTimeout(
+                            () => buscarDirecciones(texto),
+                            250
+                        );
+
+                }
+            );
+
+
+            /* =====================================================
+               BUSCAR DIRECCIONES
+               ===================================================== */
+
+            async function buscarDirecciones(texto) {
+
+                try {
+
+                    const respuesta =
+                        await fetch(
+                            `/lecturas/buscar-direcciones?q=${
+                                encodeURIComponent(texto)
+                            }`
+                        );
+
+
+                    if (!respuesta.ok) {
+
+                        ocultarResultados();
+
+                        return;
+                    }
+
+
+                    const datos =
+                        await respuesta.json();
+
+
+                    resultados.innerHTML = "";
+
+
+                    if (!datos.length) {
+
+                        ocultarResultados();
+
+                        return;
+                    }
+
+
+                    datos.forEach(
+                        inmueble => {
+
+                            const item =
+                                document.createElement(
+                                    "button"
+                                );
+
+
+                            item.type = "button";
+
+                            item.className =
+                                "autocomplete-item";
+
+
+                            const direccion =
+                                document.createElement(
+                                    "span"
+                                );
+
+                            direccion.className =
+                                "address-main";
+
+                            direccion.textContent =
+                                inmueble.direccion
+                                || "Sin dirección";
+
+
+                            const codigo =
+                                document.createElement(
+                                    "span"
+                                );
+
+                            codigo.className =
+                                "address-code";
+
+                            codigo.textContent =
+                                inmueble.codigo
+                                ? "Código: "
+                                  + inmueble.codigo
+                                : "";
+
+
+                            item.appendChild(
+                                direccion
+                            );
+
+                            if (inmueble.codigo) {
+
+                                item.appendChild(
+                                    codigo
+                                );
+                            }
+
+
+                            /* =================================
+                               SELECCIONAR DIRECCIÓN
+                               ================================= */
+
+                            item.addEventListener(
+                                "click",
+                                function () {
+
+                                    input.value =
+                                        inmueble.direccion
+                                        || "";
+
+                                    hidden.value =
+                                        inmueble.idInmueble;
+
+
+                                    ocultarResultados();
+                                }
+                            );
+
+
+                            resultados.appendChild(
+                                item
+                            );
+
+                        }
+                    );
+
+
+                    resultados.style.display =
+                        "block";
+
+                } catch (error) {
+
+                    console.error(
+                        "Error buscando direcciones:",
+                        error
+                    );
+
+                    ocultarResultados();
+                }
+            }
+
+
+            /* =====================================================
+               OCULTAR RESULTADOS
+               ===================================================== */
+
+            function ocultarResultados() {
+
+                resultados.innerHTML = "";
+
+                resultados.style.display =
+                    "none";
+            }
+
+
+            /* =====================================================
+               CERRAR AL HACER CLICK FUERA
+               ===================================================== */
+
+            document.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        !event.target.closest(
+                            ".address-autocomplete"
+                        )
+                    ) {
+
+                        ocultarResultados();
+                    }
+
+                }
+            );
+
+        }
+
+    );
+
+</script>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+</body>
+</html>

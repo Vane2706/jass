@@ -1,0 +1,1602 @@
+<!doctype html>
+
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Panel principal')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+
+<main class="app-main">
+
+  <div th:replace="~{fragments/layout :: topbar('Panel principal')}"></div>
+
+
+  <section class="content">
+
+    <div th:replace="~{fragments/layout :: alerts}"></div>
+
+    <!-- ===================================================== -->
+    <!-- FILTROS -->
+    <!-- ===================================================== -->
+
+    <div class="surface p-3 mb-4">
+
+      <form method="get"
+            th:action="@{/}"
+            class="row g-3 align-items-end">
+
+        <!-- AÑO -->
+
+        <div class="col-md-3">
+
+          <label class="form-label small fw-semibold">
+            Año
+          </label>
+
+          <select class="form-select"
+                  name="anio">
+
+            <option th:each="a : ${anios}"
+                    th:value="${a}"
+                    th:selected="${a == dashboard.anio}"
+                    th:text="${a}">
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- MES -->
+
+        <div class="col-md-3">
+
+          <label class="form-label small fw-semibold">
+            Mes
+          </label>
+
+          <select class="form-select"
+                  name="mes">
+
+            <option value=""
+                    th:selected="${dashboard.mes == null}">
+              Todos
+            </option>
+
+            <option value="1"
+                    th:selected="${dashboard.mes == 1}">
+              Enero
+            </option>
+
+            <option value="2"
+                    th:selected="${dashboard.mes == 2}">
+              Febrero
+            </option>
+
+            <option value="3"
+                    th:selected="${dashboard.mes == 3}">
+              Marzo
+            </option>
+
+            <option value="4"
+                    th:selected="${dashboard.mes == 4}">
+              Abril
+            </option>
+
+            <option value="5"
+                    th:selected="${dashboard.mes == 5}">
+              Mayo
+            </option>
+
+            <option value="6"
+                    th:selected="${dashboard.mes == 6}">
+              Junio
+            </option>
+
+            <option value="7"
+                    th:selected="${dashboard.mes == 7}">
+              Julio
+            </option>
+
+            <option value="8"
+                    th:selected="${dashboard.mes == 8}">
+              Agosto
+            </option>
+
+            <option value="9"
+                    th:selected="${dashboard.mes == 9}">
+              Septiembre
+            </option>
+
+            <option value="10"
+                    th:selected="${dashboard.mes == 10}">
+              Octubre
+            </option>
+
+            <option value="11"
+                    th:selected="${dashboard.mes == 11}">
+              Noviembre
+            </option>
+
+            <option value="12"
+                    th:selected="${dashboard.mes == 12}">
+              Diciembre
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+          <button type="submit"
+                  class="btn btn-primary w-100">
+
+            <i class="bi bi-funnel me-1"></i>
+            Aplicar filtros
+
+          </button>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+          <a th:href="@{/}"
+             class="btn btn-light w-100">
+
+            <i class="bi bi-arrow-counterclockwise me-1"></i>
+            Limpiar
+
+          </a>
+
+        </div>
+
+      </form>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- KPI -->
+    <!-- ===================================================== -->
+
+    <div class="row g-3 mb-4">
+
+
+      <!-- FACTURADO -->
+
+      <div class="col-md-6 col-xl-2">
+
+        <div class="surface p-3 h-100">
+
+          <div class="d-flex gap-3 align-items-start">
+
+            <div class="fs-3 text-primary">
+              <i class="bi bi-receipt"></i>
+            </div>
+
+            <div>
+
+              <small class="text-muted">
+                Monto Total Facturado
+              </small>
+
+              <h4 class="fw-bold mt-2 mb-0"
+                  th:text="${'S/ ' + #numbers.formatDecimal(
+                                    dashboard.totalFacturado,
+                                    1,
+                                    2
+                                )}">
+                S/ 0.00
+              </h4>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- CONSUMO -->
+
+      <div class="col-md-6 col-xl-2">
+
+        <div class="surface p-3 h-100">
+
+          <div class="d-flex gap-3 align-items-start">
+
+            <div class="fs-3 text-success">
+              <i class="bi bi-droplet-fill"></i>
+            </div>
+
+            <div>
+
+              <small class="text-muted">
+                Consumo Total de Agua
+              </small>
+
+              <h4 class="fw-bold mt-2 mb-0">
+
+                                <span th:text="${#numbers.formatDecimal(
+                                    dashboard.consumoTotal,
+                                    1,
+                                    2
+                                )}">
+                                    0
+                                </span>
+
+                <small>m³</small>
+
+              </h4>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- RECAUDADO -->
+
+      <div class="col-md-6 col-xl-2">
+
+        <div class="surface p-3 h-100">
+
+          <div class="d-flex gap-3 align-items-start">
+
+            <div class="fs-3 text-primary">
+              <i class="bi bi-cash-stack"></i>
+            </div>
+
+            <div>
+
+              <small class="text-muted">
+                Monto Total Recaudado
+              </small>
+
+              <h4 class="fw-bold mt-2 mb-0"
+                  th:text="${'S/ ' + #numbers.formatDecimal(
+                                    dashboard.totalRecaudado,
+                                    1,
+                                    2
+                                )}">
+                S/ 0.00
+              </h4>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ÍNDICE DE RECAUDACIÓN -->
+
+      <div class="col-md-6 col-xl-2">
+
+        <div class="surface p-3 h-100">
+
+          <div class="d-flex gap-3 align-items-start">
+
+            <div class="fs-3 text-success">
+              <i class="bi bi-speedometer2"></i>
+            </div>
+
+            <div>
+
+              <small class="text-muted">
+                Índice de Recaudación
+              </small>
+
+              <h4 class="fw-bold mt-2 mb-0">
+
+                                <span th:text="${#numbers.formatDecimal(
+                                    dashboard.indiceRecaudacion,
+                                    1,
+                                    1
+                                )}">
+                                    0
+                                </span>%
+
+              </h4>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MOROSIDAD -->
+
+      <div class="col-md-6 col-xl-2">
+
+        <div class="surface p-3 h-100">
+
+          <div class="d-flex gap-3 align-items-start">
+
+            <div class="fs-3 text-danger">
+              <i class="bi bi-exclamation-circle-fill"></i>
+            </div>
+
+            <div>
+
+              <small class="text-muted">
+                Monto Total de Morosidad
+              </small>
+
+              <h4 class="fw-bold mt-2 mb-0"
+                  th:text="${'S/ ' + #numbers.formatDecimal(
+                                    dashboard.totalMorosidad,
+                                    1,
+                                    2
+                                )}">
+                S/ 0.00
+              </h4>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- SERVICIOS APTOS PARA CORTE -->
+
+      <div class="col-md-6 col-xl-2">
+
+        <div class="surface p-3 h-100">
+
+          <div class="d-flex gap-3 align-items-start">
+
+            <div class="fs-3 text-warning">
+              <i class="bi bi-person-x-fill"></i>
+            </div>
+
+            <div>
+
+              <small class="text-muted">
+                Servicios Aptos para Corte
+              </small>
+
+              <h4 class="fw-bold mt-2 mb-0"
+                  th:text="${dashboard.serviciosAptosCorte}">
+                0
+              </h4>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PRIMERA FILA DE GRÁFICOS -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+      <!-- FACTURACIÓN VS RECAUDACIÓN -->
+
+      <div class="col-xl-7">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <div>
+
+              <h3>
+                Evolución mensual de Facturación vs. Recaudación
+              </h3>
+
+              <small class="text-muted"
+                     th:text="${'Año ' + dashboard.anio}">
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <div style="height: 330px;">
+
+            <canvas id="graficoEvolucion"></canvas>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- CONSUMO MENSUAL -->
+
+      <div class="col-xl-5">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <h3>
+              Consumo mensual de agua
+            </h3>
+
+          </div>
+
+
+          <div style="height: 330px;">
+
+            <canvas id="graficoConsumoMensual"></canvas>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- SEGUNDA FILA DE GRÁFICOS -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+      <!-- CONSUMO POR TIPO -->
+
+      <div class="col-xl-4">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <h3>
+              Consumo por tipo de servicio
+            </h3>
+
+          </div>
+
+
+          <div style="height: 320px;">
+
+            <canvas id="graficoTipoServicio"></canvas>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MOROSIDAD POR SECTOR -->
+
+      <div class="col-xl-4">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <h3>
+              Morosidad por sector
+            </h3>
+
+          </div>
+
+
+          <div style="height: 320px;">
+
+            <canvas id="graficoMorosidad"></canvas>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MÉTODOS DE PAGO -->
+
+      <div class="col-xl-4">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <h3>
+              Recaudación por método de pago
+            </h3>
+
+          </div>
+
+
+          <div style="height: 320px;">
+
+            <canvas id="graficoMetodos"></canvas>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- TERCERA FILA -->
+    <!-- SERVICIOS VENCIDOS + MEDIDORES CON OBSERVACIONES -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+      <!-- SERVICIOS VENCIDOS -->
+
+      <div class="col-xl-7">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head d-flex
+                                justify-content-between
+                                align-items-center
+                                flex-wrap gap-2">
+
+            <div>
+
+              <h3 class="mb-1">
+
+                <i class="bi bi-exclamation-circle
+                                          text-primary me-2"></i>
+
+                Servicios con períodos vencidos
+
+              </h3>
+
+              <small class="text-muted">
+                Facturas pendientes o parcialmente pagadas
+              </small>
+
+            </div>
+
+
+            <a th:href="@{/morosidad}"
+               class="btn btn-sm btn-light">
+
+              Ver todos
+
+              <i class="bi bi-arrow-right ms-1"></i>
+
+            </a>
+
+          </div>
+
+
+          <div class="table-responsive mt-3">
+
+            <table class="table table-hover
+                                      align-middle dashboard-table">
+
+              <thead>
+
+              <tr>
+
+                <th>Servicio</th>
+
+                <th>Asociado</th>
+
+                <th>Sector</th>
+
+                <th class="text-center">
+                  Períodos
+                </th>
+
+                <th class="text-end">
+                  Pendiente
+                </th>
+
+                <th class="text-end">
+                  Estado
+                </th>
+
+              </tr>
+
+              </thead>
+
+
+              <tbody>
+
+
+              <tr th:each="x : ${dashboard.serviciosVencidos}">
+
+                <td>
+
+                  <a th:href="@{/servicios/{id}(id=${x.idServicio})}"
+                     class="text-decoration-none fw-bold">
+
+                                        <span th:text="${x.codigoServicio}">
+                                            SRV-000
+                                        </span>
+
+                  </a>
+
+                </td>
+
+
+                <td>
+
+                                    <span th:text="${x.asociado}">
+                                        —
+                                    </span>
+
+                </td>
+
+
+                <td>
+
+                                    <span th:text="${x.sector}">
+                                        —
+                                    </span>
+
+                </td>
+
+
+                <td class="text-center">
+
+                                    <span class="fw-bold"
+                                          th:text="${x.periodosVencidos}">
+                                        0
+                                    </span>
+
+                </td>
+
+
+                <td class="text-end">
+
+                  <strong th:text="${'S/ ' + #numbers.formatDecimal(
+                                        x.montoPendiente,
+                                        1,
+                                        2
+                                    )}">
+                    S/ 0.00
+                  </strong>
+
+                </td>
+
+
+                <td class="text-end">
+
+                                    <span class="dashboard-status"
+                                          th:classappend="${
+                                              x.estado == 'CRITICO'
+                                              ? ' status-danger'
+                                              : (
+                                                  x.estado == 'ADVERTENCIA'
+                                                  ? ' status-warning'
+                                                  : ' status-info'
+                                              )
+                                          }">
+
+                                        <i class="bi bi-circle-fill"></i>
+
+                                        <span th:text="${
+                                            x.estado == 'CRITICO'
+                                            ? 'Crítico'
+                                            : (
+                                                x.estado == 'ADVERTENCIA'
+                                                ? 'Advertencia'
+                                                : 'Pendiente'
+                                            )
+                                        }">
+                                        </span>
+
+                                    </span>
+
+                </td>
+
+              </tr>
+
+
+              <tr th:if="${#lists.isEmpty(dashboard.serviciosVencidos)}">
+
+                <td colspan="6"
+                    class="text-center text-muted py-5">
+
+                  <i class="bi bi-check-circle
+                                              fs-3 text-success
+                                              d-block mb-2"></i>
+
+                  No existen servicios con períodos vencidos.
+
+                </td>
+
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- MEDIDORES CON OBSERVACIONES -->
+
+      <div class="col-xl-5">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <div>
+
+              <h3 class="mb-1">
+
+                <i class="bi bi-gear-fill
+                                          text-primary me-2"></i>
+
+                Medidores con observaciones
+
+              </h3>
+
+              <small class="text-muted">
+                Observaciones registradas durante las lecturas
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <div class="table-responsive mt-3">
+
+            <table class="table table-hover
+                                      align-middle dashboard-table">
+
+              <thead>
+
+              <tr>
+
+                <th>Medidor</th>
+
+                <th>Asociado</th>
+
+                <th>Observación</th>
+
+                <th class="text-end">
+                  Estado
+                </th>
+
+              </tr>
+
+              </thead>
+
+
+              <tbody>
+
+
+              <tr th:each="x : ${dashboard.medidoresObservacion}">
+
+                <td>
+
+                  <a th:href="@{/lecturas/{id}(id=${x.idLectura})}"
+                     class="fw-bold text-decoration-none">
+
+                                        <span th:text="${x.numeroMedidor}">
+                                            M-000
+                                        </span>
+
+                  </a>
+
+                </td>
+
+
+                <td>
+
+                                    <span th:text="${x.asociado}">
+                                        —
+                                    </span>
+
+                </td>
+
+
+                <td>
+
+                                    <span class="dashboard-observation"
+                                          th:text="${x.observacion}"
+                                          th:title="${x.observacion}">
+
+                                        Observación
+
+                                    </span>
+
+                </td>
+
+
+                <td class="text-end">
+
+                                    <span class="dashboard-status"
+                                          th:classappend="${
+                                              x.estado == 'CRITICO'
+                                              ? ' status-danger'
+                                              : ' status-warning'
+                                          }">
+
+                                        <i class="bi bi-circle-fill"></i>
+
+                                        <span th:text="${
+                                            x.estado == 'CRITICO'
+                                            ? 'Crítico'
+                                            : 'Advertencia'
+                                        }">
+                                        </span>
+
+                                    </span>
+
+                </td>
+
+              </tr>
+
+
+              <tr th:if="${#lists.isEmpty(dashboard.medidoresObservacion)}">
+
+                <td colspan="4"
+                    class="text-center text-muted py-5">
+
+                  <i class="bi bi-check-circle
+                                              fs-3 text-success
+                                              d-block mb-2"></i>
+
+                  No existen observaciones registradas.
+
+                </td>
+
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- CUARTA FILA -->
+    <!-- CONSUMOS ATÍPICOS + EFECTIVIDAD DE CORTES -->
+    <!-- ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+      <!-- CONSUMOS ATÍPICOS -->
+
+      <div class="col-xl-8">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <div>
+
+              <h3 class="mb-1">
+
+                <i class="bi bi-activity
+                                          text-primary me-2"></i>
+
+                Alertas de consumo atípico
+
+              </h3>
+
+              <small class="text-muted">
+                Incrementos de consumo superiores al promedio histórico
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <div class="table-responsive mt-3">
+
+            <table class="table table-hover
+                                      align-middle dashboard-table">
+
+              <thead>
+
+              <tr>
+
+                <th>Servicio</th>
+
+                <th>Asociado</th>
+
+                <th>Sector</th>
+
+                <th class="text-end">
+                  Consumo
+                </th>
+
+                <th class="text-end">
+                  Promedio
+                </th>
+
+                <th class="text-end">
+                  Variación
+                </th>
+
+                <th class="text-end">
+                  Estado
+                </th>
+
+              </tr>
+
+              </thead>
+
+
+              <tbody>
+
+
+              <tr th:each="x : ${dashboard.consumosAtipicos}">
+
+                <td>
+
+                  <a th:href="@{/lecturas/{id}(id=${x.idLectura})}"
+                     class="fw-bold text-decoration-none">
+
+                                        <span th:text="${x.codigoServicio}">
+                                            SRV-000
+                                        </span>
+
+                  </a>
+
+                </td>
+
+
+                <td>
+
+                                    <span th:text="${x.asociado}">
+                                        —
+                                    </span>
+
+                </td>
+
+
+                <td>
+
+                                    <span th:text="${x.sector}">
+                                        —
+                                    </span>
+
+                </td>
+
+
+                <td class="text-end">
+
+                  <strong>
+
+                                        <span th:text="${#numbers.formatDecimal(
+                                            x.consumoActual,
+                                            1,
+                                            2
+                                        )}">
+                                            0
+                                        </span>
+
+                    m³
+
+                  </strong>
+
+                </td>
+
+
+                <td class="text-end">
+
+                                    <span th:text="${#numbers.formatDecimal(
+                                        x.promedioHistorico,
+                                        1,
+                                        2
+                                    )}">
+                                        0
+                                    </span>
+
+                  m³
+
+                </td>
+
+
+                <td class="text-end">
+
+                  <strong class="text-danger">
+
+                    +
+
+                    <span th:text="${#numbers.formatDecimal(
+                                            x.variacion,
+                                            1,
+                                            1
+                                        )}">
+                                            0
+                                        </span>%
+
+                  </strong>
+
+                </td>
+
+
+                <td class="text-end">
+
+                                    <span class="dashboard-status"
+                                          th:classappend="${
+                                              x.estado == 'CRITICO'
+                                              ? ' status-danger'
+                                              : ' status-warning'
+                                          }">
+
+                                        <i class="bi bi-circle-fill"></i>
+
+                                        <span th:text="${
+                                            x.estado == 'CRITICO'
+                                            ? 'Crítico'
+                                            : 'Advertencia'
+                                        }">
+                                        </span>
+
+                                    </span>
+
+                </td>
+
+              </tr>
+
+
+              <tr th:if="${#lists.isEmpty(dashboard.consumosAtipicos)}">
+
+                <td colspan="7"
+                    class="text-center text-muted py-5">
+
+                  <i class="bi bi-check-circle
+                                              fs-3 text-success
+                                              d-block mb-2"></i>
+
+                  No se detectaron consumos atípicos.
+
+                </td>
+
+              </tr>
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- EFECTIVIDAD DE CORTES -->
+
+      <div class="col-xl-4">
+
+        <div class="surface p-4 h-100">
+
+          <div class="surface-head">
+
+            <div>
+
+              <h3 class="mb-1">
+
+                <i class="bi bi-tools
+                                          text-primary me-2"></i>
+
+                Efectividad de cortes
+
+              </h3>
+
+              <small class="text-muted">
+                Órdenes generadas frente a cortes ejecutados
+              </small>
+
+            </div>
+
+          </div>
+
+
+          <div class="dashboard-cut-chart">
+
+            <div class="dashboard-donut-wrap">
+
+              <canvas id="graficoCortes"></canvas>
+
+
+              <div class="dashboard-donut-center">
+
+                <strong th:text="${
+                                    dashboard.efectividadCortes.ordenesGeneradas
+                                }">
+                  0
+                </strong>
+
+                <span>
+                                    órdenes
+                                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="row g-2 mt-3">
+
+
+            <div class="col-4">
+
+              <div class="cut-stat cut-stat-success">
+
+                <strong th:text="${
+                                    dashboard.efectividadCortes.cortesEjecutados
+                                }">
+                  0
+                </strong>
+
+                <span>
+                                    Cortes
+                                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="col-4">
+
+              <div class="cut-stat cut-stat-danger">
+
+                <strong th:text="${
+                                    dashboard.efectividadCortes.pendientes
+                                }">
+                  0
+                </strong>
+
+                <span>
+                                    Pendientes
+                                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="col-4">
+
+              <div class="cut-stat cut-stat-info">
+
+                <strong th:text="${
+                                    dashboard.efectividadCortes.reconexionesRealizadas
+                                }">
+                  0
+                </strong>
+
+                <span>
+                                    Reconexiones
+                                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<!-- ===================================================== -->
+<!-- CHART.JS -->
+<!-- ===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- ===================================================== -->
+<!-- DATOS + GRÁFICOS -->
+<!-- ===================================================== -->
+
+<!-- Chart.js Datalabels Plugin para mostrar números sobre las barras y dentro de los gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+
+  const evolucion = /*[[${dashboard.evolucionMensual}]]*/ [];
+  const consumoMensual = /*[[${dashboard.consumoMensual}]]*/ [];
+  const consumoTipo = /*[[${dashboard.consumoPorTipo}]]*/ [];
+  const morosidadSector = /*[[${dashboard.morosidadPorSector}]]*/ [];
+  const recaudacionMetodo = /*[[${dashboard.recaudacionPorMetodo}]]*/ [];
+  const efectividadCortes = /*[[${dashboard.efectividadCortes}]]*/ {};
+
+  // Registrar DataLabels si está presente
+  if (typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+  }
+
+  // Configuración general
+  Chart.defaults.font.family = "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif";
+  Chart.defaults.font.size = 11;
+  Chart.defaults.color = '#64748b';
+
+  const gridStyle = {
+    color: '#f1f5f9',
+    drawBorder: false,
+    tickLength: 0
+  };
+
+  const tooltipStyle = {
+    backgroundColor: '#0f172a',
+    titleColor: '#f8fafc',
+    bodyColor: '#cbd5e1',
+    padding: 10,
+    cornerRadius: 8,
+    boxPadding: 4,
+    usePointStyle: true
+  };
+
+  // Plugin para Texto Central en Donas
+  const centerTextPlugin = {
+    id: 'centerText',
+    afterDraw(chart) {
+      if (chart.config.type !== 'doughnut' || !chart.config.options.plugins.centerText) return;
+      const { ctx, chartArea: { left, top, width, height } } = chart;
+      const config = chart.config.options.plugins.centerText;
+
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const centerX = left + width / 2;
+      const centerY = top + height / 2;
+
+      // Valor Principal
+      ctx.font = `700 ${config.fontSize || '18px'} 'Plus Jakarta Sans', sans-serif`;
+      ctx.fillStyle = config.color || '#0f172a';
+      ctx.fillText(config.text || '', centerX, centerY - (config.subtext ? 8 : 0));
+
+      // Subtexto
+      if (config.subtext) {
+        ctx.font = `600 11px 'Plus Jakarta Sans', sans-serif`;
+        ctx.fillStyle = '#64748b';
+        ctx.fillText(config.subtext, centerX, centerY + 12);
+      }
+      ctx.restore();
+    }
+  };
+
+  Chart.register(centerTextPlugin);
+
+  // =====================================================
+  // 1. FACTURACIÓN VS RECAUDACIÓN (Líneas Limpias como la Imagen)
+  // =====================================================
+  const canvasEvolucion = document.getElementById('graficoEvolucion');
+  if (canvasEvolucion) {
+    new Chart(canvasEvolucion.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: evolucion.map(x => x.nombreMes),
+        datasets: [
+          {
+            label: 'Facturación (S/)',
+            data: evolucion.map(x => x.facturacion),
+            borderColor: '#0284c7', // Azul exacto imagen
+            backgroundColor: '#0284c7',
+            borderWidth: 2.5,
+            tension: 0.3,
+            fill: false,
+            pointBackgroundColor: '#0284c7',
+            pointRadius: 4,
+            pointHoverRadius: 6
+          },
+          {
+            label: 'Recaudación (S/)',
+            data: evolucion.map(x => x.recaudacion),
+            borderColor: '#10b981', // Verde exacto imagen
+            backgroundColor: '#10b981',
+            borderWidth: 2.5,
+            tension: 0.3,
+            fill: false,
+            pointBackgroundColor: '#10b981',
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          datalabels: { display: false },
+          legend: {
+            position: 'bottom',
+            labels: { usePointStyle: true, boxWidth: 8, padding: 15 }
+          },
+          tooltip: tooltipStyle
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            grid: gridStyle,
+            ticks: { callback: v => Number(v).toLocaleString('es-PE') }
+          }
+        }
+      }
+    });
+  }
+
+  // =====================================================
+  // 2. CONSUMO MENSUAL DE AGUA (Destacando el mes actual)
+  // =====================================================
+  const canvasConsumo = document.getElementById('graficoConsumoMensual');
+  if (canvasConsumo) {
+    // Generar colores: destacar con azul oscuro el último o valor activo
+    const totalData = consumoMensual.map(x => x.consumo);
+    const maxValIndex = totalData.length - 1; // O puedes buscar el mes seleccionado
+    const barColors = totalData.map((_, idx) => idx === maxValIndex ? '#0369a1' : '#93c5fd');
+
+    new Chart(canvasConsumo.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: consumoMensual.map(x => x.nombreMes),
+        datasets: [{
+          label: 'Consumo',
+          data: totalData,
+          backgroundColor: barColors,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            align: 'end',
+            anchor: 'end',
+            color: '#0f172a',
+            font: { weight: '700', size: 10 },
+            formatter: (val, ctx) => ctx.dataIndex === maxValIndex ? val.toLocaleString('es-PE') : '',
+            display: ctx => ctx.dataIndex === maxValIndex
+          },
+          tooltip: tooltipStyle
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            grid: gridStyle,
+            title: { display: true, text: 'Consumo (m³)', color: '#94a3b8' }
+          }
+        }
+      }
+    });
+  }
+
+  // =====================================================
+  // 3. CONSUMO POR TIPO DE SERVICIO (Dona con KPI central)
+  // =====================================================
+  const canvasTipo = document.getElementById('graficoTipoServicio');
+  if (canvasTipo) {
+    const totalConsumo = consumoTipo.reduce((acc, curr) => acc + (curr.consumo || 0), 0);
+
+    new Chart(canvasTipo.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: consumoTipo.map(x => x.tipoServicio),
+        datasets: [{
+          data: consumoTipo.map(x => x.consumo),
+          backgroundColor: ['#0284c7', '#10b981', '#f59e0b', '#a855f7', '#06b6d4'],
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '70%',
+        plugins: {
+          centerText: {
+            text: totalConsumo.toLocaleString('es-PE'),
+            subtext: 'm³ Total',
+            fontSize: '20px'
+          },
+          legend: {
+            position: 'right',
+            labels: { usePointStyle: true, boxWidth: 8, padding: 12 }
+          },
+          datalabels: { display: false },
+          tooltip: tooltipStyle
+        }
+      }
+    });
+  }
+
+  // =====================================================
+  // 4. MOROSIDAD POR SECTOR (Barras Horizontales con Valores)
+  // =====================================================
+  const canvasMorosidad = document.getElementById('graficoMorosidad');
+  if (canvasMorosidad) {
+    new Chart(canvasMorosidad.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: morosidadSector.map(x => x.sector),
+        datasets: [{
+          data: morosidadSector.map(x => x.deuda),
+          backgroundColor: '#ef4444',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            align: 'end',
+            anchor: 'end',
+            color: '#475569',
+            font: { weight: '600', size: 10 },
+            formatter: v => Number(v).toLocaleString('es-PE', { minimumFractionDigits: 2 })
+          },
+          tooltip: tooltipStyle
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            grid: gridStyle,
+            ticks: { callback: v => 'S/ ' + Number(v).toLocaleString('es-PE') }
+          },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // =====================================================
+  // 5. RECAUDACIÓN POR MÉTODO (Multicolor como la Imagen)
+  // =====================================================
+  const canvasMetodos = document.getElementById('graficoMetodos');
+  if (canvasMetodos) {
+    new Chart(canvasMetodos.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: recaudacionMetodo.map(x => x.metodo),
+        datasets: [{
+          data: recaudacionMetodo.map(x => x.monto),
+          backgroundColor: ['#0284c7', '#10b981', '#a855f7', '#f59e0b', '#06b6d4'],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            align: 'end',
+            anchor: 'end',
+            color: '#0f172a',
+            font: { weight: '700', size: 10 },
+            formatter: v => 'S/ ' + Number(v).toLocaleString('es-PE', { minimumFractionDigits: 2 })
+          },
+          tooltip: tooltipStyle
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            grid: gridStyle,
+            ticks: { callback: v => 'S/ ' + Number(v).toLocaleString('es-PE') }
+          }
+        }
+      }
+    });
+  }
+
+  // =====================================================
+  // 6. EFECTIVIDAD DE CORTES (Dona Verde/Roja con KPI)
+  // =====================================================
+  const canvasCortes = document.getElementById('graficoCortes');
+  if (canvasCortes) {
+    const ejecutados = Number(efectividadCortes?.cortesEjecutados || 0);
+    const pendientes = Number(efectividadCortes?.pendientes || 0);
+    const totalCortes = ejecutados + pendientes;
+
+    new Chart(canvasCortes.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Cortes ejecutados', 'Pendientes'],
+        datasets: [{
+          data: [ejecutados, pendientes],
+          backgroundColor: ['#10b981', '#ef4444'],
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '72%',
+        plugins: {
+          centerText: {
+            text: totalCortes.toString(),
+            subtext: 'Cortes',
+            fontSize: '22px'
+          },
+          legend: {
+            position: 'right',
+            labels: { usePointStyle: true, boxWidth: 8, padding: 12 }
+          },
+          datalabels: { display: false },
+          tooltip: tooltipStyle
+        }
+      }
+    });
+  }
+
+  /*]]>*/
+</script>
+
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+</body>
+
+</html>

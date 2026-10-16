@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Reportes')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+<main class="app-main">
+    <div th:replace="~{fragments/layout :: topbar('Reportes')}"></div>
+    <section class="content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="page-actions">
+            <div><h2>Centro de reportes</h2>
+                <p>Exportaciones disponibles en Excel y PDF.</p></div>
+        </div>
+        <div class="row g-3"
+             th:with="tipos=${ {'asociados','lecturas','facturacion','pagos','morosidad','caja','cierres'} }">
+            <div class="col-md-6 col-xl-4" th:each="t:${tipos}">
+                <div class="surface"><h3 class="text-capitalize" th:text="${t}"></h3>
+                    <p class="text-secondary">Descarga la información consolidada.</p><a
+                            class="btn btn-sm btn-outline-success"
+                            th:href="@{/reportes/{tipo}/excel(tipo=${t})}">Excel</a> <a
+                            class="btn btn-sm btn-outline-danger" th:href="@{/reportes/{tipo}/pdf(tipo=${t})}">PDF</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

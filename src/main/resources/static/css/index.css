@@ -1,0 +1,220 @@
+/* =========================================================
+   DASHBOARD - TABLAS ANALÍTICAS
+   ========================================================= */
+
+.dashboard-table {
+    margin-bottom: 0;
+    font-size: .82rem;
+}
+
+.dashboard-table thead th {
+    border-top: 0;
+    border-bottom: 1px solid #e8edf5;
+    color: #64748b;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .025em;
+    white-space: nowrap;
+}
+
+.dashboard-table tbody td {
+    padding-top: .85rem;
+    padding-bottom: .85rem;
+    border-color: #f1f5f9;
+}
+
+.dashboard-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* =========================================================
+   ESTADOS
+   ========================================================= */
+
+.dashboard-status {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+
+    padding: .32rem .62rem;
+
+    border-radius: 999px;
+
+    font-size: .72rem;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.dashboard-status i {
+    font-size: .45rem;
+}
+
+
+.status-danger {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+.status-warning {
+    color: #d97706;
+    background: #fffbeb;
+}
+
+.status-info {
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+
+/* =========================================================
+   OBSERVACIÓN
+   ========================================================= */
+
+.dashboard-observation {
+    display: block;
+
+    max-width: 180px;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   GRÁFICO DE CORTES
+   ========================================================= */
+
+.dashboard-cut-chart {
+    height: 220px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-top: 1rem;
+}
+
+
+.dashboard-donut-wrap {
+    position: relative;
+
+    width: 210px;
+    height: 210px;
+}
+
+
+.dashboard-donut-center {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    pointer-events: none;
+}
+
+
+.dashboard-donut-center strong {
+    color: #0f172a;
+
+    font-size: 1.75rem;
+
+    line-height: 1;
+}
+
+
+.dashboard-donut-center span {
+    color: #94a3b8;
+
+    font-size: .75rem;
+
+    margin-top: .35rem;
+}
+
+
+/* =========================================================
+   ESTADÍSTICAS DE CORTE
+   ========================================================= */
+
+.cut-stat {
+    height: 100%;
+
+    padding: .8rem .4rem;
+
+    border-radius: 12px;
+
+    text-align: center;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.cut-stat strong {
+    font-size: 1.15rem;
+}
+
+
+.cut-stat span {
+    margin-top: .15rem;
+
+    font-size: .68rem;
+
+    font-weight: 600;
+}
+
+
+.cut-stat-success {
+    color: #047857;
+    background: #ecfdf5;
+}
+
+
+.cut-stat-danger {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+
+.cut-stat-info {
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .dashboard-table {
+        min-width: 720px;
+    }
+
+    .dashboard-observation {
+        max-width: 130px;
+    }
+}

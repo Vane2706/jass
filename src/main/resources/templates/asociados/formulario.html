@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Asociados')}">
+</head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Asociados')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --associate-primary: #4f7cff;
+                --associate-primary-dark: #416ce5;
+                --associate-primary-soft: #eef4ff;
+
+                --associate-cyan: #39b8c9;
+                --associate-cyan-soft: #ecfbfd;
+
+                --associate-green: #3aaa83;
+                --associate-green-soft: #edf9f5;
+
+                --associate-red: #d96c75;
+
+                --associate-dark: #172033;
+                --associate-text: #536176;
+                --associate-muted: #8491a5;
+
+                --associate-border: #e8edf5;
+                --associate-bg: #f7f9fc;
+                --associate-surface: rgba(255, 255, 255, .97);
+
+                --associate-shadow: 0 10px 35px rgba(55, 73, 107, .07);
+                --associate-shadow-hover: 0 16px 42px rgba(55, 73, 107, .10);
+            }
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 7% 4%,
+                        rgba(79, 124, 255, .07),
+                        transparent 26%
+                    ),
+                    radial-gradient(
+                        circle at 94% 8%,
+                        rgba(57, 184, 201, .06),
+                        transparent 25%
+                    ),
+                    var(--associate-bg) !important;
+            }
+
+            .associate-form-page {
+                animation: associateFadeUp .45s ease both;
+            }
+
+            @keyframes associateFadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* =========================================================
+               CONTENEDOR PRINCIPAL
+            ========================================================= */
+
+            .associate-form-card {
+                position: relative;
+                overflow: hidden;
+                max-width: 1180px;
+                margin: 0 auto;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(251, 253, 255, .98)
+                    );
+                border: 1px solid var(--associate-border);
+                border-radius: 22px;
+                box-shadow: var(--associate-shadow);
+                transition:
+                    box-shadow .25s ease,
+                    border-color .25s ease;
+            }
+
+            .associate-form-card:hover {
+                border-color: rgba(79, 124, 255, .12);
+                box-shadow: var(--associate-shadow-hover);
+            }
+
+            .associate-form-card::before {
+                content: "";
+                position: absolute;
+                width: 210px;
+                height: 210px;
+                right: -95px;
+                top: -115px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .045);
+                pointer-events: none;
+            }
+
+            .associate-form-card::after {
+                content: "";
+                position: absolute;
+                width: 120px;
+                height: 120px;
+                left: -75px;
+                bottom: -75px;
+                border-radius: 50%;
+                background: rgba(57, 184, 201, .04);
+                pointer-events: none;
+            }
+
+            .associate-form-content {
+                position: relative;
+                z-index: 2;
+                padding: 1.5rem;
+            }
+
+            /* =========================================================
+               ENCABEZADO
+            ========================================================= */
+
+            .form-section-header {
+                display: flex;
+                align-items: center;
+                gap: .85rem;
+                padding-bottom: 1.15rem;
+                margin-bottom: 1.35rem;
+                border-bottom: 1px solid var(--associate-border);
+            }
+
+            .form-section-icon {
+                width: 43px;
+                height: 43px;
+                min-width: 43px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--associate-primary);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--associate-primary-soft),
+                        #f8fbff
+                    );
+                border: 1px solid rgba(79, 124, 255, .1);
+                border-radius: 13px;
+                font-size: 1rem;
+                box-shadow: 0 5px 14px rgba(79, 124, 255, .06);
+            }
+
+            .form-section-title {
+                margin: 0 0 .15rem;
+                color: var(--associate-dark);
+                font-size: .96rem;
+                font-weight: 750;
+                letter-spacing: -.015em;
+            }
+
+            .form-section-subtitle {
+                margin: 0;
+                color: var(--associate-muted);
+                font-size: .68rem;
+                font-weight: 520;
+            }
+
+            .required-mark {
+                color: var(--associate-red);
+            }
+
+            /* =========================================================
+               CAMPOS
+            ========================================================= */
+
+            .field-group {
+                position: relative;
+            }
+
+            .associate-label {
+                display: flex;
+                align-items: center;
+                margin-bottom: .42rem;
+                color: #4a586d;
+                font-size: .7rem;
+                font-weight: 680;
+            }
+
+            .associate-input-group {
+                position: relative;
+                display: flex;
+                align-items: stretch;
+                width: 100%;
+                border-radius: 12px;
+                transition:
+                    transform .18s ease,
+                    box-shadow .2s ease;
+            }
+
+            .associate-input-group:focus-within {
+                transform: translateY(-1px);
+                box-shadow: 0 7px 18px rgba(79, 124, 255, .08);
+            }
+
+            .associate-input-icon {
+                width: 43px;
+                min-width: 43px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #8492a7;
+                background: #f8fafc;
+                border: 1px solid #e3e9f1;
+                border-right: 0;
+                border-radius: 12px 0 0 12px;
+                font-size: .83rem;
+                transition:
+                    color .2s ease,
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .associate-input-group:focus-within .associate-input-icon {
+                color: var(--associate-primary);
+                background: var(--associate-primary-soft);
+                border-color: rgba(79, 124, 255, .42);
+            }
+
+            .associate-control {
+                min-height: 43px;
+                padding: .62rem .8rem;
+                color: #39475c;
+                background: #fbfcfe;
+                border: 1px solid #e3e9f1;
+                border-radius: 12px;
+                font-size: .76rem;
+                font-weight: 540;
+                outline: none;
+                box-shadow: none !important;
+                transition:
+                    background-color .2s ease,
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .associate-input-group .associate-control {
+                border-left: 0;
+                border-radius: 0 12px 12px 0;
+            }
+
+            .associate-control:hover {
+                border-color: #d8e0ea;
+                background: #fff;
+            }
+
+            .associate-control:focus {
+                color: #2f3c50;
+                background: #fff;
+                border-color: rgba(79, 124, 255, .5);
+                box-shadow: 0 0 0 3px rgba(79, 124, 255, .07) !important;
+            }
+
+            .associate-input-group .associate-control:focus {
+                box-shadow: none !important;
+            }
+
+            .associate-control::placeholder {
+                color: #aab3c1;
+                font-size: .72rem;
+                font-weight: 450;
+            }
+
+            select.associate-control {
+                cursor: pointer;
+            }
+
+            textarea.associate-control {
+                min-height: 88px;
+                resize: vertical;
+                line-height: 1.55;
+            }
+
+            /* =========================================================
+               ESTADO ACTIVO
+            ========================================================= */
+
+            .status-input-icon {
+                color: var(--associate-green);
+                background: var(--associate-green-soft);
+                border-color: rgba(58, 170, 131, .18);
+            }
+
+            .status-control {
+                color: #2d8a6e !important;
+                background: #f7fcfa !important;
+                border-color: rgba(58, 170, 131, .18) !important;
+                font-size: .7rem;
+                font-weight: 720;
+                letter-spacing: .025em;
+            }
+
+            /* =========================================================
+               BOTONES
+            ========================================================= */
+
+            .form-actions {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                gap: .65rem;
+                padding: 1.05rem 1.5rem;
+                background: rgba(250, 252, 255, .8);
+                border-top: 1px solid var(--associate-border);
+            }
+
+            .btn-cancel-associate {
+                min-height: 39px;
+                padding: .55rem 1.05rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: #68768b;
+                background: #fff;
+                border: 1px solid #e0e6ee;
+                border-radius: 11px;
+                font-size: .72rem;
+                font-weight: 650;
+                text-decoration: none;
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background-color .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .btn-cancel-associate:hover {
+                color: #3f4c60;
+                background: #f8fafc;
+                border-color: #d5dde7;
+                transform: translateY(-1px);
+                box-shadow: 0 5px 13px rgba(55, 73, 107, .06);
+            }
+
+            .btn-save-associate {
+                min-height: 39px;
+                padding: .55rem 1.15rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .45rem;
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--associate-primary),
+                        #5d88f7
+                    );
+                border: 1px solid var(--associate-primary);
+                border-radius: 11px;
+                font-size: .72rem;
+                font-weight: 680;
+                box-shadow: 0 7px 17px rgba(79, 124, 255, .18);
+                transition:
+                    transform .18s ease,
+                    box-shadow .18s ease,
+                    background .18s ease;
+            }
+
+            .btn-save-associate:hover {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--associate-primary-dark),
+                        var(--associate-primary)
+                    );
+                transform: translateY(-1px);
+                box-shadow: 0 9px 21px rgba(79, 124, 255, .24);
+            }
+
+            .btn-save-associate:active,
+            .btn-cancel-associate:active {
+                transform: translateY(0);
+            }
+
+            /* =========================================================
+               CAMBIO NATURAL / JURÍDICA
+            ========================================================= */
+
+            .campo-persona-natural {
+                animation: fieldAppear .25s ease both;
+            }
+
+            @keyframes fieldAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(-4px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* =========================================================
+               RESPONSIVE
+            ========================================================= */
+
+            @media (max-width: 767.98px) {
+                .associate-form-card {
+                    border-radius: 18px;
+                }
+
+                .associate-form-content {
+                    padding: 1.15rem;
+                }
+
+                .form-actions {
+                    padding: 1rem 1.15rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .form-section-header {
+                    align-items: flex-start;
+                }
+
+                .form-section-icon {
+                    width: 40px;
+                    height: 40px;
+                    min-width: 40px;
+                }
+
+                .form-actions {
+                    flex-direction: column-reverse;
+                }
+
+                .btn-cancel-associate,
+                .btn-save-associate {
+                    width: 100%;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .associate-form-page,
+                .associate-form-card,
+                .associate-input-group,
+                .associate-input-icon,
+                .associate-control,
+                .btn-cancel-associate,
+                .btn-save-associate,
+                .campo-persona-natural {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+        </style>
+
+
+        <div class="associate-form-page">
+
+            <form class="associate-form-card"
+                  th:object="${asociado}"
+                  th:action="${asociado.idAsociado == null} ? @{/asociados/guardar} : @{/asociados/{id}/actualizar(id=${asociado.idAsociado})}"
+                  method="post"
+                  id="formAsociado">
+
+
+                <div class="associate-form-content">
+
+                    <!-- ==========================================
+                         ENCABEZADO
+                    =========================================== -->
+
+                    <div class="form-section-header">
+
+                        <div class="form-section-icon">
+                            <i class="bi bi-person-lines-fill"></i>
+                        </div>
+
+
+                        <div>
+
+                            <h5 class="form-section-title">
+                                Información Principal
+                            </h5>
+
+                            <p class="form-section-subtitle">
+                                Los campos marcados con
+                                (<span class="required-mark">*</span>)
+                                son obligatorios
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==========================================
+                         CAMPOS
+                    =========================================== -->
+
+                    <div class="row g-3">
+
+
+                        <!-- CÓDIGO -->
+
+                        <div class="col-md-4 field-group">
+
+                            <label class="associate-label">
+                                Código&nbsp;
+                                <span class="required-mark">*</span>
+                            </label>
+
+
+                            <div class="associate-input-group">
+
+                                <span class="associate-input-icon">
+                                    <i class="bi bi-hash"></i>
+                                </span>
+
+
+                                <input class="form-control associate-control"
+                                       th:field="*{codigoAsociado}"
+                                       placeholder="Ej. ASO-001"
+                                       required>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TIPO DE PERSONA -->
+
+                        <div class="col-md-4 field-group">
+
+                            <label class="associate-label">
+                                Tipo de Persona
+                            </label>
+
+
+                            <div class="associate-input-group">
+
+                                <span class="associate-input-icon">
+                                    <i class="bi bi-person-vcard"></i>
+                                </span>
+
+
+                                <select class="form-select associate-control"
+                                        id="selectTipoPersona"
+                                        th:field="*{tipoPersona}">
+
+                                    <option value="NATURAL">
+                                        Natural
+                                    </option>
+
+                                    <option value="JURIDICA">
+                                        Jurídica
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DOCUMENTO -->
+
+                        <div class="col-md-4 field-group">
+
+                            <label class="associate-label"
+                                   id="lblDocumento">
+                                Documento (DNI/RUC)
+                            </label>
+
+
+                            <div class="associate-input-group">
+
+                                <span class="associate-input-icon">
+                                    <i class="bi bi-card-heading"></i>
+                                </span>
+
+
+                                <input class="form-control associate-control"
+                                       id="inputDocumento"
+                                       th:field="*{documento}"
+                                       placeholder="8 dígitos (DNI) / 11 dígitos (RUC)"
+                                       minlength="8"
+                                       maxlength="11">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NOMBRES / RAZÓN SOCIAL -->
+
+                        <div class="col-md-4 field-group">
+
+                            <label class="associate-label"
+                                   id="lblNombres">
+                                Nombres&nbsp;
+                                <span class="required-mark">*</span>
+                            </label>
+
+
+                            <input class="form-control associate-control"
+                                   id="inputNombres"
+                                   th:field="*{nombres}"
+                                   placeholder="Ingresa los nombres"
+                                   required>
+
+                        </div>
+
+
+                        <!-- APELLIDO PATERNO -->
+
+                        <div class="col-md-4 field-group campo-persona-natural">
+
+                            <label class="associate-label">
+                                Apellido Paterno
+                            </label>
+
+
+                            <input class="form-control associate-control"
+                                   id="inputApellidoPaterno"
+                                   th:field="*{apellidoPaterno}"
+                                   placeholder="Ingresa apellido paterno">
+
+                        </div>
+
+
+                        <!-- APELLIDO MATERNO -->
+
+                        <div class="col-md-4 field-group campo-persona-natural">
+
+                            <label class="associate-label">
+                                Apellido Materno
+                            </label>
+
+
+                            <input class="form-control associate-control"
+                                   id="inputApellidoMaterno"
+                                   th:field="*{apellidoMaterno}"
+                                   placeholder="Ingresa apellido materno">
+
+                        </div>
+
+
+                        <!-- TELÉFONO -->
+
+                        <div class="col-md-4 field-group">
+
+                            <label class="associate-label">
+                                Teléfono
+                            </label>
+
+
+                            <div class="associate-input-group">
+
+                                <span class="associate-input-icon">
+                                    <i class="bi bi-telephone"></i>
+                                </span>
+
+
+                                <input class="form-control associate-control"
+                                       id="inputTelefono"
+                                       th:field="*{telefono}"
+                                       placeholder="900000000"
+                                       maxlength="9">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CORREO -->
+
+                        <div class="col-md-4 field-group">
+
+                            <label class="associate-label">
+                                Correo Electrónico
+                            </label>
+
+
+                            <div class="associate-input-group">
+
+                                <span class="associate-input-icon">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+
+
+                                <input class="form-control associate-control"
+                                       type="email"
+                                       th:field="*{correo}"
+                                       placeholder="ejemplo@correo.com">
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ESTADO -->
+
+                        <div class="col-md-4 field-group">
+
+                            <label class="associate-label">
+                                Estado
+                            </label>
+
+
+                            <div class="associate-input-group">
+
+                                <span class="associate-input-icon status-input-icon">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                </span>
+
+
+                                <input type="text"
+                                       class="form-control associate-control status-control"
+                                       value="ACTIVO"
+                                       readonly
+                                       disabled>
+
+                            </div>
+
+
+                            <input type="hidden"
+                                   th:field="*{estado}"
+                                   value="ACTIVO">
+
+                        </div>
+
+
+                        <!-- DIRECCIÓN -->
+
+                        <div class="col-12 field-group">
+
+                            <label class="associate-label">
+                                Dirección de Referencia
+                            </label>
+
+
+                            <textarea class="form-control associate-control"
+                                      rows="3"
+                                      th:field="*{direccionReferencia}"
+                                      placeholder="Ingresa la dirección detallada o referencias..."></textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==========================================
+                     ACCIONES
+                =========================================== -->
+
+                <div class="form-actions">
+
+                    <a class="btn-cancel-associate"
+                       th:href="@{/asociados}">
+                        Cancelar
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn-save-associate">
+
+                        <i class="bi bi-check2-circle"></i>
+
+                        <span>
+                            Guardar Asociado
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const selectTipo =
+            document.getElementById("selectTipoPersona");
+
+        const lblNombres =
+            document.getElementById("lblNombres");
+
+        const lblDocumento =
+            document.getElementById("lblDocumento");
+
+        const camposNatural =
+            document.querySelectorAll(".campo-persona-natural");
+
+        const inputDocumento =
+            document.getElementById("inputDocumento");
+
+        const inputNombres =
+            document.getElementById("inputNombres");
+
+        const inputApellidoPaterno =
+            document.getElementById("inputApellidoPaterno");
+
+        const inputApellidoMaterno =
+            document.getElementById("inputApellidoMaterno");
+
+        const inputTelefono =
+            document.getElementById("inputTelefono");
+
+
+        /* ==========================================
+           TIPO DE PERSONA
+        =========================================== */
+
+        function toggleCampos() {
+
+            if (selectTipo.value === "JURIDICA") {
+
+                lblNombres.innerHTML =
+                    'Razón Social <span class="required-mark">*</span>';
+
+                lblDocumento.textContent =
+                    'RUC (11 dígitos)';
+
+                inputDocumento.placeholder =
+                    '11 dígitos (RUC)';
+
+                inputDocumento.maxLength = 11;
+                inputDocumento.minLength = 11;
+
+
+                camposNatural.forEach(el => {
+
+                    el.style.display = "none";
+
+                });
+
+            } else {
+
+                lblNombres.innerHTML =
+                    'Nombres <span class="required-mark">*</span>';
+
+                lblDocumento.textContent =
+                    'DNI (8 dígitos)';
+
+                inputDocumento.placeholder =
+                    '8 dígitos (DNI)';
+
+                inputDocumento.maxLength = 8;
+                inputDocumento.minLength = 8;
+
+
+                camposNatural.forEach(el => {
+
+                    el.style.display = "block";
+
+                });
+
+            }
+
+        }
+
+
+        selectTipo.addEventListener(
+            "change",
+            function () {
+
+                toggleCampos();
+
+                inputDocumento.value =
+                    inputDocumento.value
+                        .replace(/\D/g, '')
+                        .slice(
+                            0,
+                            inputDocumento.maxLength
+                        );
+
+            }
+        );
+
+
+        toggleCampos();
+
+
+        /* ==========================================
+           DOCUMENTO: SOLO NÚMEROS
+        =========================================== */
+
+        inputDocumento.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value.replace(/\D/g, '');
+
+            }
+        );
+
+
+        /* ==========================================
+           NOMBRES Y APELLIDOS: SOLO LETRAS
+        =========================================== */
+
+        const soloLetrasHandler = function () {
+
+            this.value =
+                this.value.replace(
+                    /[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g,
+                    ''
+                );
+
+        };
+
+
+        inputNombres.addEventListener(
+            "input",
+            soloLetrasHandler
+        );
+
+
+        if (inputApellidoPaterno) {
+
+            inputApellidoPaterno.addEventListener(
+                "input",
+                soloLetrasHandler
+            );
+
+        }
+
+
+        if (inputApellidoMaterno) {
+
+            inputApellidoMaterno.addEventListener(
+                "input",
+                soloLetrasHandler
+            );
+
+        }
+
+
+        /* ==========================================
+           TELÉFONO
+        =========================================== */
+
+        inputTelefono.addEventListener(
+            "input",
+            function () {
+
+                this.value =
+                    this.value
+                        .replace(/\D/g, '')
+                        .slice(0, 9);
+
+            }
+        );
+
+
+        /* ==========================================
+           VALIDACIONES
+        =========================================== */
+
+        document
+            .getElementById("formAsociado")
+            .addEventListener(
+                "submit",
+                function (e) {
+
+                    const docVal =
+                        inputDocumento.value.trim();
+
+
+                    if (docVal.length > 0) {
+
+                        if (
+                            selectTipo.value === "NATURAL"
+                            && docVal.length !== 8
+                        ) {
+
+                            alert(
+                                "El DNI debe tener exactamente 8 dígitos."
+                            );
+
+                            inputDocumento.focus();
+
+                            e.preventDefault();
+
+                            return;
+
+                        } else if (
+                            selectTipo.value === "JURIDICA"
+                            && docVal.length !== 11
+                        ) {
+
+                            alert(
+                                "El RUC debe tener exactamente 11 dígitos."
+                            );
+
+                            inputDocumento.focus();
+
+                            e.preventDefault();
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    const telVal =
+                        inputTelefono.value.trim();
+
+
+                    if (
+                        telVal.length > 0
+                        && telVal.length !== 9
+                    ) {
+
+                        alert(
+                            "El número de teléfono debe tener exactamente 9 dígitos."
+                        );
+
+                        inputTelefono.focus();
+
+                        e.preventDefault();
+
+                        return;
+
+                    }
+
+                }
+            );
+
+    });
+</script>
+
+</body>
+</html>

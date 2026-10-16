@@ -1,0 +1,2772 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Iniciar sesión | JASS Mishquiyacu
+    </title>
+
+
+    <!-- ===================================================== -->
+    <!-- TAILWIND -->
+    <!-- ===================================================== -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <!-- ===================================================== -->
+    <!-- LUCIDE ICONS -->
+    <!-- ===================================================== -->
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+
+    <!-- ===================================================== -->
+    <!-- FUENTE -->
+    <!-- ===================================================== -->
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+
+    <!-- ===================================================== -->
+    <!-- TAILWIND CONFIG -->
+    <!-- ===================================================== -->
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: [
+                            'Plus Jakarta Sans',
+                            'sans-serif'
+                        ]
+                    }
+                }
+            }
+        }
+    </script>
+
+
+    <!-- ===================================================== -->
+    <!-- ESTILOS -->
+    <!-- ===================================================== -->
+
+    <style>
+
+        :root {
+            --login-primary: #4f7cff;
+            --login-primary-dark: #416ce5;
+            --login-primary-soft: #eef4ff;
+
+            --login-cyan: #39b8c9;
+            --login-cyan-dark: #2fa4b4;
+            --login-cyan-soft: #ecfbfd;
+
+            --login-green: #3aaa83;
+            --login-green-soft: #edf9f5;
+
+            --login-red: #d96c75;
+            --login-red-soft: #fff0f2;
+
+            --login-dark: #172033;
+            --login-text: #536176;
+            --login-muted: #8491a5;
+
+            --login-border: #e8edf5;
+            --login-bg: #f7f9fc;
+        }
+
+
+        /* =====================================================
+           BASE
+        ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+
+            color:
+                var(--login-text);
+
+            background:
+                var(--login-bg);
+
+            font-family:
+                'Plus Jakarta Sans',
+                sans-serif;
+
+            -webkit-font-smoothing:
+                antialiased;
+
+            -moz-osx-font-smoothing:
+                grayscale;
+        }
+
+        button,
+        input {
+            font-family:
+                inherit;
+        }
+
+        ::selection {
+            color:
+                var(--login-dark);
+
+            background:
+                rgba(79, 124, 255, .16);
+        }
+
+
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .login-layout {
+            min-height:
+                100vh;
+
+            display:
+                grid;
+
+            grid-template-columns:
+                minmax(0, 1.04fr)
+                minmax(430px, .96fr);
+
+            background:
+                #fff;
+        }
+
+
+        /* =====================================================
+           PANEL VISUAL
+        ===================================================== */
+
+        .login-visual {
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            min-height:
+                100vh;
+
+            display:
+                flex;
+
+            flex-direction:
+                column;
+
+            padding:
+                2rem 2.4rem;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #f7fbff 0%,
+                    #eef7ff 44%,
+                    #eefbfc 100%
+                );
+
+            border-right:
+                1px solid rgba(79, 124, 255, .07);
+        }
+
+
+        /* =====================================================
+           FONDO DECORATIVO
+        ===================================================== */
+
+        .visual-grid {
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            opacity:
+                .34;
+
+            background-image:
+                linear-gradient(
+                    rgba(79, 124, 255, .04) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(79, 124, 255, .04) 1px,
+                    transparent 1px
+                );
+
+            background-size:
+                42px 42px;
+
+            mask-image:
+                linear-gradient(
+                    to bottom,
+                    black,
+                    transparent 90%
+                );
+
+            pointer-events:
+                none;
+        }
+
+        .visual-orb {
+            position:
+                absolute;
+
+            border-radius:
+                50%;
+
+            pointer-events:
+                none;
+
+            filter:
+                blur(2px);
+        }
+
+        .visual-orb-one {
+            width:
+                390px;
+
+            height:
+                390px;
+
+            top:
+                -180px;
+
+            left:
+                -160px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(79, 124, 255, .14),
+                    rgba(79, 124, 255, .025) 60%,
+                    transparent 72%
+                );
+        }
+
+        .visual-orb-two {
+            width:
+                450px;
+
+            height:
+                450px;
+
+            right:
+                -230px;
+
+            bottom:
+                -190px;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(57, 184, 201, .15),
+                    rgba(57, 184, 201, .025) 60%,
+                    transparent 72%
+                );
+        }
+
+        .visual-orb-three {
+            width:
+                190px;
+
+            height:
+                190px;
+
+            right:
+                12%;
+
+            top:
+                17%;
+
+            border:
+                1px solid rgba(79, 124, 255, .07);
+
+            animation:
+                floatOrb 8s ease-in-out infinite;
+        }
+
+        @keyframes floatOrb {
+
+            0%,
+            100% {
+                transform:
+                    translateY(0);
+            }
+
+            50% {
+                transform:
+                    translateY(-12px);
+            }
+        }
+
+
+        /* =====================================================
+           MARCA
+        ===================================================== */
+
+        .visual-brand {
+            position:
+                relative;
+
+            z-index:
+                5;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                1rem;
+        }
+
+        .brand-main {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                .7rem;
+        }
+
+        .brand-icon {
+            width:
+                43px;
+
+            height:
+                43px;
+
+            min-width:
+                43px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            color:
+                var(--login-cyan);
+
+            background:
+                rgba(255, 255, 255, .78);
+
+            border:
+                1px solid rgba(57, 184, 201, .14);
+
+            border-radius:
+                13px;
+
+            box-shadow:
+                0 7px 20px rgba(55, 73, 107, .07);
+
+            backdrop-filter:
+                blur(10px);
+
+            -webkit-backdrop-filter:
+                blur(10px);
+        }
+
+        .brand-icon svg {
+            width:
+                21px;
+
+            height:
+                21px;
+
+            stroke-width:
+                2;
+        }
+
+        .brand-title {
+            display:
+                block;
+
+            color:
+                var(--login-dark);
+
+            font-size:
+                .7rem;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                .085em;
+        }
+
+        .brand-subtitle {
+            display:
+                block;
+
+            margin-top:
+                .15rem;
+
+            color:
+                var(--login-muted);
+
+            font-size:
+                .56rem;
+
+            font-weight:
+                600;
+        }
+
+
+        /* =====================================================
+           ESTADO
+        ===================================================== */
+
+        .system-status {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                .42rem;
+
+            padding:
+                .4rem .65rem;
+
+            color:
+                #557166;
+
+            background:
+                rgba(255, 255, 255, .68);
+
+            border:
+                1px solid rgba(58, 170, 131, .13);
+
+            border-radius:
+                999px;
+
+            box-shadow:
+                0 5px 15px rgba(55, 73, 107, .035);
+
+            backdrop-filter:
+                blur(10px);
+
+            -webkit-backdrop-filter:
+                blur(10px);
+
+            font-size:
+                .56rem;
+
+            font-weight:
+                700;
+        }
+
+        .system-dot {
+            position:
+                relative;
+
+            width:
+                7px;
+
+            height:
+                7px;
+
+            border-radius:
+                50%;
+
+            background:
+                var(--login-green);
+
+            box-shadow:
+                0 0 0 3px rgba(58, 170, 131, .10);
+        }
+
+        .system-dot::after {
+            content: "";
+
+            position:
+                absolute;
+
+            inset:
+                -3px;
+
+            border:
+                1px solid rgba(58, 170, 131, .25);
+
+            border-radius:
+                50%;
+
+            animation:
+                statusPulse 2.2s ease-out infinite;
+        }
+
+        @keyframes statusPulse {
+
+            0% {
+                opacity:
+                    .7;
+
+                transform:
+                    scale(.8);
+            }
+
+            70%,
+            100% {
+                opacity:
+                    0;
+
+                transform:
+                    scale(1.8);
+            }
+        }
+
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+
+        .visual-content {
+            position:
+                relative;
+
+            z-index:
+                5;
+
+            width:
+                100%;
+
+            max-width:
+                610px;
+
+            margin:
+                auto 0;
+
+            padding:
+                3rem 0;
+
+            animation:
+                visualAppear .6s ease both;
+        }
+
+        @keyframes visualAppear {
+
+            from {
+                opacity:
+                    0;
+
+                transform:
+                    translateY(12px);
+            }
+
+            to {
+                opacity:
+                    1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        .visual-pill {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                .4rem;
+
+            margin-bottom:
+                1rem;
+
+            padding:
+                .38rem .65rem;
+
+            color:
+                #477d94;
+
+            background:
+                rgba(255, 255, 255, .65);
+
+            border:
+                1px solid rgba(57, 184, 201, .12);
+
+            border-radius:
+                999px;
+
+            box-shadow:
+                0 5px 15px rgba(55, 73, 107, .035);
+
+            font-size:
+                .57rem;
+
+            font-weight:
+                700;
+
+            backdrop-filter:
+                blur(10px);
+
+            -webkit-backdrop-filter:
+                blur(10px);
+        }
+
+        .visual-pill svg {
+            width:
+                13px;
+
+            height:
+                13px;
+
+            color:
+                var(--login-cyan);
+        }
+
+        .visual-title {
+            max-width:
+                590px;
+
+            margin:
+                0;
+
+            color:
+                var(--login-dark);
+
+            font-size:
+                clamp(2.1rem, 4vw, 3.8rem);
+
+            font-weight:
+                800;
+
+            line-height:
+                1.08;
+
+            letter-spacing:
+                -.055em;
+        }
+
+        .visual-title-highlight {
+            color:
+                transparent;
+
+            background:
+                linear-gradient(
+                    100deg,
+                    var(--login-primary),
+                    var(--login-cyan)
+                );
+
+            background-clip:
+                text;
+
+            -webkit-background-clip:
+                text;
+        }
+
+        .visual-description {
+            max-width:
+                550px;
+
+            margin:
+                1.15rem 0 0;
+
+            color:
+                #6d7c92;
+
+            font-size:
+                .82rem;
+
+            font-weight:
+                500;
+
+            line-height:
+                1.75;
+        }
+
+
+        /* =====================================================
+           MÉTRICAS
+        ===================================================== */
+
+        .feature-grid {
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap:
+                .65rem;
+
+            margin-top:
+                1.6rem;
+        }
+
+        .feature-card {
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            min-height:
+                105px;
+
+            padding:
+                .85rem;
+
+            background:
+                rgba(255, 255, 255, .62);
+
+            border:
+                1px solid rgba(255, 255, 255, .9);
+
+            border-radius:
+                15px;
+
+            box-shadow:
+                0 7px 22px rgba(55, 73, 107, .045);
+
+            backdrop-filter:
+                blur(12px);
+
+            -webkit-backdrop-filter:
+                blur(12px);
+
+            transition:
+                transform .2s ease,
+                background-color .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .feature-card:hover {
+            transform:
+                translateY(-3px);
+
+            background:
+                rgba(255, 255, 255, .86);
+
+            border-color:
+                rgba(79, 124, 255, .10);
+
+            box-shadow:
+                0 11px 28px rgba(55, 73, 107, .075);
+        }
+
+        .feature-icon {
+            width:
+                30px;
+
+            height:
+                30px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            margin-bottom:
+                .55rem;
+
+            color:
+                var(--login-primary);
+
+            background:
+                var(--login-primary-soft);
+
+            border:
+                1px solid rgba(79, 124, 255, .08);
+
+            border-radius:
+                8px;
+
+            transition:
+                transform .2s ease;
+        }
+
+        .feature-card:nth-child(2)
+        .feature-icon {
+            color:
+                var(--login-cyan);
+
+            background:
+                var(--login-cyan-soft);
+        }
+
+        .feature-card:nth-child(3)
+        .feature-icon {
+            color:
+                var(--login-green);
+
+            background:
+                var(--login-green-soft);
+        }
+
+        .feature-card:hover
+        .feature-icon {
+            transform:
+                scale(1.06);
+        }
+
+        .feature-icon svg {
+            width:
+                14px;
+
+            height:
+                14px;
+        }
+
+        .feature-title {
+            display:
+                block;
+
+            color:
+                #3d4b60;
+
+            font-size:
+                .67rem;
+
+            font-weight:
+                750;
+        }
+
+        .feature-subtitle {
+            display:
+                block;
+
+            margin-top:
+                .15rem;
+
+            color:
+                var(--login-muted);
+
+            font-size:
+                .53rem;
+
+            font-weight:
+                550;
+        }
+
+
+        /* =====================================================
+           PIE IZQUIERDO
+        ===================================================== */
+
+        .visual-footer {
+            position:
+                relative;
+
+            z-index:
+                5;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            gap:
+                1rem;
+
+            padding-top:
+                .85rem;
+
+            color:
+                #8b98aa;
+
+            border-top:
+                1px solid rgba(79, 124, 255, .08);
+
+            font-size:
+                .53rem;
+
+            font-weight:
+                550;
+        }
+
+        .water-message {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                .3rem;
+
+            color:
+                #708297;
+        }
+
+        .water-message svg {
+            width:
+                12px;
+
+            height:
+                12px;
+
+            color:
+                var(--login-cyan);
+        }
+
+
+        /* =====================================================
+           ONDAS
+        ===================================================== */
+
+        .water-waves {
+            position:
+                absolute;
+
+            left:
+                0;
+
+            right:
+                0;
+
+            bottom:
+                0;
+
+            height:
+                150px;
+
+            overflow:
+                hidden;
+
+            opacity:
+                .45;
+
+            pointer-events:
+                none;
+        }
+
+        .wave {
+            position:
+                absolute;
+
+            bottom:
+                -2px;
+
+            width:
+                200%;
+
+            height:
+                100%;
+
+            fill:
+                rgba(79, 124, 255, .045);
+        }
+
+        .wave-one {
+            animation:
+                waveMove 15s linear infinite;
+        }
+
+        .wave-two {
+            height:
+                72%;
+
+            fill:
+                rgba(57, 184, 201, .055);
+
+            animation:
+                waveMove 10s linear infinite reverse;
+        }
+
+        @keyframes waveMove {
+
+            from {
+                transform:
+                    translateX(0);
+            }
+
+            to {
+                transform:
+                    translateX(-50%);
+            }
+        }
+
+
+        /* =====================================================
+           PANEL LOGIN
+        ===================================================== */
+
+        .login-panel {
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            min-height:
+                100vh;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                2rem;
+
+            background:
+                #fbfcfe;
+        }
+
+        .login-panel::before {
+            content: "";
+
+            position:
+                absolute;
+
+            width:
+                300px;
+
+            height:
+                300px;
+
+            top:
+                -160px;
+
+            right:
+                -150px;
+
+            border-radius:
+                50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(79, 124, 255, .075),
+                    transparent 70%
+                );
+        }
+
+        .login-panel::after {
+            content: "";
+
+            position:
+                absolute;
+
+            width:
+                260px;
+
+            height:
+                260px;
+
+            left:
+                -150px;
+
+            bottom:
+                -140px;
+
+            border-radius:
+                50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(57, 184, 201, .07),
+                    transparent 70%
+                );
+        }
+
+        .login-panel-grid {
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            opacity:
+                .45;
+
+            background-image:
+                radial-gradient(
+                    #dfe6ef .7px,
+                    transparent .7px
+                );
+
+            background-size:
+                18px 18px;
+
+            mask-image:
+                linear-gradient(
+                    to bottom,
+                    transparent,
+                    black 20%,
+                    black 80%,
+                    transparent
+                );
+
+            pointer-events:
+                none;
+        }
+
+
+        /* =====================================================
+           CONTENEDOR LOGIN
+        ===================================================== */
+
+        .login-container {
+            position:
+                relative;
+
+            z-index:
+                3;
+
+            width:
+                100%;
+
+            max-width:
+                430px;
+
+            animation:
+                loginAppear .55s ease both;
+        }
+
+        @keyframes loginAppear {
+
+            from {
+                opacity:
+                    0;
+
+                transform:
+                    translateY(12px);
+            }
+
+            to {
+                opacity:
+                    1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* =====================================================
+           TARJETA
+        ===================================================== */
+
+        .login-card {
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            padding:
+                2rem;
+
+            background:
+                rgba(255, 255, 255, .94);
+
+            border:
+                1px solid rgba(232, 237, 245, .95);
+
+            border-radius:
+                22px;
+
+            box-shadow:
+                0 18px 55px rgba(55, 73, 107, .09);
+
+            backdrop-filter:
+                blur(18px);
+
+            -webkit-backdrop-filter:
+                blur(18px);
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+        }
+
+        .login-card:hover {
+            transform:
+                translateY(-2px);
+
+            border-color:
+                rgba(79, 124, 255, .11);
+
+            box-shadow:
+                0 23px 65px rgba(55, 73, 107, .12);
+        }
+
+        .login-card::before {
+            content: "";
+
+            position:
+                absolute;
+
+            width:
+                150px;
+
+            height:
+                150px;
+
+            top:
+                -100px;
+
+            right:
+                -70px;
+
+            border-radius:
+                50%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(79, 124, 255, .055),
+                    transparent 70%
+                );
+
+            pointer-events:
+                none;
+        }
+
+
+        /* =====================================================
+           LOGIN HEADER
+        ===================================================== */
+
+        .login-header {
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            margin-bottom:
+                1.55rem;
+
+            text-align:
+                center;
+        }
+
+        .login-logo-wrapper {
+            position:
+                relative;
+
+            width:
+                68px;
+
+            height:
+                68px;
+
+            margin:
+                0 auto .9rem;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+        }
+
+        .login-logo-halo {
+            position:
+                absolute;
+
+            inset:
+                0;
+
+            background:
+                var(--login-primary-soft);
+
+            border:
+                1px solid rgba(79, 124, 255, .10);
+
+            border-radius:
+                20px;
+
+            transform:
+                rotate(7deg);
+
+            transition:
+                transform .25s ease;
+        }
+
+        .login-card:hover
+        .login-logo-halo {
+            transform:
+                rotate(11deg);
+        }
+
+        .login-logo {
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            width:
+                53px;
+
+            height:
+                53px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            color:
+                #fff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--login-primary),
+                    var(--login-cyan)
+                );
+
+            border-radius:
+                16px;
+
+            box-shadow:
+                0 8px 22px rgba(79, 124, 255, .19);
+        }
+
+        .login-logo svg {
+            width:
+                25px;
+
+            height:
+                25px;
+
+            stroke-width:
+                2;
+        }
+
+        .login-title {
+            margin:
+                0;
+
+            color:
+                var(--login-dark);
+
+            font-size:
+                1.35rem;
+
+            font-weight:
+                800;
+
+            letter-spacing:
+                -.035em;
+        }
+
+        .login-subtitle {
+            margin:
+                .35rem 0 0;
+
+            color:
+                var(--login-muted);
+
+            font-size:
+                .65rem;
+
+            font-weight:
+                500;
+        }
+
+
+        /* =====================================================
+           ALERTAS
+        ===================================================== */
+
+        .login-alert {
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            display:
+                flex;
+
+            align-items:
+                flex-start;
+
+            gap:
+                .55rem;
+
+            padding:
+                .7rem .75rem;
+
+            margin-bottom:
+                1rem;
+
+            border:
+                1px solid;
+
+            border-radius:
+                11px;
+
+            font-size:
+                .59rem;
+
+            font-weight:
+                600;
+
+            line-height:
+                1.5;
+
+            animation:
+                alertAppear .3s ease both;
+        }
+
+        @keyframes alertAppear {
+
+            from {
+                opacity:
+                    0;
+
+                transform:
+                    translateY(-4px);
+            }
+
+            to {
+                opacity:
+                    1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+        .login-alert svg {
+            width:
+                16px;
+
+            height:
+                16px;
+
+            min-width:
+                16px;
+
+            margin-top:
+                1px;
+        }
+
+        .login-alert-error {
+            color:
+                #a95059;
+
+            background:
+                var(--login-red-soft);
+
+            border-color:
+                rgba(217, 108, 117, .15);
+        }
+
+        .login-alert-error svg {
+            color:
+                var(--login-red);
+        }
+
+        .login-alert-success {
+            color:
+                #397862;
+
+            background:
+                var(--login-green-soft);
+
+            border-color:
+                rgba(58, 170, 131, .14);
+        }
+
+        .login-alert-success svg {
+            color:
+                var(--login-green);
+        }
+
+
+        /* =====================================================
+           FORMULARIO
+        ===================================================== */
+
+        .login-form {
+            position:
+                relative;
+
+            z-index:
+                2;
+        }
+
+        .form-group {
+            margin-bottom:
+                1rem;
+        }
+
+        .form-label {
+            display:
+                block;
+
+            margin-bottom:
+                .38rem;
+
+            color:
+                #5a687d;
+
+            font-size:
+                .56rem;
+
+            font-weight:
+                750;
+
+            letter-spacing:
+                .055em;
+
+            text-transform:
+                uppercase;
+        }
+
+        .input-wrapper {
+            position:
+                relative;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            min-height:
+                47px;
+
+            background:
+                #fafbfd;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius:
+                12px;
+
+            transition:
+                background-color .18s ease,
+                border-color .18s ease,
+                box-shadow .18s ease,
+                transform .18s ease;
+        }
+
+        .input-wrapper:hover {
+            background:
+                #fff;
+
+            border-color:
+                #d8e0ea;
+        }
+
+        .input-wrapper:focus-within {
+            background:
+                #fff;
+
+            border-color:
+                rgba(79, 124, 255, .48);
+
+            box-shadow:
+                0 0 0 3px rgba(79, 124, 255, .075),
+                0 6px 16px rgba(55, 73, 107, .045);
+
+            transform:
+                translateY(-1px);
+        }
+
+        .input-icon {
+            position:
+                absolute;
+
+            left:
+                .85rem;
+
+            width:
+                17px;
+
+            height:
+                17px;
+
+            color:
+                #9aa6b7;
+
+            pointer-events:
+                none;
+
+            transition:
+                color .18s ease;
+        }
+
+        .input-wrapper:focus-within
+        .input-icon {
+            color:
+                var(--login-primary);
+        }
+
+        .form-input {
+            width:
+                100%;
+
+            min-height:
+                45px;
+
+            padding:
+                .65rem 2.8rem .65rem 2.55rem;
+
+            color:
+                var(--login-dark);
+
+            background:
+                transparent;
+
+            border:
+                0;
+
+            outline:
+                0;
+
+            font-size:
+                .69rem;
+
+            font-weight:
+                600;
+        }
+
+        .form-input::placeholder {
+            color:
+                #adb6c4;
+
+            font-weight:
+                500;
+        }
+
+
+        /* =====================================================
+           MOSTRAR CONTRASEÑA
+        ===================================================== */
+
+        .password-toggle {
+            position:
+                absolute;
+
+            right:
+                .45rem;
+
+            width:
+                34px;
+
+            height:
+                34px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            padding:
+                0;
+
+            color:
+                #9aa6b7;
+
+            background:
+                transparent;
+
+            border:
+                0;
+
+            border-radius:
+                8px;
+
+            cursor:
+                pointer;
+
+            transition:
+                color .18s ease,
+                background-color .18s ease;
+        }
+
+        .password-toggle:hover {
+            color:
+                var(--login-primary);
+
+            background:
+                var(--login-primary-soft);
+        }
+
+        .password-toggle svg {
+            width:
+                16px;
+
+            height:
+                16px;
+        }
+
+
+        /* =====================================================
+           RECORDAR
+        ===================================================== */
+
+        .remember-row {
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                space-between;
+
+            margin:
+                .1rem 0 1.25rem;
+        }
+
+        .remember-label {
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                .45rem;
+
+            color:
+                #6f7c90;
+
+            font-size:
+                .59rem;
+
+            font-weight:
+                600;
+
+            cursor:
+                pointer;
+
+            user-select:
+                none;
+        }
+
+        .remember-checkbox {
+            width:
+                15px;
+
+            height:
+                15px;
+
+            margin:
+                0;
+
+            accent-color:
+                var(--login-primary);
+
+            cursor:
+                pointer;
+        }
+
+
+        /* =====================================================
+           BOTÓN LOGIN
+        ===================================================== */
+
+        .login-submit {
+            position:
+                relative;
+
+            overflow:
+                hidden;
+
+            width:
+                100%;
+
+            min-height:
+                47px;
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            justify-content:
+                center;
+
+            gap:
+                .45rem;
+
+            padding:
+                .7rem 1rem;
+
+            color:
+                #fff;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--login-primary),
+                    #5a88f5 50%,
+                    var(--login-cyan)
+                );
+
+            border:
+                0;
+
+            border-radius:
+                12px;
+
+            box-shadow:
+                0 8px 20px rgba(79, 124, 255, .19);
+
+            font-size:
+                .67rem;
+
+            font-weight:
+                750;
+
+            cursor:
+                pointer;
+
+            transition:
+                transform .18s ease,
+                box-shadow .18s ease,
+                filter .18s ease;
+        }
+
+        .login-submit:hover {
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 12px 26px rgba(79, 124, 255, .25);
+
+            filter:
+                saturate(1.05);
+        }
+
+        .login-submit:active {
+            transform:
+                translateY(0);
+        }
+
+        .login-submit svg {
+            width:
+                15px;
+
+            height:
+                15px;
+
+            transition:
+                transform .18s ease;
+        }
+
+        .login-submit:hover svg {
+            transform:
+                translateX(3px);
+        }
+
+        .login-submit::after {
+            content: "";
+
+            position:
+                absolute;
+
+            width:
+                240px;
+
+            height:
+                240px;
+
+            left:
+                var(--ripple-x, 50%);
+
+            top:
+                var(--ripple-y, 50%);
+
+            border-radius:
+                50%;
+
+            background:
+                rgba(255, 255, 255, .25);
+
+            opacity:
+                0;
+
+            transform:
+                translate(-50%, -50%)
+                scale(0);
+
+            pointer-events:
+                none;
+        }
+
+        .login-submit.ripple-active::after {
+            animation:
+                buttonRipple .55s ease-out;
+        }
+
+        @keyframes buttonRipple {
+
+            0% {
+                opacity:
+                    .65;
+
+                transform:
+                    translate(-50%, -50%)
+                    scale(0);
+            }
+
+            100% {
+                opacity:
+                    0;
+
+                transform:
+                    translate(-50%, -50%)
+                    scale(1);
+            }
+        }
+
+
+        /* =====================================================
+           INFORMACIÓN DEL SISTEMA
+        ===================================================== */
+
+        .system-info {
+            position:
+                relative;
+
+            z-index:
+                2;
+
+            margin-top:
+                1.45rem;
+
+            padding-top:
+                1rem;
+
+            color:
+                #9aa5b5;
+
+            border-top:
+                1px solid #eef1f5;
+
+            text-align:
+                center;
+
+            font-size:
+                .52rem;
+
+            font-weight:
+                600;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1100px) {
+
+            .login-layout {
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(400px, .9fr);
+            }
+
+            .login-visual {
+                padding:
+                    1.8rem;
+            }
+
+            .visual-title {
+                font-size:
+                    2.65rem;
+            }
+        }
+
+
+        @media (max-width: 900px) {
+
+            .login-layout {
+                display:
+                    block;
+            }
+
+            .login-visual {
+                min-height:
+                    auto;
+
+                padding:
+                    1.25rem 1.3rem 1.5rem;
+            }
+
+            .visual-content {
+                max-width:
+                    none;
+
+                padding:
+                    2.3rem 0 1.5rem;
+
+                text-align:
+                    center;
+            }
+
+            .visual-pill {
+                margin-left:
+                    auto;
+
+                margin-right:
+                    auto;
+            }
+
+            .visual-title {
+                max-width:
+                    620px;
+
+                margin-left:
+                    auto;
+
+                margin-right:
+                    auto;
+
+                font-size:
+                    2.5rem;
+            }
+
+            .visual-description {
+                max-width:
+                    600px;
+
+                margin-left:
+                    auto;
+
+                margin-right:
+                    auto;
+            }
+
+            .feature-grid {
+                max-width:
+                    620px;
+
+                margin-left:
+                    auto;
+
+                margin-right:
+                    auto;
+            }
+
+            .visual-footer {
+                margin-top:
+                    1rem;
+            }
+
+            .water-waves {
+                height:
+                    100px;
+            }
+
+            .login-panel {
+                min-height:
+                    auto;
+
+                padding:
+                    2.5rem 1rem;
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .system-status {
+                display:
+                    none;
+            }
+
+            .visual-brand {
+                justify-content:
+                    center;
+            }
+
+            .visual-content {
+                padding:
+                    1.9rem 0 1.2rem;
+            }
+
+            .visual-title {
+                font-size:
+                    2rem;
+            }
+
+            .visual-description {
+                font-size:
+                    .72rem;
+            }
+
+            .feature-grid {
+                gap:
+                    .45rem;
+            }
+
+            .feature-card {
+                min-height:
+                    95px;
+
+                padding:
+                    .7rem .55rem;
+            }
+
+            .feature-title {
+                font-size:
+                    .59rem;
+            }
+
+            .feature-subtitle {
+                font-size:
+                    .48rem;
+            }
+
+            .visual-footer {
+                justify-content:
+                    center;
+
+                text-align:
+                    center;
+            }
+
+            .water-message {
+                display:
+                    none;
+            }
+
+            .login-panel {
+                padding:
+                    1.5rem .8rem;
+            }
+
+            .login-card {
+                padding:
+                    1.5rem 1.15rem;
+
+                border-radius:
+                    19px;
+            }
+
+            .login-title {
+                font-size:
+                    1.2rem;
+            }
+        }
+
+
+        /* =====================================================
+           REDUCIR MOVIMIENTO
+        ===================================================== */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration:
+                    .01ms !important;
+
+                animation-iteration-count:
+                    1 !important;
+
+                transition-duration:
+                    .01ms !important;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-layout">
+
+
+    <!-- ===================================================== -->
+    <!-- PANEL VISUAL -->
+    <!-- ===================================================== -->
+
+    <section class="login-visual">
+
+
+        <!-- DECORACIÓN -->
+
+        <div class="visual-grid"></div>
+
+        <div class="visual-orb visual-orb-one"></div>
+
+        <div class="visual-orb visual-orb-two"></div>
+
+        <div class="visual-orb visual-orb-three"></div>
+
+
+        <!-- ================================================= -->
+        <!-- MARCA -->
+        <!-- ================================================= -->
+
+        <div class="visual-brand">
+
+            <div class="brand-main">
+
+                <div class="brand-icon">
+                    <i data-lucide="droplets"></i>
+                </div>
+
+                <div>
+
+                    <span class="brand-title">
+                        JASS MISHQUIYACU
+                    </span>
+
+                    <span class="brand-subtitle">
+                        Servicio de Agua Potable
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="system-status">
+
+                <span class="system-dot"></span>
+
+                <span>
+                    Sistema Online 100%
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- CONTENIDO -->
+        <!-- ================================================= -->
+
+        <div class="visual-content">
+
+
+            <div class="visual-pill">
+
+                <i data-lucide="sparkles"></i>
+
+                <span>
+                    Gestión Inteligente &amp; Sostenible
+                </span>
+
+            </div>
+
+
+            <h1 class="visual-title">
+
+                El futuro del agua,
+
+                <br>
+
+                <span class="visual-title-highlight">
+                    en un solo lugar.
+                </span>
+
+            </h1>
+
+
+            <p class="visual-description">
+                Administra lecturas, monitorea el consumo, gestiona cobranzas y automatiza la operación de agua potable de forma simple y segura.
+            </p>
+
+
+            <!-- ============================================= -->
+            <!-- CARACTERÍSTICAS -->
+            <!-- ============================================= -->
+
+            <div class="feature-grid">
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i data-lucide="activity"></i>
+                    </div>
+
+                    <span class="feature-title">
+                        Monitoreo
+                    </span>
+
+                    <span class="feature-subtitle">
+                        En tiempo real
+                    </span>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i data-lucide="shield-check"></i>
+                    </div>
+
+                    <span class="feature-title">
+                        Seguridad
+                    </span>
+
+                    <span class="feature-subtitle">
+                        Cifrado de datos
+                    </span>
+
+                </div>
+
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        <i data-lucide="zap"></i>
+                    </div>
+
+                    <span class="feature-title">
+                        Rapidez
+                    </span>
+
+                    <span class="feature-subtitle">
+                        Facturación ágil
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- FOOTER -->
+        <!-- ================================================= -->
+
+        <div class="visual-footer">
+
+            <span>
+                &copy; 2026 JASS Mishquiyacu. Todos los derechos reservados.
+            </span>
+
+
+            <span class="water-message">
+
+                <i data-lucide="heart"></i>
+
+                Agua Limpia &amp; Segura
+
+            </span>
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- ONDAS -->
+        <!-- ================================================= -->
+
+        <div class="water-waves">
+
+            <svg class="wave wave-one"
+                 viewBox="0 0 1200 120"
+                 preserveAspectRatio="none">
+
+                <path d="M0,0 C150,90 350,-40 500,40 C650,120 900,10 1200,40 L1200,120 L0,120 Z"></path>
+
+            </svg>
+
+
+            <svg class="wave wave-two"
+                 viewBox="0 0 1200 120"
+                 preserveAspectRatio="none">
+
+                <path d="M0,0 C300,70 500,-20 700,50 C850,100 1050,20 1200,60 L1200,120 L0,120 Z"></path>
+
+            </svg>
+
+        </div>
+
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- PANEL LOGIN -->
+    <!-- ===================================================== -->
+
+    <section class="login-panel">
+
+
+        <div class="login-panel-grid"></div>
+
+
+        <div class="login-container">
+
+
+            <!-- ================================================= -->
+            <!-- TARJETA LOGIN -->
+            <!-- ================================================= -->
+
+            <div class="login-card">
+
+
+                <!-- ============================================= -->
+                <!-- CABECERA -->
+                <!-- ============================================= -->
+
+                <div class="login-header">
+
+
+                    <div class="login-logo-wrapper">
+
+                        <div class="login-logo-halo"></div>
+
+                        <div class="login-logo">
+                            <i data-lucide="droplet"></i>
+                        </div>
+
+                    </div>
+
+
+                    <h2 class="login-title">
+                        ¡Bienvenido de nuevo!
+                    </h2>
+
+
+                    <p class="login-subtitle">
+                        Ingresa tus credenciales para acceder al panel
+                    </p>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- ERROR -->
+                <!-- ============================================= -->
+
+                <div th:if="${param.error}"
+                     class="login-alert login-alert-error">
+
+                    <i data-lucide="circle-alert"></i>
+
+                    <span>
+                        Usuario o contraseña incorrectos. Por favor, verifica tus datos e intenta nuevamente.
+                    </span>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- LOGOUT -->
+                <!-- ============================================= -->
+
+                <div th:if="${param.logout}"
+                     class="login-alert login-alert-success">
+
+                    <i data-lucide="circle-check"></i>
+
+                    <span>
+                        Has cerrado sesión correctamente. ¡Hasta pronto!
+                    </span>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- FORMULARIO -->
+                <!-- ============================================= -->
+
+                <form th:action="@{/login}"
+                      method="post"
+                      id="loginForm"
+                      class="login-form">
+
+
+                    <!-- USUARIO -->
+
+                    <div class="form-group">
+
+                        <label for="username"
+                               class="form-label">
+                            Usuario
+                        </label>
+
+
+                        <div class="input-wrapper">
+
+                            <i data-lucide="user"
+                               class="input-icon">
+                            </i>
+
+
+                            <input id="username"
+                                   name="username"
+                                   type="text"
+                                   autocomplete="username"
+                                   required
+                                   autofocus
+                                   placeholder="ej. admin@mishquiyacu"
+                                   class="form-input">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONTRASEÑA -->
+
+                    <div class="form-group">
+
+                        <label for="password"
+                               class="form-label">
+                            Contraseña
+                        </label>
+
+
+                        <div class="input-wrapper">
+
+                            <i data-lucide="lock-keyhole"
+                               class="input-icon">
+                            </i>
+
+
+                            <input id="password"
+                                   name="password"
+                                   type="password"
+                                   autocomplete="current-password"
+                                   required
+                                   placeholder="••••••••••••"
+                                   class="form-input">
+
+
+                            <button type="button"
+                                    id="togglePasswordBtn"
+                                    class="password-toggle"
+                                    aria-label="Mostrar u ocultar contraseña">
+
+                                <i data-lucide="eye"
+                                   id="eyeIcon">
+                                </i>
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RECORDAR -->
+
+                    <div class="remember-row">
+
+                        <label class="remember-label">
+
+                            <input type="checkbox"
+                                   name="remember-me"
+                                   class="remember-checkbox">
+
+                            <span>
+                                Recordar sesión
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+                    <!-- INGRESAR -->
+
+                    <button type="submit"
+                            class="login-submit"
+                            id="loginSubmit">
+
+                        <span>
+                            Ingresar al sistema
+                        </span>
+
+                        <i data-lucide="arrow-right"></i>
+
+                    </button>
+
+                </form>
+
+
+                <!-- ============================================= -->
+                <!-- INFORMACIÓN -->
+                <!-- ============================================= -->
+
+                <div class="system-info">
+                    Sistema Integral de Gestión de Agua Potable v2.5
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- SCRIPTS -->
+<!-- ========================================================= -->
+
+<script>
+
+    /* =========================================================
+       INICIALIZAR ICONOS
+       ========================================================= */
+
+    lucide.createIcons();
+
+
+    /* =========================================================
+       MOSTRAR / OCULTAR CONTRASEÑA
+       ========================================================= */
+
+    const passwordInput =
+        document.getElementById('password');
+
+    const togglePasswordBtn =
+        document.getElementById('togglePasswordBtn');
+
+
+    togglePasswordBtn.addEventListener('click', () => {
+
+        const isPassword =
+            passwordInput.type === 'password';
+
+
+        passwordInput.type =
+            isPassword
+                ? 'text'
+                : 'password';
+
+
+        togglePasswordBtn.innerHTML =
+            isPassword
+                ? '<i data-lucide="eye-off"></i>'
+                : '<i data-lucide="eye"></i>';
+
+
+        lucide.createIcons();
+
+    });
+
+
+    /* =========================================================
+       RIPPLE DEL BOTÓN
+       ========================================================= */
+
+    const loginSubmit =
+        document.getElementById('loginSubmit');
+
+
+    loginSubmit.addEventListener('click', function (event) {
+
+        const rect =
+            this.getBoundingClientRect();
+
+
+        const x =
+            event.clientX - rect.left;
+
+
+        const y =
+            event.clientY - rect.top;
+
+
+        this.style.setProperty(
+            '--ripple-x',
+            `${x}px`
+        );
+
+
+        this.style.setProperty(
+            '--ripple-y',
+            `${y}px`
+        );
+
+
+        this.classList.remove(
+            'ripple-active'
+        );
+
+
+        void this.offsetWidth;
+
+
+        this.classList.add(
+            'ripple-active'
+        );
+
+    });
+
+</script>
+
+</body>
+
+</html>

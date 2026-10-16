@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Error inesperado')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Error inesperado')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --error-primary: #4f7cff;
+                --error-primary-dark: #416ce5;
+                --error-primary-soft: #eef4ff;
+
+                --error-cyan: #39b8c9;
+                --error-cyan-soft: #ecfbfd;
+
+                --error-red: #d96c75;
+                --error-red-dark: #c75b65;
+                --error-red-soft: #fff0f2;
+
+                --error-dark: #172033;
+                --error-text: #536176;
+                --error-muted: #8491a5;
+
+                --error-border: #e8edf5;
+                --error-bg: #f7f9fc;
+
+                --error-shadow:
+                    0 18px 50px rgba(55, 73, 107, .09);
+
+                --error-shadow-hover:
+                    0 24px 60px rgba(55, 73, 107, .12);
+            }
+
+
+            /* =====================================================
+               BASE
+            ===================================================== */
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 8% 5%,
+                        rgba(79, 124, 255, .07),
+                        transparent 27%
+                    ),
+                    radial-gradient(
+                        circle at 93% 8%,
+                        rgba(57, 184, 201, .055),
+                        transparent 24%
+                    ),
+                    var(--error-bg) !important;
+            }
+
+            .error-page {
+                min-height: calc(100vh - 180px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1.5rem 0 3rem;
+                animation: errorPageAppear .42s ease both;
+            }
+
+            @keyframes errorPageAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(9px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+
+            /* =====================================================
+               CARD
+            ===================================================== */
+
+            .error-card-modern {
+                position: relative;
+                overflow: hidden;
+                width: 100%;
+                max-width: 680px;
+                padding: 2.6rem 2.4rem 2.2rem;
+                text-align: center;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(252, 253, 255, .98)
+                    );
+                border: 1px solid var(--error-border);
+                border-radius: 24px;
+                box-shadow: var(--error-shadow);
+                transition:
+                    transform .25s ease,
+                    border-color .25s ease,
+                    box-shadow .25s ease;
+            }
+
+            .error-card-modern:hover {
+                transform: translateY(-2px);
+                border-color: rgba(217, 108, 117, .13);
+                box-shadow: var(--error-shadow-hover);
+            }
+
+
+            /* =====================================================
+               DECORACIÓN
+            ===================================================== */
+
+            .error-decoration {
+                position: absolute;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+
+            .error-decoration-one {
+                width: 190px;
+                height: 190px;
+                top: -115px;
+                right: -70px;
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(217, 108, 117, .075),
+                        rgba(217, 108, 117, .018) 60%,
+                        transparent 72%
+                    );
+            }
+
+            .error-decoration-two {
+                width: 155px;
+                height: 155px;
+                bottom: -100px;
+                left: -60px;
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(79, 124, 255, .07),
+                        rgba(79, 124, 255, .015) 60%,
+                        transparent 72%
+                    );
+            }
+
+            .error-decoration-three {
+                width: 90px;
+                height: 90px;
+                top: 32px;
+                left: -52px;
+                border: 1px solid rgba(57, 184, 201, .07);
+            }
+
+
+            /* =====================================================
+               CONTENIDO
+            ===================================================== */
+
+            .error-content {
+                position: relative;
+                z-index: 2;
+            }
+
+
+            /* =====================================================
+               ICONO
+            ===================================================== */
+
+            .error-icon-wrapper {
+                position: relative;
+                width: 82px;
+                height: 82px;
+                margin: 0 auto 1.3rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .error-icon-halo {
+                position: absolute;
+                inset: 0;
+                border-radius: 24px;
+                background: var(--error-red-soft);
+                border: 1px solid rgba(217, 108, 117, .10);
+                transform: rotate(7deg);
+                transition:
+                    transform .28s ease,
+                    background-color .28s ease;
+            }
+
+            .error-card-modern:hover
+            .error-icon-halo {
+                transform: rotate(12deg) scale(1.03);
+                background: #ffedef;
+            }
+
+            .error-icon {
+                position: relative;
+                z-index: 2;
+                width: 64px;
+                height: 64px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--error-red);
+                background:
+                    linear-gradient(
+                        145deg,
+                        #fffafa,
+                        var(--error-red-soft)
+                    );
+                border: 1px solid rgba(217, 108, 117, .14);
+                border-radius: 19px;
+                font-size: 1.55rem;
+                font-weight: 800;
+                box-shadow:
+                    0 8px 22px rgba(217, 108, 117, .10);
+                transition:
+                    transform .25s ease,
+                    box-shadow .25s ease;
+            }
+
+            .error-card-modern:hover
+            .error-icon {
+                transform: translateY(-2px);
+                box-shadow:
+                    0 11px 27px rgba(217, 108, 117, .14);
+            }
+
+
+            /* =====================================================
+               TEXTO
+            ===================================================== */
+
+            .error-eyebrow {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: .28rem .62rem;
+                margin-bottom: .8rem;
+                color: #60718d;
+                background:
+                    linear-gradient(
+                        135deg,
+                        #f8faff,
+                        var(--error-primary-soft)
+                    );
+                border: 1px solid rgba(79, 124, 255, .10);
+                border-radius: 999px;
+                font-size: .56rem;
+                font-weight: 760;
+                letter-spacing: .1em;
+            }
+
+            .error-title {
+                max-width: 520px;
+                margin: 0 auto .65rem;
+                color: var(--error-dark);
+                font-size: 1.35rem;
+                font-weight: 780;
+                line-height: 1.25;
+                letter-spacing: -.025em;
+            }
+
+            .error-message {
+                max-width: 500px;
+                margin: 0 auto;
+                color: var(--error-muted);
+                font-size: .72rem;
+                font-weight: 500;
+                line-height: 1.65;
+            }
+
+
+            /* =====================================================
+               SEPARADOR
+            ===================================================== */
+
+            .error-divider {
+                width: 46px;
+                height: 3px;
+                margin: 1.35rem auto;
+                background:
+                    linear-gradient(
+                        90deg,
+                        var(--error-primary),
+                        var(--error-cyan)
+                    );
+                border-radius: 999px;
+                opacity: .55;
+            }
+
+
+            /* =====================================================
+               BOTONES
+            ===================================================== */
+
+            .error-actions {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: .65rem;
+            }
+
+            .btn-error-back,
+            .btn-error-home {
+                min-height: 40px;
+                padding: .56rem 1.15rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .42rem;
+                border-radius: 11px;
+                font-size: .7rem;
+                font-weight: 680;
+                text-decoration: none;
+                cursor: pointer;
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .btn-error-back {
+                color: #68768b;
+                background: #fff;
+                border: 1px solid #e0e6ee;
+                box-shadow:
+                    0 4px 12px rgba(55, 73, 107, .04);
+            }
+
+            .btn-error-back:hover {
+                color: #405069;
+                background: #f8fafc;
+                border-color: #d4dde8;
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 16px rgba(55, 73, 107, .07);
+            }
+
+            .btn-error-back i {
+                transition: transform .18s ease;
+            }
+
+            .btn-error-back:hover i {
+                transform: translateX(-2px);
+            }
+
+            .btn-error-home {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--error-primary),
+                        #5e89f7
+                    );
+                border: 1px solid var(--error-primary);
+                box-shadow:
+                    0 7px 18px rgba(79, 124, 255, .18);
+            }
+
+            .btn-error-home:hover {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--error-primary-dark),
+                        var(--error-primary)
+                    );
+                transform: translateY(-1px);
+                box-shadow:
+                    0 10px 23px rgba(79, 124, 255, .24);
+            }
+
+            .btn-error-home i {
+                transition: transform .2s ease;
+            }
+
+            .btn-error-home:hover i {
+                transform: translateY(-1px);
+            }
+
+            .btn-error-back:active,
+            .btn-error-home:active {
+                transform: translateY(0);
+            }
+
+
+            /* =====================================================
+               RESPONSIVE
+            ===================================================== */
+
+            @media (max-width: 767.98px) {
+
+                .error-page {
+                    min-height: calc(100vh - 160px);
+                    padding: 1rem 0 2rem;
+                }
+
+                .error-card-modern {
+                    max-width: 600px;
+                    padding: 2.2rem 1.5rem 1.8rem;
+                    border-radius: 20px;
+                }
+
+                .error-title {
+                    font-size: 1.2rem;
+                }
+
+                .error-icon-wrapper {
+                    width: 75px;
+                    height: 75px;
+                }
+
+                .error-icon {
+                    width: 59px;
+                    height: 59px;
+                    font-size: 1.4rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+
+                .error-card-modern {
+                    padding: 2rem 1.1rem 1.3rem;
+                    border-radius: 18px;
+                }
+
+                .error-title {
+                    font-size: 1.08rem;
+                }
+
+                .error-message {
+                    font-size: .68rem;
+                }
+
+                .error-actions {
+                    flex-direction: column-reverse;
+                    width: 100%;
+                }
+
+                .btn-error-back,
+                .btn-error-home {
+                    width: 100%;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .error-page,
+                .error-card-modern,
+                .error-icon-halo,
+                .error-icon,
+                .btn-error-back,
+                .btn-error-home,
+                .btn-error-back i,
+                .btn-error-home i {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+        </style>
+
+
+        <!-- ===================================================== -->
+        <!-- ERROR -->
+        <!-- ===================================================== -->
+
+        <div class="error-page">
+
+            <div class="error-card-modern">
+
+
+                <!-- DECORACIÓN -->
+
+                <div class="error-decoration error-decoration-one"></div>
+                <div class="error-decoration error-decoration-two"></div>
+                <div class="error-decoration error-decoration-three"></div>
+
+
+                <!-- CONTENIDO -->
+
+                <div class="error-content">
+
+
+                    <!-- ICONO -->
+
+                    <div class="error-icon-wrapper">
+
+                        <div class="error-icon-halo"></div>
+
+                        <div class="error-icon">
+                            <i class="bi bi-exclamation-lg"></i>
+                        </div>
+
+                    </div>
+
+
+                    <!-- IDENTIFICADOR -->
+
+                    <span class="error-eyebrow">
+                        JASS MISHQUIYACU
+                    </span>
+
+
+                    <!-- TÍTULO -->
+
+                    <h2 class="error-title"
+                        th:text="${titulo}">
+                        Error inesperado
+                    </h2>
+
+
+                    <!-- MENSAJE -->
+
+                    <p class="error-message"
+                       th:text="${mensaje}">
+                        Ocurrió un inconveniente al procesar la solicitud.
+                    </p>
+
+
+                    <!-- SEPARADOR -->
+
+                    <div class="error-divider"></div>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="error-actions">
+
+                        <button type="button"
+                                class="btn-error-back"
+                                onclick="history.back()">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            <span>Volver</span>
+
+                        </button>
+
+
+                        <a class="btn-error-home"
+                           th:href="@{/}">
+
+                            <i class="bi bi-house-door"></i>
+
+                            <span>Ir al inicio</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</body>
+</html>

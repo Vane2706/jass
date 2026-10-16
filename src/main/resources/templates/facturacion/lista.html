@@ -1,0 +1,2506 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Facturación')}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body class="bg-body-tertiary">
+
+<style>
+
+    /* =========================================================
+       VARIABLES
+       ========================================================= */
+
+    :root {
+        --fac-primary: #4f8fc7;
+        --fac-primary-dark: #3978ad;
+        --fac-primary-soft: #eef7ff;
+
+        --fac-cyan: #48b8c7;
+        --fac-cyan-soft: #ecfbfd;
+
+        --fac-violet: #818cf8;
+        --fac-violet-soft: #f4f3ff;
+
+        --fac-success: #3f9b70;
+        --fac-success-soft: #effaf4;
+
+        --fac-warning: #c58b3c;
+        --fac-warning-soft: #fff9eb;
+
+        --fac-danger: #c86b73;
+        --fac-danger-soft: #fff2f3;
+
+        --fac-text: #1f2a3d;
+        --fac-text-soft: #475569;
+        --fac-muted: #7b8798;
+
+        --fac-border: #e7edf4;
+        --fac-bg: #f7f9fc;
+        --fac-white: #ffffff;
+
+        --fac-shadow:
+            0 1px 2px rgba(15, 23, 42, .02),
+            0 8px 25px rgba(15, 23, 42, .045);
+
+        --fac-shadow-hover:
+            0 12px 30px rgba(15, 23, 42, .075);
+    }
+
+
+    /* =========================================================
+       BASE
+       ========================================================= */
+
+    body {
+        background:
+            radial-gradient(
+                circle at 95% 4%,
+                rgba(72, 184, 199, .055),
+                transparent 24%
+            ),
+            radial-gradient(
+                circle at 72% 10%,
+                rgba(79, 143, 199, .035),
+                transparent 22%
+            ),
+            var(--fac-bg);
+
+        color: var(--fac-text);
+    }
+
+
+    /* =========================================================
+       ANIMACIONES
+       ========================================================= */
+
+    @keyframes fadeUp {
+
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    @keyframes receiptFloat {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-2px);
+        }
+
+    }
+
+
+    .animate-in {
+        animation: fadeUp .45s ease both;
+    }
+
+
+    /* =========================================================
+       CABECERA
+       ========================================================= */
+
+    .billing-header {
+        position: relative;
+        overflow: hidden;
+
+        margin-bottom: 1.25rem;
+        padding: 1.55rem 1.7rem;
+
+        border: 1px solid rgba(226, 232, 240, .9);
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255, 255, 255, .98),
+                rgba(239, 248, 255, .94) 52%,
+                rgba(236, 254, 255, .78)
+            );
+
+        box-shadow:
+            0 8px 30px rgba(15, 23, 42, .035);
+    }
+
+
+    .billing-header::before {
+        content: "";
+
+        position: absolute;
+
+        width: 190px;
+        height: 190px;
+
+        right: -70px;
+        top: -110px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(79, 143, 199, .13),
+                transparent 68%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .billing-header::after {
+        content: "";
+
+        position: absolute;
+
+        width: 130px;
+        height: 130px;
+
+        right: 100px;
+        bottom: -105px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(72, 184, 199, .08),
+                transparent 70%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .header-icon {
+        position: relative;
+        z-index: 1;
+
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #dceefe;
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f0f8ff,
+                #e6f7fb
+            );
+
+        color: var(--fac-primary);
+
+        font-size: 1.18rem;
+    }
+
+
+    .header-icon i {
+        animation: receiptFloat 3s ease-in-out infinite;
+    }
+
+
+    .page-eyebrow {
+        margin-bottom: .15rem;
+
+        color: var(--fac-primary);
+
+        font-size: .71rem;
+        font-weight: 750;
+
+        letter-spacing: .09em;
+        text-transform: uppercase;
+    }
+
+
+    .page-title {
+        margin: 0;
+
+        color: var(--fac-text);
+
+        font-weight: 750;
+        letter-spacing: -.025em;
+    }
+
+
+    /* =========================================================
+       PANEL PRINCIPAL
+       ========================================================= */
+
+    .billing-panel {
+        overflow: hidden;
+
+        border: 1px solid var(--fac-border);
+        border-radius: 22px;
+
+        background: rgba(255, 255, 255, .96);
+
+        box-shadow: var(--fac-shadow);
+
+        animation: fadeUp .5s ease both;
+    }
+
+
+    /* =========================================================
+       FILTROS
+       ========================================================= */
+
+    .billing-toolbar {
+        padding: 1.2rem 1.35rem;
+
+        border-bottom: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 1),
+                rgba(250, 253, 255, .95)
+            );
+    }
+
+
+    .control-label {
+        margin-bottom: .38rem;
+
+        color: #7b8798;
+
+        font-size: .69rem;
+        font-weight: 700;
+
+        letter-spacing: .025em;
+    }
+
+
+    /* =========================================================
+       SELECT PERIODO
+       ========================================================= */
+
+    .period-control {
+        position: relative;
+    }
+
+
+    .period-control-icon {
+        position: absolute;
+
+        left: 15px;
+        bottom: 14px;
+
+        z-index: 3;
+
+        color: var(--fac-primary);
+
+        font-size: .85rem;
+
+        pointer-events: none;
+    }
+
+
+    .period-control .form-select {
+        height: 44px;
+
+        padding-left: 42px;
+        padding-right: 38px;
+
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+
+        background-color: #f8fafc;
+
+        color: var(--fac-text-soft);
+
+        font-size: .84rem;
+        font-weight: 550;
+
+        box-shadow: none;
+
+        cursor: pointer;
+
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+
+    .period-control .form-select:hover {
+        border-color: #cbd5e1;
+
+        background-color: white;
+    }
+
+
+    .period-control .form-select:focus {
+        border-color: rgba(79, 143, 199, .48);
+
+        background-color: white;
+
+        box-shadow:
+            0 0 0 4px rgba(79, 143, 199, .07);
+    }
+
+
+    /* =========================================================
+       BUSCADOR
+       ========================================================= */
+
+    .quick-search {
+        position: relative;
+    }
+
+
+    .quick-search-icon {
+        position: absolute;
+
+        left: 15px;
+        bottom: 14px;
+
+        z-index: 3;
+
+        color: #94a3b8;
+
+        font-size: .85rem;
+
+        pointer-events: none;
+
+        transition: color .2s ease;
+    }
+
+
+    .quick-search .form-control {
+        height: 44px;
+
+        padding-left: 42px;
+        padding-right: 38px;
+
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+
+        background: #f8fafc;
+
+        color: var(--fac-text);
+
+        font-size: .84rem;
+
+        box-shadow: none;
+
+        transition:
+            border-color .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+
+    .quick-search .form-control::placeholder {
+        color: #a0aec0;
+    }
+
+
+    .quick-search .form-control:hover {
+        border-color: #cbd5e1;
+
+        background: white;
+    }
+
+
+    .quick-search .form-control:focus {
+        border-color: rgba(79, 143, 199, .48);
+
+        background: white;
+
+        box-shadow:
+            0 0 0 4px rgba(79, 143, 199, .07);
+    }
+
+
+    .quick-search:focus-within .quick-search-icon {
+        color: var(--fac-primary);
+    }
+
+
+    /* =========================================================
+       BOTONES FILTRO
+       ========================================================= */
+
+    .filter-actions {
+        padding-bottom: 0;
+    }
+
+
+    .btn-filter {
+        height: 44px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .45rem;
+
+        padding: 0 1rem;
+
+        border: 1px solid #cfe2f3;
+        border-radius: 11px;
+
+        background: white;
+
+        color: var(--fac-primary);
+
+        font-size: .82rem;
+        font-weight: 650;
+
+        transition:
+            transform .2s ease,
+            background .2s ease,
+            color .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .btn-filter:hover {
+        color: white;
+
+        background: var(--fac-primary);
+
+        border-color: var(--fac-primary);
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 5px 12px rgba(79, 143, 199, .17);
+    }
+
+
+    .btn-clear {
+        height: 44px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .4rem;
+
+        padding: 0 .85rem;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 11px;
+
+        background: #f8fafc;
+
+        color: #718096;
+
+        font-size: .8rem;
+        font-weight: 550;
+
+        text-decoration: none;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease;
+    }
+
+
+    .btn-clear:hover {
+        color: #475569;
+
+        background: #eef2f6;
+
+        transform: translateY(-1px);
+    }
+
+
+    /* =========================================================
+       ENCABEZADO DE TABLA
+       ========================================================= */
+
+    .billing-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 1rem;
+
+        padding: 1rem 1.35rem;
+
+        border-bottom: 1px solid #edf1f6;
+
+        background: white;
+    }
+
+
+    .billing-summary-title {
+        margin: 0;
+
+        color: #334155;
+
+        font-size: .89rem;
+        font-weight: 700;
+    }
+
+
+    .billing-summary-text {
+        margin-top: .15rem;
+
+        color: #8a97a8;
+
+        font-size: .73rem;
+    }
+
+
+    .results-chip {
+        min-height: 37px;
+
+        display: inline-flex;
+        align-items: center;
+
+        gap: .5rem;
+
+        padding: .42rem .78rem;
+
+        border: 1px solid #edf1f6;
+        border-radius: 11px;
+
+        background: #f8fafc;
+
+        color: #64748b;
+
+        font-size: .76rem;
+        font-weight: 550;
+
+        white-space: nowrap;
+    }
+
+
+    .results-chip-icon {
+        width: 23px;
+        height: 23px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 7px;
+
+        background: var(--fac-primary-soft);
+
+        color: var(--fac-primary);
+
+        font-size: .7rem;
+    }
+
+
+    /* =========================================================
+       TABLA
+       ========================================================= */
+
+    .billing-table {
+        width: 100%;
+
+        margin: 0;
+
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+
+    .billing-table thead th {
+        padding: .85rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #edf1f6;
+
+        background: #f8fafc;
+
+        color: #718096;
+
+        font-size: .67rem;
+        font-weight: 750;
+
+        letter-spacing: .05em;
+        text-transform: uppercase;
+
+        white-space: nowrap;
+    }
+
+
+    .billing-table tbody td {
+        padding: .92rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #f0f3f7;
+
+        background: white;
+
+        vertical-align: middle;
+
+        transition:
+            background .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .billing-table tbody tr {
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .billing-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    .billing-table tbody tr:hover td {
+        background: #fbfdff;
+    }
+
+
+    .billing-table tbody tr:hover td:first-child {
+        box-shadow:
+            inset 3px 0 0 rgba(79, 143, 199, .68);
+    }
+
+
+    /* =========================================================
+       FACTURA
+       ========================================================= */
+
+    .invoice-number {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .5rem;
+
+        padding: .38rem .62rem;
+
+        border: 1px solid #dcecf9;
+        border-radius: 9px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f8fcff,
+                #eff8ff
+            );
+
+        color: #3978ad;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            "Liberation Mono",
+            monospace;
+
+        font-size: .75rem;
+        font-weight: 700;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .invoice-number-icon {
+        width: 22px;
+        height: 22px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 6px;
+
+        background: #fff2f3;
+
+        color: #c86b73;
+
+        font-size: .68rem;
+    }
+
+
+    .billing-table tbody tr:hover .invoice-number {
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 4px 10px rgba(79, 143, 199, .07);
+    }
+
+
+    /* =========================================================
+       SERVICIO
+       ========================================================= */
+
+    .service-code {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .35rem;
+
+        padding: .37rem .6rem;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 8px;
+
+        background: #f8fafc;
+
+        color: #475569;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .74rem;
+        font-weight: 650;
+    }
+
+
+    .service-code i {
+        color: var(--fac-cyan);
+
+        font-size: .68rem;
+    }
+
+
+    /* =========================================================
+       PERIODO
+       ========================================================= */
+
+    .period-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .35rem;
+
+        padding: .37rem .6rem;
+
+        border: 1px solid #d9f2e1;
+        border-radius: 8px;
+
+        background: #f3fcf6;
+
+        color: #46775a;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .74rem;
+        font-weight: 650;
+    }
+
+
+    .period-badge i {
+        color: #6ca681;
+
+        font-size: .67rem;
+    }
+
+
+    /* =========================================================
+       FECHAS
+       ========================================================= */
+
+    .date-value {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .42rem;
+
+        color: #64748b;
+
+        font-size: .77rem;
+        font-weight: 550;
+
+        white-space: nowrap;
+    }
+
+
+    .date-icon {
+        width: 25px;
+        height: 25px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 7px;
+
+        font-size: .67rem;
+    }
+
+
+    .date-icon.emission {
+        background: #eff8ff;
+
+        color: #4f8fc7;
+    }
+
+
+    .date-icon.expiration {
+        background: #fff9eb;
+
+        color: #c58b3c;
+    }
+
+
+    /* =========================================================
+       MONTO
+       ========================================================= */
+
+    .amount-value {
+        display: inline-flex;
+        align-items: baseline;
+
+        color: #263348;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .84rem;
+        font-weight: 750;
+
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       ESTADOS
+       ========================================================= */
+
+    .invoice-status {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .4rem;
+
+        padding: .37rem .65rem;
+
+        border: 1px solid transparent;
+        border-radius: 50rem;
+
+        font-size: .69rem;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    .invoice-status.paid {
+        color: #287a50;
+
+        background: var(--fac-success-soft);
+
+        border-color: #d6f1e1;
+    }
+
+
+    .invoice-status.partial {
+        color: #a66f26;
+
+        background: var(--fac-warning-soft);
+
+        border-color: #f5e8bc;
+    }
+
+
+    .invoice-status.pending {
+        color: #b55a63;
+
+        background: var(--fac-danger-soft);
+
+        border-color: #f6dadd;
+    }
+
+
+    .status-dot {
+        position: relative;
+
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+
+    .invoice-status.paid .status-dot::after {
+        content: "";
+
+        position: absolute;
+        inset: -3px;
+
+        border: 1px solid currentColor;
+        border-radius: 50%;
+
+        opacity: .18;
+    }
+
+
+    /* =========================================================
+       ACCIÓN
+       ========================================================= */
+
+    .detail-button {
+        width: 35px;
+        height: 35px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 10px;
+
+        background: white;
+
+        color: #64748b;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 1px 2px rgba(15, 23, 42, .02);
+
+        transition:
+            transform .2s ease,
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .detail-button:hover {
+        color: white;
+
+        background: var(--fac-primary);
+
+        border-color: var(--fac-primary);
+
+        transform: translateX(2px);
+
+        box-shadow:
+            0 5px 12px rgba(79, 143, 199, .18);
+    }
+
+
+    /* =========================================================
+       SIN RESULTADOS DE BÚSQUEDA LOCAL
+       ========================================================= */
+
+    #clientNoResultsRow {
+        display: none;
+    }
+
+
+    /* =========================================================
+       ESTADO VACÍO
+       ========================================================= */
+
+    .empty-state {
+        padding: 3.7rem 1rem;
+    }
+
+
+    .empty-state-icon {
+        width: 62px;
+        height: 62px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 1rem;
+
+        border: 1px solid #dceefe;
+        border-radius: 18px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f0f8ff,
+                #ecfeff
+            );
+
+        color: var(--fac-primary);
+
+        font-size: 1.45rem;
+    }
+
+
+    /* =========================================================
+       FOOTER / PAGINACIÓN
+       ========================================================= */
+
+    .table-footer {
+        padding: .95rem 1.35rem;
+
+        border-top: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfcfe
+            );
+    }
+
+
+    .page-counter {
+        color: #7c8999;
+
+        font-size: .78rem;
+    }
+
+
+    .page-counter strong {
+        color: #334155;
+
+        font-weight: 650;
+    }
+
+
+    .modern-pagination {
+        gap: .25rem;
+    }
+
+
+    .modern-pagination .page-link {
+        min-width: 33px;
+        height: 33px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0 .55rem;
+
+        border: 1px solid transparent;
+        border-radius: 9px !important;
+
+        background: transparent;
+
+        color: #64748b;
+
+        font-size: .78rem;
+        font-weight: 600;
+
+        box-shadow: none !important;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease,
+            border-color .2s ease;
+    }
+
+
+    .modern-pagination .page-link:hover {
+        color: var(--fac-primary);
+
+        background: var(--fac-primary-soft);
+
+        border-color: #dceefe;
+
+        transform: translateY(-1px);
+    }
+
+
+    .modern-pagination
+    .page-item.active
+    .page-link {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #6aa8d7,
+                #4f8fc7
+            );
+
+        border-color: var(--fac-primary);
+
+        box-shadow:
+            0 4px 10px rgba(79, 143, 199, .18) !important;
+    }
+
+
+    .modern-pagination
+    .page-item.disabled
+    .page-link {
+        color: #c1c9d4;
+
+        background: transparent;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .billing-header {
+            padding: 1.3rem;
+        }
+
+        .billing-toolbar {
+            padding: 1rem;
+        }
+
+        .billing-summary {
+            padding: 1rem;
+        }
+
+    }
+
+
+    @media (max-width: 767.98px) {
+
+        .billing-header,
+        .billing-panel {
+            border-radius: 18px;
+        }
+
+        .billing-summary {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .results-chip {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .filter-actions {
+            width: 100%;
+        }
+
+        .btn-filter,
+        .btn-clear {
+            flex: 1;
+        }
+
+        .table-footer {
+            padding: 1rem;
+        }
+
+    }
+
+
+    @media (max-width: 575.98px) {
+
+        .billing-header {
+            padding: 1.15rem;
+        }
+
+        .billing-toolbar {
+            padding: .9rem;
+        }
+
+        .control-label {
+            font-size: .67rem;
+        }
+
+    }
+
+</style>
+
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+
+<main class="app-main">
+
+
+    <!-- ===================================================== -->
+    <!-- TOPBAR -->
+    <!-- ===================================================== -->
+
+    <div th:replace="~{fragments/layout :: topbar('Facturación')}"></div>
+
+
+    <section class="content px-3 px-lg-4 py-4">
+
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+
+        <div class="billing-header animate-in">
+
+
+            <div class="d-flex align-items-center gap-3">
+
+
+                <div class="header-icon">
+
+                    <i class="bi bi-receipt-cutoff"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="page-eyebrow">
+                        Gestión de facturación
+                    </div>
+
+                    <h2 class="page-title h4">
+                        Facturación
+                    </h2>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- PANEL PRINCIPAL -->
+        <!-- ================================================= -->
+
+        <div class="billing-panel">
+
+
+            <!-- ================================================= -->
+            <!-- FILTROS -->
+            <!-- ================================================= -->
+
+            <div class="billing-toolbar">
+
+
+                <form method="get"
+                      th:action="@{/facturacion}"
+                      class="row g-3 align-items-end">
+
+                    <!-- PERIODO -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Periodo
+                        </label>
+
+                        <select name="idPeriodo"
+                                class="form-select">
+
+                            <option value="">
+                                Todos los periodos
+                            </option>
+
+                            <option th:each="p : ${periodos}"
+                                    th:value="${p.idPeriodo}"
+                                    th:text="${p.anio + ' - ' + p.mes}"
+                                    th:selected="${idPeriodo == p.idPeriodo}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DIRECCIÓN -->
+
+                    <div class="col-md-5 position-relative">
+
+                        <label class="form-label">
+                            Dirección del inmueble
+                        </label>
+
+                        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-geo-alt"></i>
+            </span>
+
+                            <input type="text"
+                                   id="direccionInput"
+                                   name="direccion"
+                                   class="form-control"
+                                   autocomplete="off"
+                                   placeholder="Escriba una dirección..."
+                                   th:value="${direccion}">
+
+                        </div>
+
+
+                        <!-- SUGERENCIAS -->
+
+                        <div id="direccionSuggestions"
+                             class="list-group position-absolute w-100"
+                             style="z-index: 1050; display:none;">
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOTÓN -->
+
+                    <div class="col-md-3">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            <i class="bi bi-search"></i>
+
+                            Filtrar
+
+                        </button>
+
+                    </div>
+
+
+                    <input type="hidden"
+                           name="pagina"
+                           value="0">
+
+                </form>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- RESUMEN -->
+            <!-- ================================================= -->
+
+            <div class="billing-summary">
+
+
+                <div>
+
+
+                    <h6 class="billing-summary-title">
+                        Historial de Facturación
+                    </h6>
+
+
+                    <div class="billing-summary-text">
+                        Registros consolidados de facturas y cobros por cliente.
+                    </div>
+
+
+                </div>
+
+
+                <div class="results-chip">
+
+
+                    <span class="results-chip-icon">
+
+                        <i class="bi bi-receipt"></i>
+
+                    </span>
+
+
+                    <span th:text="${totalRegistros
+                        + (totalRegistros == 1
+                            ? ' Factura registrada'
+                            : ' Facturas registradas')}">
+
+                        0 Facturas registradas
+
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TABLA -->
+            <!-- ================================================= -->
+
+            <div class="table-responsive">
+
+
+                <table class="table
+                              billing-table
+                              align-middle
+                              mb-0"
+
+                       id="invoicesTable">
+
+
+                    <thead>
+
+
+                    <tr>
+
+
+                        <th scope="col"
+                            class="ps-4">
+
+                            N° Factura
+
+                        </th>
+                        <th scope="col">
+                            Periodo
+                        </th>
+                        <th scope="col">
+                            Asociado
+                        </th>
+
+
+                        <th scope="col">
+                            Servicio
+                        </th>
+                        <th scope="col">
+                            Vencimiento
+                        </th>
+
+
+                        <th scope="col">
+                            Monto Total
+                        </th>
+
+
+                        <th scope="col">
+                            Estado
+                        </th>
+
+
+                        <th scope="col"
+                            class="text-end pe-4">
+
+                            Acciones
+
+                        </th>
+
+                    </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <!-- ========================================= -->
+                    <!-- FACTURAS -->
+                    <!-- ========================================= -->
+
+                    <tr th:each="f : ${facturas}"
+                        class="invoice-row">
+
+
+
+
+                        <!-- NÚMERO FACTURA -->
+
+                        <td class="ps-4">
+
+
+                            <span class="invoice-number">
+
+
+                                <span class="invoice-number-icon">
+
+                                    <i class="bi bi-file-earmark-text-fill"></i>
+
+                                </span>
+
+
+                                <span th:text="${f.numeroFactura}">
+
+                                    FAC-000
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+                        <!-- PERIODO -->
+
+                        <td>
+
+
+                            <span class="period-badge">
+
+
+                                <i class="bi bi-calendar2-week"></i>
+
+
+                                <span th:text="${#numbers.formatInteger(
+                                    f.periodo.mes,
+                                    2
+                                ) + '/' + f.periodo.anio}">
+
+                                    09/2026
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ASOCIADO -->
+
+                        <td>
+
+                            <th:block
+                                    th:with="titular=${titularesPorInmueble[
+            f.servicio.inmueble.idInmueble
+        ]}">
+
+
+                                <!-- TIENE TITULAR -->
+
+                                <div th:if="${titular != null}"
+                                     class="d-flex align-items-center gap-2">
+
+
+            <span class="invoice-number-icon">
+
+                <i class="bi bi-person-fill"></i>
+
+            </span>
+
+
+                                    <div class="overflow-hidden">
+
+
+                                        <!-- NOMBRE COMPLETO -->
+
+                                        <div class="fw-semibold text-dark text-truncate"
+
+                                             th:text="${#strings.trim(
+                         (titular.nombres ?: '')
+                         + ' '
+                         + (titular.apellidoPaterno ?: '')
+                         + ' '
+                         + (titular.apellidoMaterno ?: '')
+                     )}">
+
+                                            Nombre del asociado
+
+                                        </div>
+
+
+                                        <!-- CÓDIGO DEL ASOCIADO -->
+
+                                        <div class="small text-muted mt-1"
+
+                                             th:if="${titular.codigoAsociado != null
+                         and !#strings.isEmpty(
+                             titular.codigoAsociado
+                         )}">
+
+
+                                            <i class="bi bi-person-vcard me-1"></i>
+
+
+                                            <span th:text="${titular.codigoAsociado}">
+
+                        ASO-000
+
+                    </span>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                                <!-- SIN TITULAR -->
+
+                                <span th:unless="${titular != null}"
+                                      class="text-muted small">
+
+            <i class="bi bi-person-dash me-1"></i>
+
+            Sin titular asignado
+
+        </span>
+
+
+                            </th:block>
+
+                        </td>
+
+
+                        <!-- SERVICIO -->
+
+                        <td>
+
+
+                            <span class="service-code">
+
+
+                                <i class="bi bi-droplet-fill"></i>
+
+
+                                <span th:text="${f.servicio.codigoServicio}">
+
+                                    SER-000
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+
+
+
+                        <!-- VENCIMIENTO -->
+
+                        <td>
+
+
+                            <span class="date-value">
+
+
+                                <span class="date-icon expiration">
+
+                                    <i class="bi bi-calendar-event"></i>
+
+                                </span>
+
+
+                                <span th:text="${f.fechaVencimiento != null
+                                    ? #temporals.format(
+                                        f.fechaVencimiento,
+                                        'dd/MM/yyyy'
+                                      )
+                                    : '—'}">
+
+                                    —
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- MONTO -->
+
+                        <td>
+
+
+                            <span class="amount-value"
+
+                                  th:text="${'S/ '
+                                      + #numbers.formatDecimal(
+                                          f.total,
+                                          1,
+                                          'POINT',
+                                          2,
+                                          'COMMA'
+                                      )}">
+
+                                S/ 0.00
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ESTADO -->
+
+                        <td>
+
+
+                            <!-- PAGADA -->
+
+                            <span th:if="${f.estado == 'PAGADA'}"
+                                  class="invoice-status paid">
+
+
+                                <span class="status-dot"></span>
+
+
+                                <span th:text="${f.estado}">
+                                    PAGADA
+                                </span>
+
+
+                            </span>
+
+
+                            <!-- PARCIAL -->
+
+                            <span th:if="${f.estado == 'PARCIAL'}"
+                                  class="invoice-status partial">
+
+
+                                <span class="status-dot"></span>
+
+
+                                <span th:text="${f.estado}">
+                                    PARCIAL
+                                </span>
+
+
+                            </span>
+
+
+                            <!-- OTROS / PENDIENTE -->
+
+                            <span th:if="${f.estado != 'PAGADA'
+                                and f.estado != 'PARCIAL'}"
+
+                                  class="invoice-status pending">
+
+
+                                <span class="status-dot"></span>
+
+
+                                <span th:text="${f.estado}">
+                                    PENDIENTE
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ACCIÓN -->
+
+                        <td class="text-end pe-4">
+
+
+                            <a class="detail-button"
+
+                               title="Ver detalles"
+
+                               aria-label="Ver detalles"
+
+                               th:href="@{/facturacion/{id}(
+                                    id=${f.idFactura}
+                               )}">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    <!-- ========================================= -->
+                    <!-- SIN RESULTADOS EN BÚSQUEDA LOCAL -->
+                    <!-- ========================================= -->
+
+                    <tr id="clientNoResultsRow">
+
+
+                        <td colspan="8"
+                            class="border-0 text-center">
+
+
+                            <div class="empty-state">
+
+
+                                <div class="empty-state-icon">
+
+                                    <i class="bi bi-search"></i>
+
+                                </div>
+
+
+                                <h6 class="fw-bold
+                                           text-dark
+                                           mb-1">
+
+                                    No se encontraron facturas
+
+                                </h6>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    <!-- ========================================= -->
+                    <!-- ESTADO VACÍO DEL SERVIDOR -->
+                    <!-- ========================================= -->
+
+                    <tr th:if="${#lists.isEmpty(facturas)}"
+                        id="noResultsRow">
+
+
+                        <td colspan="8"
+                            class="border-0 text-center">
+
+
+                            <div class="empty-state">
+
+
+                                <div class="empty-state-icon">
+
+                                    <i class="bi bi-receipt-cutoff"></i>
+
+                                </div>
+
+
+                                <h6 class="fw-bold
+                                           text-dark
+                                           mb-1">
+
+                                    No se encontraron facturas
+
+                                </h6>
+
+
+                                <p class="text-muted
+                                          small
+                                          mb-0"
+
+                                   th:if="${idPeriodo != null}">
+
+                                    No existen facturas para el periodo seleccionado.
+
+                                </p>
+
+
+                                <p class="text-muted
+                                          small
+                                          mb-0"
+
+                                   th:if="${idPeriodo == null}">
+
+                                    Aún no hay registros de facturación creados.
+
+                                </p>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- PAGINACIÓN -->
+            <!-- ================================================= -->
+
+            <div th:if="${totalPaginas > 1}"
+
+                 class="table-footer
+                        d-flex
+                        flex-column flex-md-row
+                        justify-content-between
+                        align-items-center
+                        gap-3">
+
+
+                <!-- CONTADOR -->
+
+                <div class="page-counter">
+
+
+                    Página
+
+                    <strong th:text="${paginaActual + 1}">
+                        1
+                    </strong>
+
+                    de
+
+                    <strong th:text="${totalPaginas}">
+                        1
+                    </strong>
+
+
+                </div>
+
+
+                <!-- NAVEGACIÓN -->
+
+                <nav aria-label="Paginación de facturas">
+
+
+                    <ul class="pagination
+                               pagination-sm
+                               modern-pagination
+                               mb-0">
+
+
+                        <!-- ANTERIOR -->
+
+                        <li class="page-item"
+
+                            th:classappend="${esPrimera
+                                ? 'disabled'
+                                : ''}">
+
+
+                            <a th:if="${!esPrimera}"
+
+                               class="page-link"
+
+                               th:href="@{/facturacion(
+                                    pagina=${paginaActual - 1},
+                                    idPeriodo=${idPeriodo}
+                               )}"
+
+                               aria-label="Página anterior">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </a>
+
+
+                            <span th:if="${esPrimera}"
+                                  class="page-link">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- ===================================== -->
+                        <!-- HASTA 10 PÁGINAS -->
+                        <!-- ===================================== -->
+
+                        <th:block th:if="${totalPaginas <= 10}">
+
+
+                            <li class="page-item"
+
+                                th:each="n : ${#numbers.sequence(
+                                    inicioPagina,
+                                    finPagina
+                                )}"
+
+                                th:classappend="${paginaActual == n
+                                    ? 'active'
+                                    : ''}">
+
+
+                                <a th:if="${paginaActual != n}"
+
+                                   class="page-link"
+
+                                   th:href="@{/facturacion(
+                                        pagina=${n},
+                                        idPeriodo=${idPeriodo}
+                                   )}"
+
+                                   th:text="${n + 1}">
+
+                                    1
+
+                                </a>
+
+
+                                <span th:if="${paginaActual == n}"
+
+                                      class="page-link"
+
+                                      th:text="${n + 1}">
+
+                                    1
+
+                                </span>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- ===================================== -->
+                        <!-- MÁS DE 10 PÁGINAS -->
+                        <!-- ===================================== -->
+
+                        <th:block th:if="${totalPaginas > 10}">
+
+
+                            <!-- PRIMERA -->
+
+                            <li class="page-item"
+
+                                th:classappend="${paginaActual == 0
+                                    ? 'active'
+                                    : ''}">
+
+
+                                <a th:if="${paginaActual != 0}"
+
+                                   class="page-link"
+
+                                   th:href="@{/facturacion(
+                                        pagina=0,
+                                        idPeriodo=${idPeriodo}
+                                   )}">
+
+                                    1
+
+                                </a>
+
+
+                                <span th:if="${paginaActual == 0}"
+                                      class="page-link">
+
+                                    1
+
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- PUNTOS IZQUIERDA -->
+
+                            <li th:if="${mostrarPuntosIzquierda}"
+                                class="page-item disabled">
+
+
+                                <span class="page-link">
+                                    …
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- VENTANA -->
+
+                            <li class="page-item"
+
+                                th:each="n : ${#numbers.sequence(
+                                    inicioPagina,
+                                    finPagina
+                                )}"
+
+                                th:classappend="${paginaActual == n
+                                    ? 'active'
+                                    : ''}">
+
+
+                                <a th:if="${paginaActual != n}"
+
+                                   class="page-link"
+
+                                   th:href="@{/facturacion(
+                                        pagina=${n},
+                                        idPeriodo=${idPeriodo}
+                                   )}"
+
+                                   th:text="${n + 1}">
+                                </a>
+
+
+                                <span th:if="${paginaActual == n}"
+
+                                      class="page-link"
+
+                                      th:text="${n + 1}">
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- PUNTOS DERECHA -->
+
+                            <li th:if="${mostrarPuntosDerecha}"
+                                class="page-item disabled">
+
+
+                                <span class="page-link">
+                                    …
+                                </span>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- SIGUIENTE -->
+
+                        <li class="page-item"
+
+                            th:classappend="${esUltima
+                                ? 'disabled'
+                                : ''}">
+
+
+                            <a th:if="${!esUltima}"
+
+                               class="page-link"
+
+                               th:href="@{/facturacion(
+                                    pagina=${paginaActual + 1},
+                                    idPeriodo=${idPeriodo}
+                               )}"
+
+                               aria-label="Página siguiente">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                            <span th:if="${esUltima}"
+                                  class="page-link">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </span>
+
+
+                        </li>
+
+
+                    </ul>
+
+
+                </nav>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ========================================================= -->
+<!-- SCRIPTS -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<!-- ========================================================= -->
+<!-- FILTRO RÁPIDO LOCAL -->
+<!-- ========================================================= -->
+
+<script>
+
+    function filterTable() {
+
+        const input =
+            document.getElementById(
+                "quickSearchInput"
+            );
+
+        const rows =
+            document.querySelectorAll(
+                "#invoicesTable tbody tr.invoice-row"
+            );
+
+        const noResults =
+            document.getElementById(
+                "clientNoResultsRow"
+            );
+
+        if (!input) {
+            return;
+        }
+
+
+        const filter =
+            input.value
+                .toLowerCase()
+                .trim();
+
+
+        let visibleRows = 0;
+
+
+        rows.forEach(row => {
+
+            const text =
+                row.innerText
+                    .toLowerCase();
+
+
+            const visible =
+                text.includes(filter);
+
+
+            row.style.display =
+                visible ? "" : "none";
+
+
+            if (visible) {
+                visibleRows++;
+            }
+
+        });
+
+
+        if (noResults) {
+
+            noResults.style.display =
+                rows.length > 0
+                && visibleRows === 0
+                && filter.length > 0
+                    ? ""
+                    : "none";
+
+        }
+
+    }
+
+</script>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const input =
+            document.getElementById("direccionInput");
+
+        const suggestions =
+            document.getElementById(
+                "direccionSuggestions"
+            );
+
+
+        if (!input || !suggestions) {
+            return;
+        }
+
+
+        let timeout;
+
+
+        input.addEventListener("input", function () {
+
+            const texto =
+                input.value.trim();
+
+
+            clearTimeout(timeout);
+
+
+            if (texto.length < 2) {
+
+                suggestions.innerHTML = "";
+                suggestions.style.display = "none";
+
+                return;
+            }
+
+
+            timeout = setTimeout(() => {
+
+                fetch(
+                    `/facturacion/buscar-direcciones?q=${encodeURIComponent(texto)}`
+                )
+                    .then(response => {
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Error al buscar direcciones"
+                            );
+                        }
+
+                        return response.json();
+                    })
+
+                    .then(data => {
+
+                        suggestions.innerHTML = "";
+
+
+                        if (!data || data.length === 0) {
+
+                            suggestions.style.display =
+                                "none";
+
+                            return;
+                        }
+
+
+                        data.forEach(item => {
+
+                            const option =
+                                document.createElement("button");
+
+                            option.type = "button";
+
+                            option.className =
+                                "list-group-item list-group-item-action";
+
+
+                            option.innerHTML = `
+                                <i class="bi bi-geo-alt me-2"></i>
+                                ${escapeHtml(item.direccion)}
+                            `;
+
+
+                            option.addEventListener(
+                                "click",
+                                function () {
+
+                                    input.value =
+                                        item.direccion;
+
+                                    suggestions.innerHTML =
+                                        "";
+
+                                    suggestions.style.display =
+                                        "none";
+                                }
+                            );
+
+
+                            suggestions.appendChild(
+                                option
+                            );
+
+                        });
+
+
+                        suggestions.style.display =
+                            "block";
+
+                    })
+
+                    .catch(error => {
+
+                        console.error(
+                            "Error:",
+                            error
+                        );
+
+                        suggestions.style.display =
+                            "none";
+                    });
+
+            }, 250);
+
+        });
+
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    !input.contains(event.target) &&
+                    !suggestions.contains(event.target)
+                ) {
+
+                    suggestions.style.display =
+                        "none";
+                }
+
+            }
+        );
+
+
+        function escapeHtml(text) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                text ?? "";
+
+            return div.innerHTML;
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

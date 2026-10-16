@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Proveedor')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+<main class="app-main">
+    <div th:replace="~{fragments/layout :: topbar('Proveedor')}"></div>
+    <section class="content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="page-actions">
+            <div><h2 th:text="${proveedor.razonSocial}"></h2>
+                <p th:text="${proveedor.ruc ?: 'Sin RUC'}"></p></div>
+            <a class="btn btn-light" th:href="@{/proveedores}">Volver</a></div>
+        <div class="surface detail-card">
+            <dl>
+                <dt>Teléfono</dt>
+                <dd th:text="${proveedor.telefono ?: '—'}"></dd>
+                <dt>Correo</dt>
+                <dd th:text="${proveedor.correo ?: '—'}"></dd>
+                <dt>Dirección</dt>
+                <dd th:text="${proveedor.direccion ?: '—'}"></dd>
+                <dt>Estado</dt>
+                <dd th:text="${proveedor.estado}"></dd>
+            </dl>
+        </div>
+    </section>
+</main>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

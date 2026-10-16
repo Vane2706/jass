@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Orden de corte')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Orden de corte')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --cut-primary: #4f7cff;
+                --cut-primary-dark: #416ce5;
+                --cut-primary-soft: #eef4ff;
+
+                --cut-cyan: #39b8c9;
+                --cut-cyan-soft: #ecfbfd;
+
+                --cut-green: #3aaa83;
+                --cut-green-soft: #edf9f5;
+
+                --cut-amber: #d8a64d;
+                --cut-amber-soft: #fff8e9;
+
+                --cut-red: #d96c75;
+                --cut-red-dark: #c95d67;
+                --cut-red-soft: #fff0f2;
+
+                --cut-dark: #172033;
+                --cut-text: #536176;
+                --cut-muted: #8491a5;
+
+                --cut-border: #e8edf5;
+                --cut-bg: #f7f9fc;
+
+                --cut-shadow:
+                    0 10px 35px rgba(55, 73, 107, .07);
+
+                --cut-shadow-hover:
+                    0 17px 44px rgba(55, 73, 107, .10);
+            }
+
+
+            /* =====================================================
+               BASE
+            ===================================================== */
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 7% 4%,
+                        rgba(79, 124, 255, .07),
+                        transparent 26%
+                    ),
+                    radial-gradient(
+                        circle at 94% 8%,
+                        rgba(57, 184, 201, .055),
+                        transparent 25%
+                    ),
+                    var(--cut-bg) !important;
+            }
+
+            .cut-page {
+                max-width: 1180px;
+                margin: 0 auto;
+                animation: cutPageAppear .42s ease both;
+            }
+
+            @keyframes cutPageAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+
+            /* =====================================================
+               HEADER
+            ===================================================== */
+
+            .cut-header {
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1.5rem;
+                padding: 1.2rem 1.35rem;
+                margin-bottom: 1rem;
+                background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255, 255, 255, .98),
+                        rgba(246, 249, 255, .97)
+                    );
+                border: 1px solid var(--cut-border);
+                border-radius: 18px;
+                box-shadow:
+                    0 7px 25px rgba(55, 73, 107, .055);
+            }
+
+            .cut-header::before {
+                content: "";
+                position: absolute;
+                width: 170px;
+                height: 170px;
+                top: -110px;
+                right: 130px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .045);
+                pointer-events: none;
+            }
+
+            .cut-header::after {
+                content: "";
+                position: absolute;
+                width: 105px;
+                height: 105px;
+                right: -45px;
+                bottom: -70px;
+                border-radius: 50%;
+                background: rgba(57, 184, 201, .055);
+                pointer-events: none;
+            }
+
+            .cut-header-content,
+            .cut-header-action {
+                position: relative;
+                z-index: 2;
+            }
+
+            .cut-eyebrow {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                margin-bottom: .3rem;
+                color: var(--cut-primary);
+                font-size: .58rem;
+                font-weight: 760;
+                letter-spacing: .08em;
+            }
+
+            .cut-title-row {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: .55rem;
+                margin-bottom: .15rem;
+            }
+
+            .cut-title {
+                margin: 0;
+                color: var(--cut-dark);
+                font-size: 1.25rem;
+                font-weight: 780;
+                letter-spacing: -.025em;
+            }
+
+            .cut-service-code {
+                display: inline-flex;
+                align-items: center;
+                gap: .3rem;
+                padding: .27rem .55rem;
+                color: #536783;
+                background: var(--cut-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 7px;
+                font-family:
+                    ui-monospace,
+                    SFMono-Regular,
+                    Menlo,
+                    Monaco,
+                    Consolas,
+                    monospace;
+                font-size: .61rem;
+                font-weight: 680;
+            }
+
+            .btn-cut-back {
+                min-height: 38px;
+                padding: .52rem .95rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .4rem;
+                color: #68768b;
+                background: rgba(255, 255, 255, .88);
+                border: 1px solid #e0e6ee;
+                border-radius: 11px;
+                font-size: .7rem;
+                font-weight: 650;
+                text-decoration: none;
+                box-shadow:
+                    0 4px 12px rgba(55, 73, 107, .04);
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background-color .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .btn-cut-back:hover {
+                color: var(--cut-primary);
+                background: var(--cut-primary-soft);
+                border-color: rgba(79, 124, 255, .18);
+                transform: translateX(-2px);
+                box-shadow:
+                    0 6px 15px rgba(79, 124, 255, .07);
+            }
+
+
+            /* =====================================================
+               CARDS
+            ===================================================== */
+
+            .cut-card {
+                position: relative;
+                overflow: hidden;
+                height: 100%;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(251, 253, 255, .98)
+                    );
+                border: 1px solid var(--cut-border);
+                border-radius: 20px;
+                box-shadow: var(--cut-shadow);
+                transition:
+                    transform .22s ease,
+                    border-color .22s ease,
+                    box-shadow .22s ease;
+            }
+
+            .cut-card:hover {
+                transform: translateY(-2px);
+                border-color: rgba(79, 124, 255, .12);
+                box-shadow: var(--cut-shadow-hover);
+            }
+
+            .cut-card-body {
+                position: relative;
+                z-index: 2;
+                padding: 1.35rem;
+            }
+
+
+            /* =====================================================
+               DETAIL HEADER
+            ===================================================== */
+
+            .detail-header {
+                display: flex;
+                align-items: center;
+                gap: .75rem;
+                padding-bottom: .9rem;
+                margin-bottom: .35rem;
+                border-bottom: 1px solid var(--cut-border);
+            }
+
+            .detail-header-icon {
+                width: 41px;
+                height: 41px;
+                min-width: 41px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--cut-primary);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--cut-primary-soft),
+                        #f8fbff
+                    );
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 12px;
+                font-size: .9rem;
+                box-shadow:
+                    0 5px 14px rgba(79, 124, 255, .055);
+            }
+
+            .detail-header-title {
+                margin: 0;
+                color: var(--cut-dark);
+                font-size: .87rem;
+                font-weight: 750;
+            }
+
+
+            /* =====================================================
+               DETALLES
+            ===================================================== */
+
+            .cut-detail-list {
+                margin: 0;
+            }
+
+            .cut-detail-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                min-height: 55px;
+                padding: .75rem .15rem;
+                border-bottom: 1px solid #f0f3f7;
+                transition:
+                    padding .18s ease,
+                    background-color .18s ease;
+            }
+
+            .cut-detail-row:last-child {
+                border-bottom: 0;
+            }
+
+            .cut-detail-row:hover {
+                padding-left: .45rem;
+                padding-right: .45rem;
+                background: rgba(247, 249, 252, .65);
+                border-radius: 9px;
+            }
+
+            .cut-detail-label {
+                margin: 0;
+                color: var(--cut-muted);
+                font-size: .65rem;
+                font-weight: 620;
+            }
+
+            .cut-detail-value {
+                margin: 0;
+                color: #3f4d62;
+                font-size: .72rem;
+                font-weight: 650;
+                text-align: right;
+            }
+
+            .period-value {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 31px;
+                padding: .24rem .5rem;
+                color: #7c6739;
+                background: var(--cut-amber-soft);
+                border: 1px solid rgba(216, 166, 77, .13);
+                border-radius: 7px;
+                font-size: .65rem;
+                font-weight: 720;
+            }
+
+
+            /* =====================================================
+               DEUDA
+            ===================================================== */
+
+            .debt-row {
+                margin: .4rem 0;
+                padding: .85rem .75rem;
+                background:
+                    linear-gradient(
+                        135deg,
+                        #fffafa,
+                        var(--cut-red-soft)
+                    );
+                border: 1px solid rgba(217, 108, 117, .11);
+                border-radius: 11px;
+            }
+
+            .debt-row:hover {
+                padding-left: .75rem;
+                padding-right: .75rem;
+                background:
+                    linear-gradient(
+                        135deg,
+                        #fffafa,
+                        var(--cut-red-soft)
+                    );
+            }
+
+            .debt-value {
+                color: #c55e68;
+                font-family:
+                    ui-monospace,
+                    SFMono-Regular,
+                    Menlo,
+                    Monaco,
+                    Consolas,
+                    monospace;
+                font-size: 1.05rem;
+                font-weight: 780;
+                letter-spacing: -.025em;
+            }
+
+
+            /* =====================================================
+               ESTADO
+            ===================================================== */
+
+            .status-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: .3rem;
+                padding: .3rem .58rem;
+                border-radius: 999px;
+                font-size: .59rem;
+                font-weight: 720;
+                letter-spacing: .02em;
+            }
+
+            .status-pending {
+                color: #987328;
+                background: var(--cut-amber-soft);
+                border: 1px solid rgba(216, 166, 77, .16);
+            }
+
+            .status-executed {
+                color: #b6545d;
+                background: var(--cut-red-soft);
+                border: 1px solid rgba(217, 108, 117, .15);
+            }
+
+            .status-other {
+                color: #536783;
+                background: var(--cut-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .12);
+            }
+
+            .status-dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: currentColor;
+                box-shadow: 0 0 0 3px rgba(255, 255, 255, .6);
+            }
+
+
+            /* =====================================================
+               FORMULARIO DE SUSPENSIÓN
+            ===================================================== */
+
+            .suspension-card {
+                border-color: rgba(217, 108, 117, .10);
+            }
+
+            .suspension-card:hover {
+                border-color: rgba(217, 108, 117, .16);
+            }
+
+            .suspension-header {
+                display: flex;
+                align-items: center;
+                gap: .75rem;
+                padding-bottom: .9rem;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid var(--cut-border);
+            }
+
+            .suspension-header-icon {
+                width: 41px;
+                height: 41px;
+                min-width: 41px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--cut-red);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--cut-red-soft),
+                        #fff9fa
+                    );
+                border: 1px solid rgba(217, 108, 117, .12);
+                border-radius: 12px;
+                font-size: .9rem;
+                box-shadow:
+                    0 5px 14px rgba(217, 108, 117, .055);
+            }
+
+            .suspension-title {
+                margin: 0;
+                color: var(--cut-dark);
+                font-size: .87rem;
+                font-weight: 750;
+            }
+
+
+            /* =====================================================
+               WARNING
+            ===================================================== */
+
+            .warning-callout {
+                display: flex;
+                align-items: center;
+                gap: .6rem;
+                padding: .72rem .8rem;
+                margin-bottom: 1rem;
+                color: #9b7130;
+                background:
+                    linear-gradient(
+                        135deg,
+                        #fffdf8,
+                        var(--cut-amber-soft)
+                    );
+                border: 1px solid rgba(216, 166, 77, .14);
+                border-radius: 10px;
+                font-size: .65rem;
+                font-weight: 600;
+            }
+
+            .warning-callout-icon {
+                width: 29px;
+                height: 29px;
+                min-width: 29px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--cut-amber);
+                background: rgba(255, 255, 255, .8);
+                border: 1px solid rgba(216, 166, 77, .12);
+                border-radius: 8px;
+                font-size: .72rem;
+            }
+
+
+            /* =====================================================
+               INPUTS
+            ===================================================== */
+
+            .cut-field {
+                margin-top: .85rem;
+            }
+
+            .cut-label {
+                display: flex;
+                align-items: center;
+                margin-bottom: .4rem;
+                color: #4a586d;
+                font-size: .68rem;
+                font-weight: 680;
+            }
+
+            .cut-input-wrapper {
+                position: relative;
+                display: flex;
+                align-items: stretch;
+                width: 100%;
+                border-radius: 11px;
+                transition:
+                    transform .18s ease,
+                    box-shadow .2s ease;
+            }
+
+            .cut-input-wrapper:focus-within {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 18px rgba(79, 124, 255, .07);
+            }
+
+            .cut-input-icon {
+                width: 42px;
+                min-width: 42px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #8995a7;
+                background: #f8fafc;
+                border: 1px solid #e3e9f1;
+                border-right: 0;
+                border-radius: 11px 0 0 11px;
+                font-size: .78rem;
+                transition:
+                    color .2s ease,
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .cut-input-wrapper:focus-within
+            .cut-input-icon {
+                color: var(--cut-primary);
+                background: var(--cut-primary-soft);
+                border-color: rgba(79, 124, 255, .42);
+            }
+
+            .cut-control {
+                min-height: 42px;
+                padding: .6rem .78rem;
+                color: #39475c;
+                background: #fbfcfe;
+                border: 1px solid #e3e9f1;
+                border-left: 0;
+                border-radius: 0 11px 11px 0;
+                outline: none;
+                box-shadow: none !important;
+                font-size: .73rem;
+                font-weight: 540;
+                transition:
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .cut-control:hover {
+                background: #fff;
+                border-color: #d8e0ea;
+            }
+
+            .cut-control:focus {
+                background: #fff;
+                border-color: rgba(79, 124, 255, .5);
+            }
+
+
+            /* =====================================================
+               TEXTAREA
+            ===================================================== */
+
+            .cut-textarea-wrapper {
+                position: relative;
+                transition:
+                    transform .18s ease,
+                    box-shadow .2s ease;
+            }
+
+            .cut-textarea-wrapper:focus-within {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 18px rgba(79, 124, 255, .07);
+            }
+
+            .cut-textarea-icon {
+                position: absolute;
+                z-index: 2;
+                top: .72rem;
+                left: .8rem;
+                color: #8e9bad;
+                font-size: .8rem;
+                pointer-events: none;
+                transition: color .2s ease;
+            }
+
+            .cut-textarea-wrapper:focus-within
+            .cut-textarea-icon {
+                color: var(--cut-primary);
+            }
+
+            .cut-textarea {
+                width: 100%;
+                min-height: 95px;
+                padding: .7rem .8rem .7rem 2.45rem;
+                color: #39475c;
+                background: #fbfcfe;
+                border: 1px solid #e3e9f1;
+                border-radius: 11px;
+                outline: none;
+                box-shadow: none;
+                resize: vertical;
+                font-size: .73rem;
+                line-height: 1.5;
+                transition:
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .cut-textarea:hover {
+                background: #fff;
+                border-color: #d8e0ea;
+            }
+
+            .cut-textarea:focus {
+                background: #fff;
+                border-color: rgba(79, 124, 255, .5);
+            }
+
+
+            /* =====================================================
+               BOTÓN CORTE
+            ===================================================== */
+
+            .suspension-actions {
+                display: flex;
+                justify-content: flex-end;
+                padding-top: 1.1rem;
+                margin-top: 1.1rem;
+                border-top: 1px solid var(--cut-border);
+            }
+
+            .btn-execute-cut {
+                min-height: 39px;
+                padding: .55rem 1.1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .42rem;
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--cut-red),
+                        #df7b83
+                    );
+                border: 1px solid var(--cut-red);
+                border-radius: 11px;
+                font-size: .7rem;
+                font-weight: 680;
+                box-shadow:
+                    0 7px 17px rgba(217, 108, 117, .18);
+                transition:
+                    transform .18s ease,
+                    box-shadow .18s ease,
+                    background .18s ease;
+            }
+
+            .btn-execute-cut:hover {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--cut-red-dark),
+                        var(--cut-red)
+                    );
+                transform: translateY(-1px);
+                box-shadow:
+                    0 9px 21px rgba(217, 108, 117, .25);
+            }
+
+            .btn-execute-cut:active {
+                transform: translateY(0);
+            }
+
+
+            /* =====================================================
+               RESPONSIVE
+            ===================================================== */
+
+            @media (max-width: 767.98px) {
+
+                .cut-header {
+                    align-items: flex-start;
+                    flex-direction: column;
+                    padding: 1.1rem;
+                }
+
+                .cut-header-action,
+                .btn-cut-back {
+                    width: 100%;
+                }
+
+                .cut-card {
+                    border-radius: 17px;
+                }
+
+                .cut-card-body {
+                    padding: 1.15rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+
+                .cut-title {
+                    font-size: 1.08rem;
+                }
+
+                .cut-detail-row {
+                    align-items: flex-start;
+                    flex-direction: column;
+                    gap: .25rem;
+                }
+
+                .cut-detail-value {
+                    text-align: left;
+                }
+
+                .debt-row {
+                    align-items: center;
+                    flex-direction: row;
+                }
+
+                .debt-row .cut-detail-value {
+                    text-align: right;
+                }
+
+                .suspension-actions,
+                .btn-execute-cut {
+                    width: 100%;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .cut-page,
+                .cut-card,
+                .btn-cut-back,
+                .cut-input-wrapper,
+                .cut-textarea-wrapper,
+                .btn-execute-cut {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+        </style>
+
+
+        <div class="cut-page">
+
+
+            <!-- ================================================= -->
+            <!-- ENCABEZADO -->
+            <!-- ================================================= -->
+
+            <div class="cut-header">
+
+                <div class="cut-header-content">
+
+                    <span class="cut-eyebrow">
+                        ORDEN DE CORTE
+                    </span>
+
+                    <div class="cut-title-row">
+
+                        <span class="cut-service-code">
+
+                            <i class="bi bi-droplet"></i>
+
+                            <span th:text="${orden.servicio.codigoServicio}">
+                                SRV-000001
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="cut-header-action">
+
+                    <a class="btn-cut-back"
+                       th:href="@{/morosidad}">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        <span>Volver</span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CONTENIDO -->
+            <!-- ================================================= -->
+
+            <div class="row g-3">
+
+
+                <!-- ============================================= -->
+                <!-- DETALLES DE LA ORDEN -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-6">
+
+                    <div class="cut-card">
+
+                        <div class="cut-card-body">
+
+
+                            <div class="detail-header">
+
+                                <div class="detail-header-icon">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+
+                                <h3 class="detail-header-title">
+                                    Detalle de la orden
+                                </h3>
+
+                            </div>
+
+
+                            <dl class="cut-detail-list">
+
+
+                                <!-- FECHA -->
+
+                                <div class="cut-detail-row">
+
+                                    <dt class="cut-detail-label">
+                                        Fecha generación
+                                    </dt>
+
+                                    <dd class="cut-detail-value"
+                                        th:text="${orden.fechaGeneracion}">
+                                        —
+                                    </dd>
+
+                                </div>
+
+
+                                <!-- PERIODOS -->
+
+                                <div class="cut-detail-row">
+
+                                    <dt class="cut-detail-label">
+                                        Periodos pendientes
+                                    </dt>
+
+                                    <dd class="cut-detail-value">
+
+                                        <span class="period-value"
+                                              th:text="${orden.periodosPendientes}">
+                                            0
+                                        </span>
+
+                                    </dd>
+
+                                </div>
+
+
+                                <!-- DEUDA -->
+
+                                <div class="cut-detail-row debt-row">
+
+                                    <dt class="cut-detail-label">
+                                        Deuda acumulada
+                                    </dt>
+
+                                    <dd class="cut-detail-value debt-value"
+                                        th:text="${'S/ ' + orden.deudaAcumulada}">
+                                        S/ 0.00
+                                    </dd>
+
+                                </div>
+
+
+                                <!-- MOTIVO -->
+
+                                <div class="cut-detail-row">
+
+                                    <dt class="cut-detail-label">
+                                        Motivo
+                                    </dt>
+
+                                    <dd class="cut-detail-value"
+                                        th:text="${orden.motivo}">
+                                        —
+                                    </dd>
+
+                                </div>
+
+
+                                <!-- ESTADO -->
+
+                                <div class="cut-detail-row">
+
+                                    <dt class="cut-detail-label">
+                                        Estado
+                                    </dt>
+
+                                    <dd class="cut-detail-value">
+
+                                        <span class="status-pill"
+                                              th:classappend="${orden.estado == 'PENDIENTE'} ? ' status-pending' : (${orden.estado == 'EJECUTADO'} ? ' status-executed' : ' status-other')">
+
+                                            <span class="status-dot"></span>
+
+                                            <span th:text="${orden.estado}">
+                                                PENDIENTE
+                                            </span>
+
+                                        </span>
+
+                                    </dd>
+
+                                </div>
+
+                            </dl>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- EJECUTAR SUSPENSIÓN -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-6">
+
+                    <form class="cut-card suspension-card"
+                          th:if="${orden.estado == 'PENDIENTE'}"
+                          th:action="@{/morosidad/orden/{id}/suspender(id=${orden.idOrdenCorte})}"
+                          method="post">
+
+                        <div class="cut-card-body">
+
+
+                            <div class="suspension-header">
+
+                                <div class="suspension-header-icon">
+                                    <i class="bi bi-slash-circle"></i>
+                                </div>
+
+                                <h3 class="suspension-title">
+                                    Ejecutar suspensión
+                                </h3>
+
+                            </div>
+
+
+                            <!-- ADVERTENCIA -->
+
+                            <div class="warning-callout">
+
+                                <div class="warning-callout-icon">
+                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                </div>
+
+                                <span>
+                                    Esta acción suspenderá el servicio de agua.
+                                </span>
+
+                            </div>
+
+
+                            <!-- MOTIVO -->
+
+                            <div class="cut-field">
+
+                                <label class="cut-label">
+                                    Motivo
+                                </label>
+
+                                <div class="cut-input-wrapper">
+
+                                    <span class="cut-input-icon">
+                                        <i class="bi bi-card-text"></i>
+                                    </span>
+
+                                    <input class="form-control cut-control"
+                                           name="motivo"
+                                           value="CORTE POR MOROSIDAD">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- OBSERVACIONES -->
+
+                            <div class="cut-field">
+
+                                <label class="cut-label">
+                                    Observaciones
+                                </label>
+
+                                <div class="cut-textarea-wrapper">
+
+                                    <i class="bi bi-chat-left-text cut-textarea-icon"></i>
+
+                                    <textarea class="cut-textarea"
+                                              name="observaciones"></textarea>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ACCIÓN -->
+
+                            <div class="suspension-actions">
+
+                                <button class="btn-execute-cut"
+                                        type="submit"
+                                        data-confirm="¿Confirmar suspensión del servicio?">
+
+                                    <i class="bi bi-slash-circle"></i>
+
+                                    <span>
+                                        Ejecutar corte
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Nuevo proveedor')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+<main class="app-main">
+    <div th:replace="~{fragments/layout :: topbar('Nuevo proveedor')}"></div>
+    <section class="content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="page-actions">
+            <div><h2>Registrar proveedor</h2>
+                <p>Datos comerciales y de contacto.</p></div>
+        </div>
+        <form class="surface form-surface" th:object="${proveedor}" th:action="@{/proveedores/guardar}" method="post">
+            <div class="row g-3">
+                <div class="col-md-8"><label>Razón social *</label><input class="form-control" th:field="*{razonSocial}"
+                                                                          required></div>
+                <div class="col-md-4"><label>RUC</label><input class="form-control" th:field="*{ruc}"></div>
+                <div class="col-md-4"><label>Teléfono</label><input class="form-control" th:field="*{telefono}"></div>
+                <div class="col-md-4"><label>Correo</label><input class="form-control" type="email"
+                                                                  th:field="*{correo}"></div>
+                <div class="col-md-4"><label>Estado</label><select class="form-select" th:field="*{estado}">
+                    <option>ACTIVO</option>
+                    <option>INACTIVO</option>
+                </select></div>
+                <div class="col-12"><label>Dirección</label><textarea class="form-control"
+                                                                      th:field="*{direccion}"></textarea></div>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary">Guardar proveedor</button>
+            </div>
+        </form>
+    </section>
+</main>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

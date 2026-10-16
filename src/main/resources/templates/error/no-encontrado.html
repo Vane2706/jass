@@ -1,0 +1,782 @@
+    <!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Registro no encontrado')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Registro no encontrado')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --notfound-primary: #4f7cff;
+                --notfound-primary-dark: #416ce5;
+                --notfound-primary-soft: #eef4ff;
+
+                --notfound-cyan: #39b8c9;
+                --notfound-cyan-dark: #2fa4b4;
+                --notfound-cyan-soft: #ecfbfd;
+
+                --notfound-dark: #172033;
+                --notfound-text: #536176;
+                --notfound-muted: #8491a5;
+
+                --notfound-border: #e8edf5;
+                --notfound-bg: #f7f9fc;
+
+                --notfound-shadow:
+                    0 18px 50px rgba(55, 73, 107, .09);
+
+                --notfound-shadow-hover:
+                    0 24px 60px rgba(55, 73, 107, .12);
+            }
+
+
+            /* =====================================================
+               BASE
+            ===================================================== */
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 8% 5%,
+                        rgba(79, 124, 255, .07),
+                        transparent 27%
+                    ),
+                    radial-gradient(
+                        circle at 93% 8%,
+                        rgba(57, 184, 201, .06),
+                        transparent 24%
+                    ),
+                    var(--notfound-bg) !important;
+            }
+
+            .notfound-page {
+                min-height: calc(100vh - 180px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1.5rem 0 3rem;
+                animation: notfoundAppear .42s ease both;
+            }
+
+            @keyframes notfoundAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(9px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+
+            /* =====================================================
+               TARJETA
+            ===================================================== */
+
+            .notfound-card {
+                position: relative;
+                overflow: hidden;
+                width: 100%;
+                max-width: 680px;
+                padding: 2.6rem 2.4rem 2.2rem;
+                text-align: center;
+
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(251, 253, 255, .98)
+                    );
+
+                border: 1px solid var(--notfound-border);
+                border-radius: 24px;
+
+                box-shadow: var(--notfound-shadow);
+
+                transition:
+                    transform .25s ease,
+                    border-color .25s ease,
+                    box-shadow .25s ease;
+            }
+
+            .notfound-card:hover {
+                transform: translateY(-2px);
+
+                border-color:
+                    rgba(57, 184, 201, .16);
+
+                box-shadow:
+                    var(--notfound-shadow-hover);
+            }
+
+
+            /* =====================================================
+               DECORACIÓN
+            ===================================================== */
+
+            .notfound-decoration {
+                position: absolute;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+
+            .notfound-decoration-one {
+                width: 195px;
+                height: 195px;
+
+                top: -120px;
+                right: -70px;
+
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(57, 184, 201, .09),
+                        rgba(57, 184, 201, .018) 60%,
+                        transparent 72%
+                    );
+            }
+
+            .notfound-decoration-two {
+                width: 160px;
+                height: 160px;
+
+                bottom: -100px;
+                left: -65px;
+
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(79, 124, 255, .075),
+                        rgba(79, 124, 255, .015) 60%,
+                        transparent 72%
+                    );
+            }
+
+            .notfound-decoration-three {
+                width: 90px;
+                height: 90px;
+
+                top: 30px;
+                left: -52px;
+
+                border:
+                    1px solid rgba(57, 184, 201, .07);
+            }
+
+            .notfound-decoration-four {
+                width: 56px;
+                height: 56px;
+
+                right: 45px;
+                bottom: 26px;
+
+                border:
+                    1px solid rgba(79, 124, 255, .06);
+            }
+
+
+            /* =====================================================
+               CONTENIDO
+            ===================================================== */
+
+            .notfound-content {
+                position: relative;
+                z-index: 2;
+            }
+
+
+            /* =====================================================
+               ICONO
+            ===================================================== */
+
+            .notfound-icon-wrapper {
+                position: relative;
+
+                width: 84px;
+                height: 84px;
+
+                margin:
+                    0 auto 1.3rem;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .notfound-icon-halo {
+                position: absolute;
+                inset: 0;
+
+                border-radius: 24px;
+
+                background:
+                    var(--notfound-cyan-soft);
+
+                border:
+                    1px solid rgba(57, 184, 201, .11);
+
+                transform:
+                    rotate(7deg);
+
+                transition:
+                    transform .28s ease,
+                    background-color .28s ease;
+            }
+
+            .notfound-card:hover
+            .notfound-icon-halo {
+                transform:
+                    rotate(12deg)
+                    scale(1.03);
+
+                background:
+                    #e8fafc;
+            }
+
+            .notfound-icon {
+                position: relative;
+                z-index: 2;
+
+                width: 65px;
+                height: 65px;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                color:
+                    var(--notfound-cyan);
+
+                background:
+                    linear-gradient(
+                        145deg,
+                        #fbfeff,
+                        var(--notfound-cyan-soft)
+                    );
+
+                border:
+                    1px solid rgba(57, 184, 201, .15);
+
+                border-radius: 19px;
+
+                font-size: 1.45rem;
+
+                box-shadow:
+                    0 8px 22px rgba(57, 184, 201, .10);
+
+                transition:
+                    transform .25s ease,
+                    box-shadow .25s ease;
+            }
+
+            .notfound-card:hover
+            .notfound-icon {
+                transform:
+                    translateY(-2px);
+
+                box-shadow:
+                    0 11px 27px rgba(57, 184, 201, .14);
+            }
+
+
+            /* =====================================================
+               EYEBROW
+            ===================================================== */
+
+            .notfound-eyebrow {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+
+                padding:
+                    .28rem .62rem;
+
+                margin-bottom:
+                    .8rem;
+
+                color:
+                    #60718d;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        #f8faff,
+                        var(--notfound-primary-soft)
+                    );
+
+                border:
+                    1px solid rgba(79, 124, 255, .10);
+
+                border-radius:
+                    999px;
+
+                font-size:
+                    .56rem;
+
+                font-weight:
+                    760;
+
+                letter-spacing:
+                    .1em;
+            }
+
+
+            /* =====================================================
+               TEXTO
+            ===================================================== */
+
+            .notfound-title {
+                max-width:
+                    530px;
+
+                margin:
+                    0 auto .65rem;
+
+                color:
+                    var(--notfound-dark);
+
+                font-size:
+                    1.35rem;
+
+                font-weight:
+                    780;
+
+                line-height:
+                    1.25;
+
+                letter-spacing:
+                    -.025em;
+            }
+
+            .notfound-message {
+                max-width:
+                    510px;
+
+                margin:
+                    0 auto;
+
+                color:
+                    var(--notfound-muted);
+
+                font-size:
+                    .72rem;
+
+                font-weight:
+                    500;
+
+                line-height:
+                    1.65;
+            }
+
+
+            /* =====================================================
+               SEPARADOR
+            ===================================================== */
+
+            .notfound-divider {
+                width:
+                    46px;
+
+                height:
+                    3px;
+
+                margin:
+                    1.35rem auto;
+
+                background:
+                    linear-gradient(
+                        90deg,
+                        var(--notfound-primary),
+                        var(--notfound-cyan)
+                    );
+
+                border-radius:
+                    999px;
+
+                opacity:
+                    .58;
+            }
+
+
+            /* =====================================================
+               ACCIONES
+            ===================================================== */
+
+            .notfound-actions {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                gap:
+                    .65rem;
+            }
+
+            .btn-notfound-back,
+            .btn-notfound-home {
+                min-height:
+                    40px;
+
+                padding:
+                    .56rem 1.15rem;
+
+                display:
+                    inline-flex;
+
+                align-items:
+                    center;
+
+                justify-content:
+                    center;
+
+                gap:
+                    .42rem;
+
+                border-radius:
+                    11px;
+
+                font-size:
+                    .7rem;
+
+                font-weight:
+                    680;
+
+                text-decoration:
+                    none;
+
+                cursor:
+                    pointer;
+
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+
+            /* VOLVER */
+
+            .btn-notfound-back {
+                color:
+                    #68768b;
+
+                background:
+                    #fff;
+
+                border:
+                    1px solid #e0e6ee;
+
+                box-shadow:
+                    0 4px 12px rgba(55, 73, 107, .04);
+            }
+
+            .btn-notfound-back:hover {
+                color:
+                    #405069;
+
+                background:
+                    #f8fafc;
+
+                border-color:
+                    #d4dde8;
+
+                transform:
+                    translateY(-1px);
+
+                box-shadow:
+                    0 7px 16px rgba(55, 73, 107, .07);
+            }
+
+            .btn-notfound-back i {
+                transition:
+                    transform .18s ease;
+            }
+
+            .btn-notfound-back:hover i {
+                transform:
+                    translateX(-2px);
+            }
+
+
+            /* INICIO */
+
+            .btn-notfound-home {
+                color:
+                    #fff;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--notfound-primary),
+                        #5e89f7
+                    );
+
+                border:
+                    1px solid var(--notfound-primary);
+
+                box-shadow:
+                    0 7px 18px rgba(79, 124, 255, .18);
+            }
+
+            .btn-notfound-home:hover {
+                color:
+                    #fff;
+
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--notfound-primary-dark),
+                        var(--notfound-primary)
+                    );
+
+                transform:
+                    translateY(-1px);
+
+                box-shadow:
+                    0 10px 23px rgba(79, 124, 255, .24);
+            }
+
+            .btn-notfound-home i {
+                transition:
+                    transform .2s ease;
+            }
+
+            .btn-notfound-home:hover i {
+                transform:
+                    translateY(-1px);
+            }
+
+            .btn-notfound-back:active,
+            .btn-notfound-home:active {
+                transform:
+                    translateY(0);
+            }
+
+
+            /* =====================================================
+               RESPONSIVE
+            ===================================================== */
+
+            @media (max-width: 767.98px) {
+
+                .notfound-page {
+                    min-height:
+                        calc(100vh - 160px);
+
+                    padding:
+                        1rem 0 2rem;
+                }
+
+                .notfound-card {
+                    max-width:
+                        600px;
+
+                    padding:
+                        2.2rem 1.5rem 1.8rem;
+
+                    border-radius:
+                        20px;
+                }
+
+                .notfound-title {
+                    font-size:
+                        1.2rem;
+                }
+
+                .notfound-icon-wrapper {
+                    width:
+                        76px;
+
+                    height:
+                        76px;
+                }
+
+                .notfound-icon {
+                    width:
+                        59px;
+
+                    height:
+                        59px;
+
+                    font-size:
+                        1.3rem;
+                }
+            }
+
+
+            @media (max-width: 575.98px) {
+
+                .notfound-card {
+                    padding:
+                        2rem 1.1rem 1.3rem;
+
+                    border-radius:
+                        18px;
+                }
+
+                .notfound-title {
+                    font-size:
+                        1.08rem;
+                }
+
+                .notfound-message {
+                    font-size:
+                        .68rem;
+                }
+
+                .notfound-actions {
+                    flex-direction:
+                        column-reverse;
+
+                    width:
+                        100%;
+                }
+
+                .btn-notfound-back,
+                .btn-notfound-home {
+                    width:
+                        100%;
+                }
+            }
+
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .notfound-page,
+                .notfound-card,
+                .notfound-icon-halo,
+                .notfound-icon,
+                .btn-notfound-back,
+                .btn-notfound-home,
+                .btn-notfound-back i,
+                .btn-notfound-home i {
+                    animation:
+                        none !important;
+
+                    transition:
+                        none !important;
+                }
+            }
+        </style>
+
+
+        <!-- ===================================================== -->
+        <!-- REGISTRO NO ENCONTRADO -->
+        <!-- ===================================================== -->
+
+        <div class="notfound-page">
+
+            <div class="notfound-card">
+
+
+                <!-- DECORACIÓN -->
+
+                <div class="notfound-decoration notfound-decoration-one"></div>
+                <div class="notfound-decoration notfound-decoration-two"></div>
+                <div class="notfound-decoration notfound-decoration-three"></div>
+                <div class="notfound-decoration notfound-decoration-four"></div>
+
+
+                <!-- CONTENIDO -->
+
+                <div class="notfound-content">
+
+
+                    <!-- ICONO -->
+
+                    <div class="notfound-icon-wrapper">
+
+                        <div class="notfound-icon-halo"></div>
+
+                        <div class="notfound-icon">
+                            <i class="bi bi-search"></i>
+                        </div>
+
+                    </div>
+
+
+                    <!-- IDENTIFICADOR -->
+
+                    <span class="notfound-eyebrow">
+                        JASS MISHQUIYACU
+                    </span>
+
+
+                    <!-- TÍTULO -->
+
+                    <h2 class="notfound-title"
+                        th:text="${titulo}">
+                        Registro no encontrado
+                    </h2>
+
+
+                    <!-- MENSAJE -->
+
+                    <p class="notfound-message"
+                       th:text="${mensaje}">
+                        No encontramos el registro solicitado.
+                    </p>
+
+
+                    <!-- SEPARADOR -->
+
+                    <div class="notfound-divider"></div>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="notfound-actions">
+
+                        <button type="button"
+                                class="btn-notfound-back"
+                                onclick="history.back()">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            <span>Volver</span>
+
+                        </button>
+
+
+                        <a class="btn-notfound-home"
+                           th:href="@{/}">
+
+                            <i class="bi bi-house-door"></i>
+
+                            <span>Ir al inicio</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</body>
+</html>

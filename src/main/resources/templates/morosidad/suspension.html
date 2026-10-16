@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Suspensión')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Suspensión')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --susp-primary: #4f7cff;
+                --susp-primary-dark: #416ce5;
+                --susp-primary-soft: #eef4ff;
+
+                --susp-cyan: #39b8c9;
+                --susp-cyan-dark: #2fa4b4;
+                --susp-cyan-soft: #ecfbfd;
+
+                --susp-green: #3aaa83;
+                --susp-green-soft: #edf9f5;
+
+                --susp-amber: #d8a64d;
+                --susp-amber-soft: #fff8e9;
+
+                --susp-red: #d96c75;
+                --susp-red-soft: #fff0f2;
+
+                --susp-dark: #172033;
+                --susp-text: #536176;
+                --susp-muted: #8491a5;
+
+                --susp-border: #e8edf5;
+                --susp-bg: #f7f9fc;
+
+                --susp-shadow:
+                    0 10px 35px rgba(55, 73, 107, .07);
+
+                --susp-shadow-hover:
+                    0 17px 44px rgba(55, 73, 107, .10);
+            }
+
+
+            /* =====================================================
+               BASE
+            ===================================================== */
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 7% 4%,
+                        rgba(79, 124, 255, .07),
+                        transparent 26%
+                    ),
+                    radial-gradient(
+                        circle at 94% 8%,
+                        rgba(57, 184, 201, .06),
+                        transparent 25%
+                    ),
+                    var(--susp-bg) !important;
+            }
+
+            .suspension-page {
+                max-width: 1180px;
+                margin: 0 auto;
+                animation: pageAppear .42s ease both;
+            }
+
+            @keyframes pageAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+
+            /* =====================================================
+               ENCABEZADO
+            ===================================================== */
+
+            .suspension-header {
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 1.2rem 1.35rem;
+                margin-bottom: 1rem;
+                background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(247, 250, 255, .98)
+                    );
+                border: 1px solid var(--susp-border);
+                border-radius: 18px;
+                box-shadow:
+                    0 7px 25px rgba(55, 73, 107, .055);
+            }
+
+            .suspension-header::before {
+                content: "";
+                position: absolute;
+                width: 175px;
+                height: 175px;
+                top: -115px;
+                right: 115px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .045);
+                pointer-events: none;
+            }
+
+            .suspension-header::after {
+                content: "";
+                position: absolute;
+                width: 110px;
+                height: 110px;
+                right: -50px;
+                bottom: -72px;
+                border-radius: 50%;
+                background: rgba(57, 184, 201, .06);
+                pointer-events: none;
+            }
+
+            .header-main {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: .8rem;
+                min-width: 0;
+            }
+
+            .header-icon {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--susp-red);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--susp-red-soft),
+                        #fff9fa
+                    );
+                border: 1px solid rgba(217, 108, 117, .11);
+                border-radius: 13px;
+                font-size: .95rem;
+                box-shadow:
+                    0 5px 14px rgba(217, 108, 117, .055);
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .suspension-header:hover .header-icon {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 17px rgba(217, 108, 117, .08);
+            }
+
+            .header-title {
+                margin: 0 0 .18rem;
+                color: var(--susp-dark);
+                font-size: 1.15rem;
+                font-weight: 780;
+                letter-spacing: -.025em;
+            }
+
+            .service-code {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                margin: 0;
+                padding: .28rem .56rem;
+                color: #536783;
+                background: var(--susp-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 7px;
+                font-family:
+                    ui-monospace,
+                    SFMono-Regular,
+                    Menlo,
+                    Monaco,
+                    Consolas,
+                    monospace;
+                font-size: .61rem;
+                font-weight: 680;
+            }
+
+            .service-code i {
+                color: var(--susp-primary);
+            }
+
+
+            /* =====================================================
+               TARJETAS
+            ===================================================== */
+
+            .suspension-card {
+                position: relative;
+                overflow: hidden;
+                height: 100%;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(251, 253, 255, .98)
+                    );
+                border: 1px solid var(--susp-border);
+                border-radius: 20px;
+                box-shadow: var(--susp-shadow);
+                transition:
+                    transform .22s ease,
+                    border-color .22s ease,
+                    box-shadow .22s ease;
+            }
+
+            .suspension-card:hover {
+                transform: translateY(-2px);
+                border-color: rgba(79, 124, 255, .12);
+                box-shadow: var(--susp-shadow-hover);
+            }
+
+            .card-inner {
+                position: relative;
+                z-index: 2;
+                padding: 1.35rem;
+            }
+
+
+            /* =====================================================
+               HEADER DE TARJETAS
+            ===================================================== */
+
+            .section-header {
+                display: flex;
+                align-items: center;
+                gap: .75rem;
+                padding-bottom: .9rem;
+                margin-bottom: .35rem;
+                border-bottom: 1px solid var(--susp-border);
+            }
+
+            .section-icon {
+                width: 41px;
+                height: 41px;
+                min-width: 41px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--susp-primary);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--susp-primary-soft),
+                        #f9fbff
+                    );
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 12px;
+                font-size: .9rem;
+                box-shadow:
+                    0 5px 14px rgba(79, 124, 255, .05);
+            }
+
+            .section-title {
+                margin: 0;
+                color: var(--susp-dark);
+                font-size: .87rem;
+                font-weight: 750;
+            }
+
+
+            /* =====================================================
+               DETALLE
+            ===================================================== */
+
+            .detail-list {
+                margin: 0;
+            }
+
+            .detail-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                min-height: 58px;
+                padding: .78rem .15rem;
+                border-bottom: 1px solid #f0f3f7;
+                transition:
+                    padding .18s ease,
+                    background-color .18s ease;
+            }
+
+            .detail-row:last-child {
+                border-bottom: 0;
+            }
+
+            .detail-row:hover {
+                padding-left: .45rem;
+                padding-right: .45rem;
+                background: rgba(247, 249, 252, .68);
+                border-radius: 9px;
+            }
+
+            .detail-label {
+                margin: 0;
+                color: var(--susp-muted);
+                font-size: .65rem;
+                font-weight: 620;
+            }
+
+            .detail-value {
+                max-width: 65%;
+                margin: 0;
+                color: #3f4d62;
+                font-size: .72rem;
+                font-weight: 650;
+                line-height: 1.45;
+                text-align: right;
+                overflow-wrap: anywhere;
+            }
+
+            .date-value {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                color: #536783;
+            }
+
+            .date-value i {
+                color: var(--susp-primary);
+                font-size: .7rem;
+            }
+
+
+            /* =====================================================
+               ESTADO
+            ===================================================== */
+
+            .status-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: .32rem;
+                padding: .3rem .58rem;
+                border-radius: 999px;
+                font-size: .59rem;
+                font-weight: 720;
+                letter-spacing: .02em;
+            }
+
+            .status-pill::before {
+                content: "";
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: currentColor;
+            }
+
+            .status-active {
+                color: #bd5962;
+                background: var(--susp-red-soft);
+                border: 1px solid rgba(217, 108, 117, .15);
+            }
+
+            .status-finished {
+                color: #32846a;
+                background: var(--susp-green-soft);
+                border: 1px solid rgba(58, 170, 131, .14);
+            }
+
+            .status-other {
+                color: #5d7090;
+                background: var(--susp-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .12);
+            }
+
+
+            /* =====================================================
+               RECONEXIÓN
+            ===================================================== */
+
+            .reconnection-card {
+                border-color: rgba(57, 184, 201, .11);
+            }
+
+            .reconnection-card:hover {
+                border-color: rgba(57, 184, 201, .18);
+            }
+
+            .reconnection-header {
+                display: flex;
+                align-items: center;
+                gap: .75rem;
+                padding-bottom: .9rem;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid var(--susp-border);
+            }
+
+            .reconnection-icon {
+                width: 41px;
+                height: 41px;
+                min-width: 41px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--susp-cyan);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--susp-cyan-soft),
+                        #f8feff
+                    );
+                border: 1px solid rgba(57, 184, 201, .13);
+                border-radius: 12px;
+                font-size: .9rem;
+                box-shadow:
+                    0 5px 14px rgba(57, 184, 201, .055);
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .reconnection-card:hover
+            .reconnection-icon {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 17px rgba(57, 184, 201, .09);
+            }
+
+            .reconnection-title {
+                margin: 0;
+                color: var(--susp-dark);
+                font-size: .87rem;
+                font-weight: 750;
+            }
+
+
+            /* =====================================================
+               FORMULARIO
+            ===================================================== */
+
+            .form-field {
+                margin-top: .9rem;
+            }
+
+            .form-field:first-of-type {
+                margin-top: 0;
+            }
+
+            .field-label {
+                display: flex;
+                align-items: center;
+                margin-bottom: .42rem;
+                color: #4a586d;
+                font-size: .68rem;
+                font-weight: 680;
+            }
+
+            .input-wrapper {
+                position: relative;
+                display: flex;
+                align-items: stretch;
+                width: 100%;
+                border-radius: 11px;
+                transition:
+                    transform .18s ease,
+                    box-shadow .2s ease;
+            }
+
+            .input-wrapper:focus-within {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 18px rgba(57, 184, 201, .08);
+            }
+
+            .input-icon {
+                width: 42px;
+                min-width: 42px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #8995a7;
+                background: #f8fafc;
+                border: 1px solid #e3e9f1;
+                border-right: 0;
+                border-radius: 11px 0 0 11px;
+                font-size: .78rem;
+                transition:
+                    color .2s ease,
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .input-wrapper:focus-within
+            .input-icon {
+                color: var(--susp-cyan);
+                background: var(--susp-cyan-soft);
+                border-color: rgba(57, 184, 201, .42);
+            }
+
+            .form-control-modern {
+                min-height: 42px;
+                padding: .6rem .78rem;
+                color: #39475c;
+                background: #fbfcfe;
+                border: 1px solid #e3e9f1;
+                border-left: 0;
+                border-radius: 0 11px 11px 0;
+                outline: none;
+                box-shadow: none !important;
+                font-size: .73rem;
+                font-weight: 540;
+                transition:
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .form-control-modern:hover {
+                background: #fff;
+                border-color: #d8e0ea;
+            }
+
+            .form-control-modern:focus {
+                background: #fff;
+                border-color: rgba(57, 184, 201, .5);
+            }
+
+
+            /* =====================================================
+               TEXTAREA
+            ===================================================== */
+
+            .textarea-wrapper {
+                position: relative;
+                transition:
+                    transform .18s ease,
+                    box-shadow .2s ease;
+            }
+
+            .textarea-wrapper:focus-within {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 18px rgba(57, 184, 201, .08);
+            }
+
+            .textarea-icon {
+                position: absolute;
+                z-index: 2;
+                top: .73rem;
+                left: .8rem;
+                color: #8e9bad;
+                font-size: .8rem;
+                pointer-events: none;
+                transition: color .2s ease;
+            }
+
+            .textarea-wrapper:focus-within
+            .textarea-icon {
+                color: var(--susp-cyan);
+            }
+
+            .textarea-modern {
+                width: 100%;
+                min-height: 105px;
+                padding: .72rem .8rem .72rem 2.45rem;
+                color: #39475c;
+                background: #fbfcfe;
+                border: 1px solid #e3e9f1;
+                border-radius: 11px;
+                outline: none;
+                box-shadow: none;
+                resize: vertical;
+                font-size: .73rem;
+                line-height: 1.55;
+                transition:
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .textarea-modern:hover {
+                background: #fff;
+                border-color: #d8e0ea;
+            }
+
+            .textarea-modern:focus {
+                background: #fff;
+                border-color: rgba(57, 184, 201, .5);
+            }
+
+
+            /* =====================================================
+               ACCIONES
+            ===================================================== */
+
+            .reconnection-actions {
+                display: flex;
+                justify-content: flex-end;
+                padding-top: 1.1rem;
+                margin-top: 1.1rem;
+                border-top: 1px solid var(--susp-border);
+            }
+
+            .btn-reconnection {
+                min-height: 39px;
+                padding: .55rem 1.15rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .45rem;
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--susp-primary),
+                        #5e8af7
+                    );
+                border: 1px solid var(--susp-primary);
+                border-radius: 11px;
+                font-size: .7rem;
+                font-weight: 680;
+                box-shadow:
+                    0 7px 17px rgba(79, 124, 255, .18);
+                transition:
+                    transform .18s ease,
+                    box-shadow .18s ease,
+                    background .18s ease;
+            }
+
+            .btn-reconnection:hover {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--susp-primary-dark),
+                        var(--susp-primary)
+                    );
+                transform: translateY(-1px);
+                box-shadow:
+                    0 9px 21px rgba(79, 124, 255, .24);
+            }
+
+            .btn-reconnection:active {
+                transform: translateY(0);
+            }
+
+
+            /* =====================================================
+               RESPONSIVE
+            ===================================================== */
+
+            @media (max-width: 767.98px) {
+
+                .suspension-header {
+                    padding: 1.1rem;
+                    border-radius: 17px;
+                }
+
+                .suspension-card {
+                    border-radius: 17px;
+                }
+
+                .card-inner {
+                    padding: 1.15rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+
+                .header-title {
+                    font-size: 1rem;
+                }
+
+                .detail-row {
+                    align-items: flex-start;
+                    flex-direction: column;
+                    gap: .3rem;
+                }
+
+                .detail-value {
+                    max-width: 100%;
+                    text-align: left;
+                }
+
+                .reconnection-actions,
+                .btn-reconnection {
+                    width: 100%;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .suspension-page,
+                .suspension-card,
+                .header-icon,
+                .reconnection-icon,
+                .input-wrapper,
+                .textarea-wrapper,
+                .btn-reconnection {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+        </style>
+
+
+        <div class="suspension-page">
+
+
+            <!-- ================================================= -->
+            <!-- ENCABEZADO -->
+            <!-- ================================================= -->
+
+            <div class="suspension-header">
+
+                <div class="header-main">
+
+                    <div class="header-icon">
+                        <i class="bi bi-slash-circle"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="header-title"
+                            th:text="${'Suspensión'}">
+                        </h2>
+
+                        <p class="service-code">
+
+                            <i class="bi bi-droplet"></i>
+
+                            <span th:text="${suspension.ordenCorte.servicio.codigoServicio}">
+                                SRV-000001
+                            </span>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- CONTENIDO -->
+            <!-- ================================================= -->
+
+            <div class="row g-3">
+
+
+                <!-- ============================================= -->
+                <!-- DETALLE DE SUSPENSIÓN -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-6">
+
+                    <div class="suspension-card">
+
+                        <div class="card-inner">
+
+
+                            <div class="section-header">
+
+                                <div class="section-icon">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+
+                                <h3 class="section-title">
+                                    Detalle de la suspensión
+                                </h3>
+
+                            </div>
+
+
+                            <dl class="detail-list">
+
+
+                                <!-- FECHA -->
+
+                                <div class="detail-row">
+
+                                    <dt class="detail-label">
+                                        Fecha
+                                    </dt>
+
+                                    <dd class="detail-value date-value">
+
+                                        <i class="bi bi-calendar3"></i>
+
+                                        <span th:text="${suspension.fechaSuspension}">
+                                            —
+                                        </span>
+
+                                    </dd>
+
+                                </div>
+
+
+                                <!-- MOTIVO -->
+
+                                <div class="detail-row">
+
+                                    <dt class="detail-label">
+                                        Motivo
+                                    </dt>
+
+                                    <dd class="detail-value"
+                                        th:text="${suspension.motivo}">
+                                        —
+                                    </dd>
+
+                                </div>
+
+
+                                <!-- ESTADO -->
+
+                                <div class="detail-row">
+
+                                    <dt class="detail-label">
+                                        Estado
+                                    </dt>
+
+                                    <dd class="detail-value">
+
+                                        <span class="status-pill"
+                                              th:classappend="${suspension.estado == 'ACTIVA'} ? ' status-active' : (${suspension.estado == 'FINALIZADA'} ? ' status-finished' : ' status-other')"
+                                              th:text="${suspension.estado}">
+                                            ACTIVA
+                                        </span>
+
+                                    </dd>
+
+                                </div>
+
+
+                                <!-- OBSERVACIONES -->
+
+                                <div class="detail-row">
+
+                                    <dt class="detail-label">
+                                        Observaciones
+                                    </dt>
+
+                                    <dd class="detail-value"
+                                        th:text="${suspension.observaciones ?: '—'}">
+                                        —
+                                    </dd>
+
+                                </div>
+
+                            </dl>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- SOLICITAR RECONEXIÓN -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-6">
+
+                    <form class="suspension-card reconnection-card"
+                          th:if="${suspension.estado == 'ACTIVA'}"
+                          th:action="@{/morosidad/suspension/{id}/reconexion(id=${suspension.idSuspension})}"
+                          method="post">
+
+                        <div class="card-inner">
+
+
+                            <div class="reconnection-header">
+
+                                <div class="reconnection-icon">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </div>
+
+                                <h3 class="reconnection-title">
+                                    Solicitar reconexión
+                                </h3>
+
+                            </div>
+
+
+                            <!-- FECHA -->
+
+                            <div class="form-field">
+
+                                <label class="field-label"
+                                       for="fechaSolicitud">
+                                    Fecha de solicitud
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </span>
+
+                                    <input class="form-control form-control-modern"
+                                           id="fechaSolicitud"
+                                           type="date"
+                                           name="fecha">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- OBSERVACIONES -->
+
+                            <div class="form-field">
+
+                                <label class="field-label"
+                                       for="observacionesReconexion">
+                                    Observaciones
+                                </label>
+
+                                <div class="textarea-wrapper">
+
+                                    <i class="bi bi-chat-left-text textarea-icon"></i>
+
+                                    <textarea class="textarea-modern"
+                                              id="observacionesReconexion"
+                                              name="observaciones"></textarea>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ACCIÓN -->
+
+                            <div class="reconnection-actions">
+
+                                <button class="btn-reconnection"
+                                        type="submit">
+
+                                    <i class="bi bi-arrow-repeat"></i>
+
+                                    <span>
+                                        Generar solicitud
+                                    </span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</body>
+</html>

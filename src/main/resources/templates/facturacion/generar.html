@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Generar factura')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+<main class="app-main">
+    <div th:replace="~{fragments/layout :: topbar('Generar factura')}"></div>
+    <section class="content">
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+        <div class="page-actions">
+            <div><h2>Generar factura</h2>
+                <p>Selecciona un servicio activo y un periodo abierto.</p></div>
+        </div>
+        <form class="surface form-surface" th:action="@{/facturacion/generar}" method="post">
+            <div class="row g-3">
+                <div class="col-md-6"><label>Servicio *</label><select class="form-select form-select-lg"
+                                                                       name="idServicio" required>
+                    <option value="">Seleccione…</option>
+                    <option th:each="s:${servicios}" th:value="${s.idServicio}"
+                            th:text="${s.codigoServicio + ' · ' + s.inmueble.direccion}"></option>
+                </select></div>
+                <div class="col-md-6"><label>Periodo *</label><select class="form-select form-select-lg"
+                                                                      name="idPeriodo" required>
+                    <option value="">Seleccione…</option>
+                    <option th:each="p:${periodos}" th:value="${p.idPeriodo}"
+                            th:text="${p.mes + '/' + p.anio}"></option>
+                </select></div>
+            </div>
+            <div class="info-callout mt-4">💧 La factura se genera usando la lectura y tarifa aplicable al periodo
+                seleccionado.
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary">Generar factura</button>
+            </div>
+        </form>
+    </section>
+</main>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

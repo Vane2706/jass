@@ -1,0 +1,2083 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Detalle de caja')}"></head>
+
+<body class="bg-body-tertiary">
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Detalle de caja')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --cash-primary: #4f7cff;
+                --cash-primary-dark: #3f68df;
+                --cash-primary-soft: #eef4ff;
+
+                --cash-cyan: #36b7c9;
+                --cash-cyan-soft: #ecfbfd;
+
+                --cash-green: #38a985;
+                --cash-green-soft: #edf9f5;
+
+                --cash-red: #e46f7c;
+                --cash-red-soft: #fff1f3;
+
+                --cash-amber: #dca852;
+                --cash-amber-soft: #fff8e9;
+
+                --cash-slate: #64748b;
+                --cash-dark: #172033;
+                --cash-muted: #8290a5;
+
+                --cash-border: #e8edf5;
+                --cash-surface: rgba(255, 255, 255, .94);
+                --cash-shadow: 0 10px 35px rgba(55, 73, 107, .07);
+                --cash-shadow-hover: 0 16px 40px rgba(55, 73, 107, .11);
+            }
+
+            body {
+                background:
+                    radial-gradient(circle at 8% 5%, rgba(79, 124, 255, .07), transparent 26%),
+                    radial-gradient(circle at 92% 8%, rgba(54, 183, 201, .065), transparent 25%),
+                    #f7f9fc !important;
+            }
+
+            .cash-page {
+                animation: cashFadeUp .45s ease both;
+            }
+
+            @keyframes cashFadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* =========================================================
+               CABECERA
+            ========================================================= */
+
+            .cash-header {
+                position: relative;
+                overflow: hidden;
+                background:
+                    linear-gradient(135deg,
+                        rgba(255,255,255,.98),
+                        rgba(247,250,255,.96));
+                border: 1px solid var(--cash-border);
+                border-radius: 22px;
+                padding: 1.4rem 1.5rem;
+                box-shadow: var(--cash-shadow);
+                margin-bottom: 1.25rem;
+            }
+
+            .cash-header::before {
+                content: "";
+                position: absolute;
+                width: 180px;
+                height: 180px;
+                border-radius: 50%;
+                right: -70px;
+                top: -95px;
+                background: rgba(79, 124, 255, .055);
+                pointer-events: none;
+            }
+
+            .cash-header::after {
+                content: "";
+                position: absolute;
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                right: 75px;
+                bottom: -75px;
+                background: rgba(54, 183, 201, .055);
+                pointer-events: none;
+            }
+
+            .cash-header-content {
+                position: relative;
+                z-index: 1;
+            }
+
+            .cash-title-area {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .cash-main-icon {
+                width: 54px;
+                height: 54px;
+                min-width: 54px;
+                border-radius: 17px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--cash-primary);
+                font-size: 1.4rem;
+                background:
+                    linear-gradient(145deg,
+                        var(--cash-primary-soft),
+                        #f7faff);
+                border: 1px solid rgba(79, 124, 255, .10);
+                box-shadow: 0 7px 20px rgba(79, 124, 255, .10);
+            }
+
+            .cash-title {
+                color: var(--cash-dark);
+                font-size: 1.55rem;
+                font-weight: 750;
+                letter-spacing: -.035em;
+                margin: 0;
+            }
+
+            .cash-date {
+                color: var(--cash-muted);
+                font-size: .82rem;
+                margin-top: .35rem;
+                display: flex;
+                align-items: center;
+                gap: .4rem;
+            }
+
+            .cash-date i {
+                color: var(--cash-primary);
+            }
+
+            .cash-date strong {
+                color: #526078;
+                font-weight: 600;
+            }
+
+            .cash-status {
+                display: inline-flex;
+                align-items: center;
+                gap: .42rem;
+                padding: .42rem .72rem;
+                border-radius: 999px;
+                font-size: .72rem;
+                font-weight: 700;
+                border: 1px solid transparent;
+                white-space: nowrap;
+            }
+
+            .cash-status::before {
+                content: "";
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: currentColor;
+                box-shadow: 0 0 0 3px rgba(255,255,255,.65);
+            }
+
+            .cash-status-open {
+                color: #27876a;
+                background: var(--cash-green-soft);
+                border-color: rgba(56, 169, 133, .12);
+            }
+
+            .cash-status-closed {
+                color: #738095;
+                background: #f2f5f8;
+                border-color: #e7ebf0;
+            }
+
+            /* =========================================================
+               BOTONES PRINCIPALES
+            ========================================================= */
+
+            .cash-actions {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: .6rem;
+                position: relative;
+                z-index: 2;
+            }
+
+            .cash-btn {
+                min-height: 41px;
+                border-radius: 12px;
+                padding: .58rem 1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .48rem;
+                font-size: .82rem;
+                font-weight: 650;
+                text-decoration: none;
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease,
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .cash-btn:hover {
+                transform: translateY(-2px);
+            }
+
+            .cash-btn-back {
+                color: #65738a;
+                background: #fff;
+                border: 1px solid var(--cash-border);
+            }
+
+            .cash-btn-back:hover {
+                color: var(--cash-primary);
+                border-color: rgba(79, 124, 255, .25);
+                box-shadow: 0 8px 20px rgba(55, 73, 107, .08);
+            }
+
+            .cash-btn-primary {
+                color: #fff;
+                border: 0;
+                background:
+                    linear-gradient(135deg,
+                        var(--cash-primary),
+                        #638dff);
+                box-shadow: 0 7px 18px rgba(79, 124, 255, .20);
+            }
+
+            .cash-btn-primary:hover {
+                color: #fff;
+                box-shadow: 0 10px 23px rgba(79, 124, 255, .27);
+            }
+
+            .cash-btn-danger {
+                color: #cf6170;
+                background: var(--cash-red-soft);
+                border: 1px solid rgba(228, 111, 124, .16);
+            }
+
+            .cash-btn-danger:hover {
+                color: #bf5361;
+                background: #ffecef;
+                border-color: rgba(228, 111, 124, .24);
+                box-shadow: 0 8px 20px rgba(228, 111, 124, .10);
+            }
+
+            /* =========================================================
+               RESUMEN
+            ========================================================= */
+
+            .summary-grid {
+                margin-bottom: 1.25rem;
+            }
+
+            .summary-card {
+                position: relative;
+                height: 100%;
+                overflow: hidden;
+                background: var(--cash-surface);
+                border: 1px solid var(--cash-border);
+                border-radius: 18px;
+                box-shadow: 0 7px 24px rgba(55, 73, 107, .055);
+                transition:
+                    transform .22s ease,
+                    box-shadow .22s ease,
+                    border-color .22s ease;
+            }
+
+            .summary-card:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--cash-shadow-hover);
+                border-color: rgba(79, 124, 255, .14);
+            }
+
+            .summary-card::after {
+                content: "";
+                position: absolute;
+                width: 90px;
+                height: 90px;
+                right: -38px;
+                top: -40px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .035);
+                pointer-events: none;
+            }
+
+            .summary-card-body {
+                min-height: 108px;
+                padding: 1.15rem 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            .summary-label {
+                color: var(--cash-muted);
+                font-size: .75rem;
+                font-weight: 600;
+                margin-bottom: .35rem;
+            }
+
+            .summary-value {
+                color: var(--cash-dark);
+                font-size: 1.28rem;
+                font-weight: 750;
+                letter-spacing: -.025em;
+                margin: 0;
+            }
+
+            .summary-icon {
+                width: 45px;
+                height: 45px;
+                min-width: 45px;
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.05rem;
+            }
+
+            .summary-icon-neutral {
+                color: #708097;
+                background: #f2f5f9;
+            }
+
+            .summary-icon-movement {
+                color: var(--cash-cyan);
+                background: var(--cash-cyan-soft);
+            }
+
+            .summary-current {
+                background:
+                    linear-gradient(135deg,
+                        #f7faff,
+                        #eef5ff);
+                border-color: rgba(79, 124, 255, .15);
+            }
+
+            .summary-current .summary-label {
+                color: #6683b9;
+            }
+
+            .summary-current .summary-value {
+                color: var(--cash-primary);
+                font-size: 1.45rem;
+            }
+
+            .summary-current .summary-icon {
+                color: #fff;
+                background:
+                    linear-gradient(135deg,
+                        var(--cash-primary),
+                        #70a1ff);
+                box-shadow: 0 7px 18px rgba(79, 124, 255, .20);
+            }
+
+            /* =========================================================
+               PANELES
+            ========================================================= */
+
+            .cash-panel {
+                height: 100%;
+                overflow: hidden;
+                background: var(--cash-surface);
+                border: 1px solid var(--cash-border);
+                border-radius: 20px;
+                box-shadow: var(--cash-shadow);
+            }
+
+            .cash-panel-header {
+                padding: 1.15rem 1.25rem;
+                background:
+                    linear-gradient(90deg,
+                        rgba(248,250,253,.92),
+                        rgba(255,255,255,.95));
+                border-bottom: 1px solid var(--cash-border);
+            }
+
+            .panel-heading {
+                display: flex;
+                align-items: center;
+                gap: .8rem;
+            }
+
+            .panel-icon {
+                width: 40px;
+                height: 40px;
+                min-width: 40px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: .95rem;
+            }
+
+            .panel-icon-movement {
+                color: var(--cash-primary);
+                background: var(--cash-primary-soft);
+            }
+
+            .panel-icon-close {
+                color: var(--cash-green);
+                background: var(--cash-green-soft);
+            }
+
+            .panel-title {
+                color: var(--cash-dark);
+                font-size: .98rem;
+                font-weight: 700;
+                margin: 0 0 .16rem;
+            }
+
+            .panel-subtitle {
+                color: var(--cash-muted);
+                font-size: .74rem;
+                margin: 0;
+            }
+
+            .panel-count {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                padding: .38rem .65rem;
+                border-radius: 999px;
+                color: #6d7b91;
+                background: #f4f7fa;
+                border: 1px solid #e9edf3;
+                font-size: .7rem;
+                font-weight: 650;
+            }
+
+            /* =========================================================
+               TABLAS
+            ========================================================= */
+
+            .cash-table {
+                margin: 0;
+            }
+
+            .cash-table thead th {
+                padding: .78rem 1rem;
+                color: #8491a5;
+                background: #fbfcfe;
+                border-bottom: 1px solid #edf1f6;
+                font-size: .65rem;
+                font-weight: 750;
+                letter-spacing: .055em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .cash-table tbody td {
+                padding: .85rem 1rem;
+                color: #4d5a70;
+                border-color: #f0f3f7;
+                font-size: .78rem;
+                vertical-align: middle;
+            }
+
+            .cash-table tbody tr {
+                position: relative;
+                transition:
+                    background-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .cash-table tbody tr:not(.empty-row):hover {
+                background: #f8fbff;
+                box-shadow: inset 3px 0 0 var(--cash-primary);
+            }
+
+            .date-cell {
+                display: flex;
+                align-items: center;
+                gap: .65rem;
+                white-space: nowrap;
+            }
+
+            .date-icon {
+                width: 32px;
+                height: 32px;
+                min-width: 32px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #718096;
+                background: #f3f6f9;
+            }
+
+            .date-main {
+                color: #354157;
+                font-weight: 650;
+                display: block;
+            }
+
+            .date-time {
+                color: #98a3b3;
+                font-size: .67rem;
+                display: block;
+                margin-top: .05rem;
+            }
+
+            .movement-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                padding: .36rem .62rem;
+                border-radius: 999px;
+                font-size: .68rem;
+                font-weight: 700;
+                border: 1px solid transparent;
+            }
+
+            .movement-income {
+                color: #27886a;
+                background: var(--cash-green-soft);
+                border-color: rgba(56, 169, 133, .11);
+            }
+
+            .movement-expense {
+                color: #cc6170;
+                background: var(--cash-red-soft);
+                border-color: rgba(228, 111, 124, .11);
+            }
+
+            .concept-main {
+                display: block;
+                color: #344056;
+                font-weight: 650;
+                max-width: 220px;
+            }
+
+            .concept-note {
+                display: block;
+                max-width: 220px;
+                color: #96a1b1;
+                font-size: .68rem;
+                margin-top: .12rem;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .amount {
+                font-weight: 750;
+                font-variant-numeric: tabular-nums;
+                white-space: nowrap;
+            }
+
+            .amount-income {
+                color: #27886a;
+            }
+
+            .amount-expense {
+                color: #d25f6e;
+            }
+
+            .close-difference {
+                display: inline-flex;
+                padding: .34rem .58rem;
+                border-radius: 9px;
+                color: #27886a;
+                background: var(--cash-green-soft);
+                font-weight: 700;
+                font-size: .7rem;
+                white-space: nowrap;
+            }
+
+            /* =========================================================
+               RESUMEN DEL CIERRE
+            ========================================================= */
+
+            .closing-summary {
+                padding: 1rem 1.15rem;
+                border-top: 1px solid var(--cash-border);
+                background: #fcfdff;
+            }
+
+            .closing-stat {
+                padding: .8rem .9rem;
+                border-radius: 13px;
+                border: 1px solid transparent;
+            }
+
+            .closing-stat-income {
+                background: var(--cash-green-soft);
+                border-color: rgba(56, 169, 133, .09);
+            }
+
+            .closing-stat-expense {
+                background: var(--cash-red-soft);
+                border-color: rgba(228, 111, 124, .09);
+            }
+
+            .closing-stat small {
+                display: block;
+                margin-bottom: .2rem;
+                font-size: .67rem;
+                font-weight: 650;
+            }
+
+            .closing-stat strong {
+                font-size: .86rem;
+                font-weight: 750;
+            }
+
+            /* =========================================================
+               ESTADO VACÍO
+            ========================================================= */
+
+            .empty-state {
+                padding: 2.4rem 1rem;
+                text-align: center;
+                color: var(--cash-muted);
+            }
+
+            .empty-icon {
+                width: 48px;
+                height: 48px;
+                margin: 0 auto .75rem;
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #9aa6b7;
+                background: #f3f6f9;
+                font-size: 1.2rem;
+            }
+
+            .empty-state p {
+                margin: 0;
+                font-size: .78rem;
+                font-weight: 550;
+            }
+
+            /* =========================================================
+               PAGINACIÓN
+            ========================================================= */
+
+            .cash-footer {
+                padding: .8rem 1.15rem;
+                border-top: 1px solid var(--cash-border);
+                background: #fcfdff;
+            }
+
+            .page-counter {
+                color: #8b97a9;
+                font-size: .7rem;
+            }
+
+            .page-counter strong {
+                color: #536176;
+                font-weight: 700;
+            }
+
+            .cash-pagination {
+                gap: .25rem;
+            }
+
+            .cash-pagination .page-link {
+                min-width: 31px;
+                height: 31px;
+                padding: 0 .45rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #6d7b90;
+                background: #fff;
+                border: 1px solid #e8edf3 !important;
+                border-radius: 9px !important;
+                font-size: .7rem;
+                font-weight: 650;
+                box-shadow: none !important;
+                transition: all .18s ease;
+            }
+
+            .cash-pagination .page-link:hover {
+                color: var(--cash-primary);
+                background: var(--cash-primary-soft);
+                border-color: rgba(79,124,255,.18) !important;
+                transform: translateY(-1px);
+            }
+
+            .cash-pagination .page-item.active .page-link {
+                color: #fff;
+                background: var(--cash-primary);
+                border-color: var(--cash-primary) !important;
+                box-shadow: 0 5px 12px rgba(79,124,255,.18) !important;
+            }
+
+            .cash-pagination .page-item.disabled .page-link {
+                color: #bdc5d0;
+                background: #f6f8fa;
+            }
+
+            /* =========================================================
+               OFFCANVAS
+            ========================================================= */
+
+            .cash-offcanvas {
+                width: 420px !important;
+                border-left: 0 !important;
+                box-shadow: -18px 0 50px rgba(33, 45, 70, .11) !important;
+            }
+
+            .cash-offcanvas-header {
+                padding: 1.2rem 1.3rem;
+                background:
+                    linear-gradient(135deg,
+                        #f8fbff,
+                        #ffffff);
+                border-bottom: 1px solid var(--cash-border);
+            }
+
+            .offcanvas-title-wrap {
+                display: flex;
+                align-items: center;
+                gap: .8rem;
+            }
+
+            .offcanvas-icon {
+                width: 42px;
+                height: 42px;
+                min-width: 42px;
+                border-radius: 13px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+            }
+
+            .offcanvas-icon-primary {
+                color: #fff;
+                background:
+                    linear-gradient(135deg,
+                        var(--cash-primary),
+                        #6b97ff);
+                box-shadow: 0 7px 16px rgba(79,124,255,.19);
+            }
+
+            .offcanvas-icon-danger {
+                color: #cf6170;
+                background: var(--cash-red-soft);
+            }
+
+            .cash-offcanvas .offcanvas-title {
+                color: var(--cash-dark);
+                font-size: 1rem;
+                font-weight: 750;
+                margin-bottom: .1rem;
+            }
+
+            .offcanvas-subtitle {
+                color: var(--cash-muted);
+                font-size: .7rem;
+            }
+
+            .cash-offcanvas .offcanvas-body {
+                padding: 1.3rem;
+            }
+
+            .responsible-card {
+                padding: .85rem;
+                border-radius: 14px;
+                background: #f7f9fc;
+                border: 1px solid #edf1f5;
+            }
+
+            .responsible-avatar {
+                width: 39px;
+                height: 39px;
+                min-width: 39px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--cash-primary);
+                background: var(--cash-primary-soft);
+            }
+
+            .responsible-name {
+                color: #364258;
+                font-size: .8rem;
+                font-weight: 700;
+            }
+
+            .responsible-subtitle {
+                color: #95a0b0;
+                font-size: .66rem;
+            }
+
+            .cash-form-label {
+                color: #536176;
+                font-size: .73rem;
+                font-weight: 650;
+                margin-bottom: .4rem;
+            }
+
+            .cash-offcanvas .form-control,
+            .cash-offcanvas .form-select,
+            .cash-offcanvas .input-group-text {
+                min-height: 43px;
+                border-color: #e6ebf2;
+                font-size: .78rem;
+            }
+
+            .cash-offcanvas .form-control,
+            .cash-offcanvas .form-select {
+                color: #3d495e;
+                background-color: #fff;
+            }
+
+            .cash-offcanvas .input-group-text {
+                color: #7e8a9d;
+                background: #f8fafc;
+            }
+
+            .cash-offcanvas .form-control:focus,
+            .cash-offcanvas .form-select:focus {
+                border-color: rgba(79, 124, 255, .32);
+                box-shadow: 0 0 0 .18rem rgba(79, 124, 255, .07);
+            }
+
+            .cash-offcanvas textarea.form-control {
+                min-height: 95px;
+                resize: vertical;
+            }
+
+            .offcanvas-submit {
+                min-height: 43px;
+                border-radius: 12px;
+                font-size: .78rem;
+                font-weight: 700;
+            }
+
+            .offcanvas-submit-primary {
+                color: #fff;
+                border: 0;
+                background:
+                    linear-gradient(135deg,
+                        var(--cash-primary),
+                        #638dff);
+                box-shadow: 0 7px 18px rgba(79,124,255,.18);
+            }
+
+            .offcanvas-submit-primary:hover {
+                color: #fff;
+                transform: translateY(-1px);
+                box-shadow: 0 9px 22px rgba(79,124,255,.24);
+            }
+
+            .offcanvas-submit-danger {
+                color: #fff;
+                border: 0;
+                background:
+                    linear-gradient(135deg,
+                        #dd6c79,
+                        #e9858f);
+                box-shadow: 0 7px 18px rgba(228,111,124,.17);
+            }
+
+            .offcanvas-submit-danger:hover:not(:disabled) {
+                color: #fff;
+                transform: translateY(-1px);
+            }
+
+            .offcanvas-submit-danger:disabled {
+                opacity: .48;
+                box-shadow: none;
+            }
+
+            .close-balance {
+                padding: 1rem;
+                margin-bottom: 1.25rem;
+                border-radius: 16px;
+                background:
+                    linear-gradient(135deg,
+                        #f2f7ff,
+                        #f8fbff);
+                border: 1px solid rgba(79,124,255,.11);
+            }
+
+            .close-balance-label {
+                color: #78879d;
+                font-size: .7rem;
+                display: block;
+                margin-bottom: .25rem;
+            }
+
+            .close-balance-value {
+                color: var(--cash-primary);
+                font-size: 1.55rem;
+                font-weight: 780;
+                letter-spacing: -.03em;
+            }
+
+            .close-balance-icon {
+                width: 43px;
+                height: 43px;
+                border-radius: 13px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+                background:
+                    linear-gradient(135deg,
+                        var(--cash-primary),
+                        #70a1ff);
+                box-shadow: 0 7px 16px rgba(79,124,255,.18);
+            }
+
+            #mensajeSaldo {
+                font-size: .68rem;
+            }
+
+            /* =========================================================
+               RESPONSIVE
+            ========================================================= */
+
+            @media (max-width: 1199.98px) {
+                .cash-panel {
+                    height: auto;
+                }
+            }
+
+            @media (max-width: 767.98px) {
+                .cash-header {
+                    padding: 1.15rem;
+                    border-radius: 18px;
+                }
+
+                .cash-title-area {
+                    align-items: flex-start;
+                }
+
+                .cash-main-icon {
+                    width: 47px;
+                    height: 47px;
+                    min-width: 47px;
+                    border-radius: 14px;
+                }
+
+                .cash-title {
+                    font-size: 1.3rem;
+                }
+
+                .cash-actions {
+                    width: 100%;
+                }
+
+                .cash-btn {
+                    flex: 1;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .cash-offcanvas {
+                    width: 100% !important;
+                }
+
+                .cash-actions {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                }
+
+                .cash-btn {
+                    width: 100%;
+                }
+
+                .cash-panel-header {
+                    padding: 1rem;
+                }
+
+                .cash-table thead th,
+                .cash-table tbody td {
+                    padding-left: .8rem;
+                    padding-right: .8rem;
+                }
+            }
+        </style>
+
+        <div class="cash-page">
+
+            <!-- ================================================= -->
+            <!-- ENCABEZADO -->
+            <!-- ================================================= -->
+
+            <div class="cash-header">
+                <div class="cash-header-content d-flex flex-column flex-xl-row justify-content-between align-items-start align-items-xl-center gap-3">
+
+                    <div class="cash-title-area">
+
+                        <div class="cash-main-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+
+                        <div>
+                            <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+
+                                <h2 class="cash-title" th:text="${caja.nombre}">
+                                    Caja
+                                </h2>
+
+                                <span class="cash-status"
+                                      th:classappend="${#strings.equalsIgnoreCase(caja.estado, 'ABIERTA')} ? ' cash-status-open' : ' cash-status-closed'">
+
+                                    <span th:text="${#strings.equalsIgnoreCase(caja.estado, 'ABIERTA') ? 'Abierta' : 'Cerrada'}">
+                                        Abierta
+                                    </span>
+
+                                </span>
+
+                            </div>
+
+                            <div class="cash-date">
+                                <i class="bi bi-calendar3"></i>
+
+                                <span>
+                                    Apertura:
+                                    <strong th:text="${caja.fechaApertura != null ? #temporals.format(caja.fechaApertura, 'dd/MM/yyyy HH:mm') : '—'}">
+                                        —
+                                    </strong>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="cash-actions">
+
+                        <a class="cash-btn cash-btn-back"
+                           th:href="@{/caja}">
+                            <i class="bi bi-arrow-left"></i>
+                            Volver
+                        </a>
+
+                        <th:block th:if="${#strings.equalsIgnoreCase(caja.estado, 'ABIERTA')}">
+
+                            <button class="cash-btn cash-btn-primary"
+                                    type="button"
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasMovimiento">
+                                <i class="bi bi-plus-lg"></i>
+                                Nuevo movimiento
+                            </button>
+
+                            <button class="cash-btn cash-btn-danger"
+                                    type="button"
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#offcanvasCerrarCaja">
+                                <i class="bi bi-lock"></i>
+                                Cerrar caja
+                            </button>
+
+                        </th:block>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- RESUMEN FINANCIERO -->
+            <!-- ================================================= -->
+
+            <div class="row g-3 summary-grid">
+
+                <div class="col-md-4">
+                    <div class="summary-card">
+                        <div class="summary-card-body">
+
+                            <div>
+                                <div class="summary-label">
+                                    Saldo inicial
+                                </div>
+
+                                <h4 class="summary-value"
+                                    th:text="${'S/ ' + #numbers.formatDecimal(caja.saldoInicial != null ? caja.saldoInicial : 0, 1, 2)}">
+                                    S/ 0.00
+                                </h4>
+                            </div>
+
+                            <div class="summary-icon summary-icon-neutral">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <div class="summary-card">
+                        <div class="summary-card-body">
+
+                            <div>
+                                <div class="summary-label">
+                                    Movimientos registrados
+                                </div>
+
+                                <h4 class="summary-value"
+                                    th:text="${totalMovimientos}">
+                                    0
+                                </h4>
+                            </div>
+
+                            <div class="summary-icon summary-icon-movement">
+                                <i class="bi bi-arrow-left-right"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-4">
+                    <div class="summary-card summary-current">
+                        <div class="summary-card-body">
+
+                            <div>
+                                <div class="summary-label">
+                                    Monto actual en caja
+                                </div>
+
+                                <h3 class="summary-value"
+                                    th:text="${'S/ ' + #numbers.formatDecimal(saldoActual, 1, 2)}">
+                                    S/ 0.00
+                                </h3>
+                            </div>
+
+                            <div class="summary-icon">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- MOVIMIENTOS + CIERRE -->
+            <!-- ================================================= -->
+
+            <div class="row g-4 align-items-stretch">
+
+                <!-- MOVIMIENTOS -->
+                <div class="col-xl-7">
+
+                    <div class="cash-panel">
+
+                        <div class="cash-panel-header">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                                <div class="panel-heading">
+
+                                    <div class="panel-icon panel-icon-movement">
+                                        <i class="bi bi-arrow-left-right"></i>
+                                    </div>
+
+                                    <div>
+                                        <h5 class="panel-title">
+                                            Movimientos
+                                        </h5>
+
+                                        <p class="panel-subtitle">
+                                            <span th:text="${totalMovimientos}">0</span>
+                                            movimientos registrados
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <span class="panel-count">
+                                    <i class="bi bi-layers"></i>
+                                    5 por página
+                                </span>
+
+                            </div>
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table cash-table align-middle">
+
+                                <thead>
+                                <tr>
+                                    <th class="ps-4">Fecha</th>
+                                    <th>Tipo</th>
+                                    <th>Concepto</th>
+                                    <th class="text-end pe-4">Monto</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                <tr th:each="mov : ${movimientos}">
+
+                                    <td class="ps-4">
+
+                                        <div class="date-cell">
+
+                                            <div class="date-icon">
+                                                <i class="bi bi-calendar3"></i>
+                                            </div>
+
+                                            <div>
+                                                <span class="date-main"
+                                                      th:text="${mov.fechaMovimiento != null ? #temporals.format(mov.fechaMovimiento, 'dd/MM/yyyy') : '—'}">
+                                                    —
+                                                </span>
+
+                                                <small class="date-time"
+                                                       th:if="${mov.fechaMovimiento != null}"
+                                                       th:text="${#temporals.format(mov.fechaMovimiento, 'HH:mm')}">
+                                                </small>
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="movement-badge"
+                                              th:classappend="${#strings.equalsIgnoreCase(mov.tipoMovimiento, 'INGRESO')} ? ' movement-income' : ' movement-expense'">
+
+                                            <i class="bi"
+                                               th:classappend="${#strings.equalsIgnoreCase(mov.tipoMovimiento, 'INGRESO')} ? ' bi-arrow-down-left' : ' bi-arrow-up-right'">
+                                            </i>
+
+                                            <span th:text="${#strings.equalsIgnoreCase(mov.tipoMovimiento, 'INGRESO') ? 'Ingreso' : 'Egreso'}">
+                                            </span>
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="concept-main"
+                                              th:text="${mov.concepto}">
+                                            Concepto
+                                        </span>
+
+                                        <small class="concept-note"
+                                               th:if="${mov.observaciones != null and !#strings.isEmpty(mov.observaciones)}"
+                                               th:text="${mov.observaciones}">
+                                        </small>
+
+                                    </td>
+
+
+                                    <td class="text-end pe-4">
+
+                                        <strong class="amount"
+                                                th:classappend="${#strings.equalsIgnoreCase(mov.tipoMovimiento, 'INGRESO')} ? ' amount-income' : ' amount-expense'"
+                                                th:text="${(#strings.equalsIgnoreCase(mov.tipoMovimiento, 'INGRESO') ? '+ S/ ' : '- S/ ') + #numbers.formatDecimal(mov.monto, 1, 2)}">
+                                            S/ 0.00
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr th:if="${#lists.isEmpty(movimientos)}"
+                                    class="empty-row">
+
+                                    <td colspan="4">
+
+                                        <div class="empty-state">
+
+                                            <div class="empty-icon">
+                                                <i class="bi bi-receipt"></i>
+                                            </div>
+
+                                            <p>
+                                                Esta caja todavía no tiene movimientos.
+                                            </p>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <!-- PAGINACIÓN MOVIMIENTOS -->
+
+                        <div th:if="${totalPaginasMovimientos > 1}"
+                             class="cash-footer d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                            <small class="page-counter">
+                                Página
+                                <strong th:text="${paginaMovimientoActual + 1}">1</strong>
+                                de
+                                <strong th:text="${totalPaginasMovimientos}">1</strong>
+                            </small>
+
+                            <nav aria-label="Paginación de movimientos">
+
+                                <ul class="pagination pagination-sm cash-pagination mb-0">
+
+                                    <li class="page-item"
+                                        th:classappend="${movimientosPrimeraPagina} ? ' disabled'">
+
+                                        <a class="page-link"
+                                           th:href="${movimientosPrimeraPagina} ? '#' : @{/caja/{id}(id=${caja.idCaja}, paginaMovimiento=${paginaMovimientoActual - 1})}">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+
+                                    </li>
+
+
+                                    <li class="page-item"
+                                        th:if="${totalPaginasMovimientos > 10}"
+                                        th:classappend="${paginaMovimientoActual == 0} ? ' active'">
+
+                                        <a class="page-link"
+                                           th:href="@{/caja/{id}(id=${caja.idCaja}, paginaMovimiento=0)}">
+                                            1
+                                        </a>
+
+                                    </li>
+
+
+                                    <li class="page-item disabled"
+                                        th:if="${totalPaginasMovimientos > 10 and puntosIzquierdaMovimiento}">
+                                        <span class="page-link">…</span>
+                                    </li>
+
+
+                                    <th:block th:if="${totalPaginasMovimientos <= 10}">
+
+                                        <li class="page-item"
+                                            th:each="p : ${#numbers.sequence(inicioPaginaMovimiento, finPaginaMovimiento)}"
+                                            th:classappend="${p == paginaMovimientoActual} ? ' active'">
+
+                                            <a class="page-link"
+                                               th:href="@{/caja/{id}(id=${caja.idCaja}, paginaMovimiento=${p})}"
+                                               th:text="${p + 1}">
+                                                1
+                                            </a>
+
+                                        </li>
+
+                                    </th:block>
+
+
+                                    <th:block th:if="${totalPaginasMovimientos > 10}">
+
+                                        <li class="page-item"
+                                            th:each="p : ${#numbers.sequence(inicioPaginaMovimiento, finPaginaMovimiento)}"
+                                            th:classappend="${p == paginaMovimientoActual} ? ' active'">
+
+                                            <a class="page-link"
+                                               th:href="@{/caja/{id}(id=${caja.idCaja}, paginaMovimiento=${p})}"
+                                               th:text="${p + 1}">
+                                                2
+                                            </a>
+
+                                        </li>
+
+                                    </th:block>
+
+
+                                    <li class="page-item disabled"
+                                        th:if="${totalPaginasMovimientos > 10 and puntosDerechaMovimiento}">
+                                        <span class="page-link">…</span>
+                                    </li>
+
+
+                                    <li class="page-item"
+                                        th:if="${totalPaginasMovimientos > 10}"
+                                        th:classappend="${paginaMovimientoActual == totalPaginasMovimientos - 1} ? ' active'">
+
+                                        <a class="page-link"
+                                           th:href="@{/caja/{id}(id=${caja.idCaja}, paginaMovimiento=${totalPaginasMovimientos - 1})}"
+                                           th:text="${totalPaginasMovimientos}">
+                                        </a>
+
+                                    </li>
+
+
+                                    <li class="page-item"
+                                        th:classappend="${movimientosUltimaPagina} ? ' disabled'">
+
+                                        <a class="page-link"
+                                           th:href="${movimientosUltimaPagina} ? '#' : @{/caja/{id}(id=${caja.idCaja}, paginaMovimiento=${paginaMovimientoActual + 1})}">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+
+                                    </li>
+
+                                </ul>
+
+                            </nav>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CIERRE -->
+                <div class="col-xl-5">
+
+                    <div class="cash-panel">
+
+                        <div class="cash-panel-header">
+
+                            <div class="panel-heading">
+
+                                <div class="panel-icon panel-icon-close">
+                                    <i class="bi bi-check2-circle"></i>
+                                </div>
+
+                                <div>
+                                    <h5 class="panel-title">
+                                        Cierre de caja
+                                    </h5>
+
+                                    <p class="panel-subtitle">
+                                        Información del cierre realizado.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table cash-table align-middle">
+
+                                <thead>
+                                <tr>
+                                    <th class="ps-4">Fecha</th>
+                                    <th class="text-end">Calculado</th>
+                                    <th class="text-end">Real</th>
+                                    <th class="text-end pe-4">Diferencia</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                <tr th:each="c : ${cierres}">
+
+                                    <td class="ps-4">
+
+                                        <span class="date-main"
+                                              th:text="${c.fechaCierre != null ? #temporals.format(c.fechaCierre, 'dd/MM/yyyy') : '—'}">
+                                            —
+                                        </span>
+
+                                        <small class="date-time"
+                                               th:if="${c.fechaCierre != null}"
+                                               th:text="${#temporals.format(c.fechaCierre, 'HH:mm')}">
+                                        </small>
+
+                                    </td>
+
+
+                                    <td class="text-end amount"
+                                        th:text="${'S/ ' + #numbers.formatDecimal(c.saldoCalculado, 1, 2)}">
+                                        S/ 0.00
+                                    </td>
+
+
+                                    <td class="text-end amount"
+                                        th:text="${'S/ ' + #numbers.formatDecimal(c.saldoReal, 1, 2)}">
+                                        S/ 0.00
+                                    </td>
+
+
+                                    <td class="text-end pe-4">
+
+                                        <span class="close-difference"
+                                              th:text="${'S/ ' + #numbers.formatDecimal(c.diferencia, 1, 2)}">
+                                            S/ 0.00
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+
+                                <tr th:if="${#lists.isEmpty(cierres)}"
+                                    class="empty-row">
+
+                                    <td colspan="4">
+
+                                        <div class="empty-state">
+
+                                            <div class="empty-icon">
+                                                <i class="bi bi-clock-history"></i>
+                                            </div>
+
+                                            <p>
+                                                Esta caja aún no ha sido cerrada.
+                                            </p>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        <div th:if="${!#lists.isEmpty(cierres)}"
+                             class="closing-summary">
+
+                            <div th:each="c : ${cierres}"
+                                 class="row g-2">
+
+                                <div class="col-6">
+
+                                    <div class="closing-stat closing-stat-income">
+
+                                        <small class="text-success">
+                                            Ingresos
+                                        </small>
+
+                                        <strong class="text-success"
+                                                th:text="${'S/ ' + #numbers.formatDecimal(c.totalIngresos, 1, 2)}">
+                                            S/ 0.00
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-6">
+
+                                    <div class="closing-stat closing-stat-expense">
+
+                                        <small class="text-danger">
+                                            Egresos
+                                        </small>
+
+                                        <strong class="text-danger"
+                                                th:text="${'S/ ' + #numbers.formatDecimal(c.totalEgresos, 1, 2)}">
+                                            S/ 0.00
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- ========================================================= -->
+<!-- OFFCANVAS - NUEVO MOVIMIENTO -->
+<!-- ========================================================= -->
+
+<div class="offcanvas offcanvas-end cash-offcanvas"
+     tabindex="-1"
+     id="offcanvasMovimiento"
+     aria-labelledby="offcanvasMovimientoLabel"
+     th:if="${#strings.equalsIgnoreCase(caja.estado, 'ABIERTA')}">
+
+    <div class="offcanvas-header cash-offcanvas-header">
+
+        <div class="offcanvas-title-wrap">
+
+            <div class="offcanvas-icon offcanvas-icon-primary">
+                <i class="bi bi-plus-lg"></i>
+            </div>
+
+            <div>
+                <h5 class="offcanvas-title"
+                    id="offcanvasMovimientoLabel">
+                    Nuevo movimiento
+                </h5>
+
+                <div class="offcanvas-subtitle">
+                    Registra un ingreso o egreso manual.
+                </div>
+            </div>
+
+        </div>
+
+        <button type="button"
+                class="btn-close shadow-none"
+                data-bs-dismiss="offcanvas"
+                aria-label="Cerrar">
+        </button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <form class="d-flex flex-column h-100"
+              th:action="@{/caja/{id}/movimiento(id=${caja.idCaja})}"
+              method="post">
+
+            <div class="flex-grow-1">
+
+                <!-- RESPONSABLE -->
+
+                <div class="mb-4">
+
+                    <label class="cash-form-label">
+                        Responsable
+                    </label>
+
+                    <div class="responsible-card">
+
+                        <div class="d-flex align-items-center gap-3">
+
+                            <div class="responsible-avatar">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+
+                            <div class="overflow-hidden">
+
+                                <div class="responsible-name text-truncate"
+                                     th:text="${caja.usuario.nombres + ' ' + (caja.usuario.apellidos ?: '')}">
+                                    Usuario
+                                </div>
+
+                                <div class="responsible-subtitle">
+                                    Responsable de esta caja
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TIPO -->
+
+                <div class="mb-4">
+
+                    <label class="cash-form-label">
+                        Tipo
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <select class="form-select rounded-3"
+                            name="tipo"
+                            required>
+
+                        <option value="INGRESO">
+                            Ingreso
+                        </option>
+
+                        <option value="EGRESO">
+                            Egreso
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- CONCEPTO -->
+
+                <div class="mb-4">
+
+                    <label class="cash-form-label">
+                        Concepto
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text border-end-0">
+                            <i class="bi bi-card-text"></i>
+                        </span>
+
+                        <input class="form-control border-start-0 ps-0"
+                               name="concepto"
+                               placeholder="Ej. Compra de materiales"
+                               required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MONTO -->
+
+                <div class="mb-4">
+
+                    <label class="cash-form-label">
+                        Monto
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text border-end-0 fw-semibold">
+                            S/
+                        </span>
+
+                        <input class="form-control border-start-0 ps-0"
+                               type="number"
+                               min="0.01"
+                               step="0.01"
+                               name="monto"
+                               placeholder="0.00"
+                               required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OBSERVACIONES -->
+
+                <div class="mb-4">
+
+                    <label class="cash-form-label">
+                        Observaciones
+                    </label>
+
+                    <textarea class="form-control rounded-3"
+                              name="observaciones"
+                              rows="4"
+                              placeholder="Detalle adicional del movimiento..."></textarea>
+
+                </div>
+
+            </div>
+
+
+            <div class="pt-3 border-top">
+
+                <button type="submit"
+                        class="btn offcanvas-submit offcanvas-submit-primary w-100">
+
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Registrar movimiento
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- OFFCANVAS - CERRAR CAJA -->
+<!-- ========================================================= -->
+
+<div class="offcanvas offcanvas-end cash-offcanvas"
+     tabindex="-1"
+     id="offcanvasCerrarCaja"
+     aria-labelledby="offcanvasCerrarCajaLabel"
+     th:if="${#strings.equalsIgnoreCase(caja.estado, 'ABIERTA')}">
+
+    <div class="offcanvas-header cash-offcanvas-header">
+
+        <div class="offcanvas-title-wrap">
+
+            <div class="offcanvas-icon offcanvas-icon-danger">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+
+            <div>
+
+                <h5 class="offcanvas-title"
+                    id="offcanvasCerrarCajaLabel">
+                    Cerrar caja
+                </h5>
+
+                <div class="offcanvas-subtitle">
+                    Verifica el dinero antes de finalizar.
+                </div>
+
+            </div>
+
+        </div>
+
+        <button type="button"
+                class="btn-close shadow-none"
+                data-bs-dismiss="offcanvas"
+                aria-label="Cerrar">
+        </button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <form id="formCerrarCaja"
+              class="d-flex flex-column h-100"
+              th:action="@{/caja/{id}/cerrar(id=${caja.idCaja})}"
+              method="post">
+
+            <div class="flex-grow-1">
+
+                <!-- MONTO ESPERADO -->
+
+                <div class="close-balance">
+
+                    <div class="d-flex align-items-center justify-content-between gap-3">
+
+                        <div>
+
+                            <span class="close-balance-label">
+                                Monto que debe haber en caja
+                            </span>
+
+                            <strong class="close-balance-value"
+                                    th:text="${'S/ ' + #numbers.formatDecimal(saldoActual, 1, 2)}">
+                                S/ 0.00
+                            </strong>
+
+                        </div>
+
+                        <div class="close-balance-icon">
+                            <i class="bi bi-cash-stack"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MONTO CONTADO -->
+
+                <div class="mb-4">
+
+                    <label class="cash-form-label">
+                        Monto contado
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <div class="input-group">
+
+                        <span class="input-group-text border-end-0 fw-semibold">
+                            S/
+                        </span>
+
+                        <input class="form-control border-start-0 ps-0"
+                               id="saldoReal"
+                               type="number"
+                               step="0.01"
+                               min="0"
+                               name="saldoReal"
+                               placeholder="Ingrese el monto exacto"
+                               required>
+
+                    </div>
+
+                    <div id="mensajeSaldo"
+                         class="form-text mt-2 text-muted">
+                        Debe coincidir exactamente con el monto actual mostrado.
+                    </div>
+
+                </div>
+
+
+                <input type="hidden"
+                       id="saldoEsperado"
+                       th:value="${saldoActual}">
+
+            </div>
+
+
+            <div class="pt-3 border-top">
+
+                <button id="btnCerrarCaja"
+                        type="submit"
+                        class="btn offcanvas-submit offcanvas-submit-danger w-100"
+                        disabled>
+
+                    <i class="bi bi-lock-fill me-1"></i>
+                    Cerrar caja
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="modal fade"
+     id="estadoCajaCerrada"
+     tabindex="-1"
+     aria-hidden="true">
+</div>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const saldoReal = document.getElementById("saldoReal");
+        const saldoEsperado = document.getElementById("saldoEsperado");
+        const boton = document.getElementById("btnCerrarCaja");
+        const mensaje = document.getElementById("mensajeSaldo");
+        const formulario = document.getElementById("formCerrarCaja");
+
+        if (!saldoReal || !saldoEsperado || !boton || !formulario) {
+            return;
+        }
+
+        const esperado = Number(saldoEsperado.value);
+
+        function validarMonto() {
+
+            const texto = saldoReal.value.trim();
+
+            if (!texto) {
+
+                boton.disabled = true;
+
+                saldoReal.classList.remove(
+                    "is-valid",
+                    "is-invalid"
+                );
+
+                mensaje.className = "form-text mt-2 text-muted";
+
+                mensaje.textContent =
+                    "Debe coincidir exactamente con el monto actual mostrado.";
+
+                return false;
+            }
+
+            const ingresado = Number(texto);
+
+            const esperadoCentimos =
+                Math.round(esperado * 100);
+
+            const ingresadoCentimos =
+                Math.round(ingresado * 100);
+
+            if (
+                !Number.isFinite(ingresado)
+                || ingresadoCentimos !== esperadoCentimos
+            ) {
+
+                boton.disabled = true;
+
+                saldoReal.classList.remove("is-valid");
+                saldoReal.classList.add("is-invalid");
+
+                mensaje.className =
+                    "form-text mt-2 text-danger";
+
+                mensaje.textContent =
+                    "El monto no coincide. "
+                    + "Debe ingresar exactamente S/ "
+                    + esperado.toFixed(2)
+                    + ".";
+
+                return false;
+            }
+
+            boton.disabled = false;
+
+            saldoReal.classList.remove("is-invalid");
+            saldoReal.classList.add("is-valid");
+
+            mensaje.className =
+                "form-text mt-2 text-success";
+
+            mensaje.textContent =
+                "✓ El monto coincide con el saldo de caja.";
+
+            return true;
+        }
+
+        saldoReal.addEventListener(
+            "input",
+            validarMonto
+        );
+
+        formulario.addEventListener(
+            "submit",
+            function (event) {
+
+                if (!validarMonto()) {
+
+                    event.preventDefault();
+                    saldoReal.focus();
+
+                    return;
+                }
+
+                const confirmar =
+                    window.confirm(
+                        "El monto coincide con el saldo actual. "
+                        + "¿Desea cerrar esta caja?"
+                    );
+
+                if (!confirmar) {
+                    event.preventDefault();
+                }
+            }
+        );
+    });
+</script>
+
+</body>
+</html>

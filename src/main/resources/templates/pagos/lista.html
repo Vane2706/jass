@@ -1,0 +1,3015 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Registro de pagos')}">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body class="bg-body-tertiary">
+
+<style>
+
+    /* =========================================================
+       VARIABLES
+       ========================================================= */
+
+    :root {
+        --pay-primary: #4389b8;
+        --pay-primary-dark: #32749f;
+        --pay-primary-soft: #eef8ff;
+
+        --pay-cyan: #42b6c5;
+        --pay-cyan-soft: #ecfbfd;
+
+        --pay-success: #4d9d78;
+        --pay-success-dark: #397c5d;
+        --pay-success-soft: #effaf4;
+
+        --pay-warning: #c89545;
+        --pay-warning-dark: #a8752f;
+        --pay-warning-soft: #fff9ec;
+
+        --pay-info: #518fb7;
+        --pay-info-soft: #eef7fc;
+
+        --pay-text: #1f2b3d;
+        --pay-text-soft: #475569;
+        --pay-muted: #7b8798;
+
+        --pay-border: #e7edf3;
+        --pay-bg: #f7f9fc;
+        --pay-white: #ffffff;
+
+        --pay-shadow:
+            0 1px 2px rgba(15, 23, 42, .02),
+            0 8px 25px rgba(15, 23, 42, .045);
+
+        --pay-shadow-hover:
+            0 12px 30px rgba(15, 23, 42, .075);
+    }
+
+
+    /* =========================================================
+       BASE
+       ========================================================= */
+
+    body {
+        background:
+            radial-gradient(
+                circle at 96% 4%,
+                rgba(66, 182, 197, .055),
+                transparent 24%
+            ),
+            radial-gradient(
+                circle at 72% 10%,
+                rgba(77, 157, 120, .035),
+                transparent 22%
+            ),
+            var(--pay-bg);
+
+        color: var(--pay-text);
+    }
+
+
+    /* =========================================================
+       ANIMACIONES
+       ========================================================= */
+
+    @keyframes fadeUp {
+
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    @keyframes walletFloat {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-2px);
+        }
+
+    }
+
+
+    .animate-in {
+        animation: fadeUp .45s ease both;
+    }
+
+
+    .animate-delay {
+        animation: fadeUp .55s ease both;
+    }
+
+
+    /* =========================================================
+       CABECERA PRINCIPAL
+       ========================================================= */
+
+    .payments-header {
+        position: relative;
+        overflow: hidden;
+
+        margin-bottom: 1.25rem;
+        padding: 1.55rem 1.7rem;
+
+        border: 1px solid rgba(226, 232, 240, .9);
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255, 255, 255, .98),
+                rgba(239, 249, 255, .93) 52%,
+                rgba(239, 250, 246, .82)
+            );
+
+        box-shadow:
+            0 8px 30px rgba(15, 23, 42, .035);
+    }
+
+
+    .payments-header::before {
+        content: "";
+
+        position: absolute;
+
+        width: 190px;
+        height: 190px;
+
+        right: -70px;
+        top: -110px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(67, 137, 184, .12),
+                transparent 68%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .payments-header::after {
+        content: "";
+
+        position: absolute;
+
+        width: 135px;
+        height: 135px;
+
+        right: 95px;
+        bottom: -110px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(77, 157, 120, .08),
+                transparent 70%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .header-icon {
+        position: relative;
+        z-index: 1;
+
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #d8edf6;
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eef9ff,
+                #eaf9f5
+            );
+
+        color: var(--pay-primary);
+
+        font-size: 1.18rem;
+    }
+
+
+    .header-icon i {
+        animation: walletFloat 3s ease-in-out infinite;
+    }
+
+
+    .page-eyebrow {
+        margin-bottom: .15rem;
+
+        color: var(--pay-primary);
+
+        font-size: .71rem;
+        font-weight: 750;
+
+        letter-spacing: .09em;
+        text-transform: uppercase;
+    }
+
+
+    .page-title {
+        margin: 0;
+
+        color: var(--pay-text);
+
+        font-weight: 750;
+        letter-spacing: -.025em;
+    }
+
+
+    /* =========================================================
+       PANELES
+       ========================================================= */
+
+    .payment-panel {
+        overflow: hidden;
+
+        border: 1px solid var(--pay-border);
+        border-radius: 22px;
+
+        background: rgba(255, 255, 255, .96);
+
+        box-shadow: var(--pay-shadow);
+
+        transition:
+            box-shadow .25s ease,
+            transform .25s ease;
+    }
+
+
+    .payment-panel:hover {
+        box-shadow:
+            0 10px 32px rgba(15, 23, 42, .06);
+    }
+
+
+    /* =========================================================
+       CABECERA DE PANEL
+       ========================================================= */
+
+    .panel-header {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 1rem;
+
+        padding: 1.15rem 1.35rem;
+
+        border-bottom: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfdff
+            );
+    }
+
+
+    .panel-header.pending-header {
+        box-shadow:
+            inset 3px 0 0 rgba(200, 149, 69, .62);
+    }
+
+
+    .panel-header.history-header {
+        box-shadow:
+            inset 3px 0 0 rgba(77, 157, 120, .62);
+    }
+
+
+    .panel-heading {
+        display: flex;
+        align-items: center;
+
+        gap: .75rem;
+    }
+
+
+    .panel-heading-icon {
+        width: 39px;
+        height: 39px;
+        min-width: 39px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 11px;
+
+        font-size: .95rem;
+    }
+
+
+    .panel-heading-icon.pending {
+        border: 1px solid #f4e4bf;
+
+        background: var(--pay-warning-soft);
+
+        color: var(--pay-warning);
+    }
+
+
+    .panel-heading-icon.history {
+        border: 1px solid #d7eee1;
+
+        background: var(--pay-success-soft);
+
+        color: var(--pay-success);
+    }
+
+
+    .panel-title {
+        margin: 0;
+
+        color: #334155;
+
+        font-size: .91rem;
+        font-weight: 700;
+    }
+
+
+    .panel-description {
+        display: block;
+
+        margin-top: .13rem;
+
+        color: #8a97a8;
+
+        font-size: .72rem;
+    }
+
+
+    .panel-tools {
+        display: flex;
+        align-items: center;
+
+        gap: .7rem;
+    }
+
+
+    /* =========================================================
+       BUSCADORES
+       ========================================================= */
+
+    .table-search {
+        position: relative;
+
+        width: 220px;
+    }
+
+
+    .table-search-icon {
+        position: absolute;
+
+        left: 13px;
+        top: 50%;
+
+        z-index: 2;
+
+        transform: translateY(-50%);
+
+        color: #94a3b8;
+
+        font-size: .78rem;
+
+        pointer-events: none;
+
+        transition: color .2s ease;
+    }
+
+
+    .table-search .form-control {
+        height: 38px;
+
+        padding-left: 37px;
+        padding-right: 12px;
+
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+
+        background: #f8fafc;
+
+        color: var(--pay-text);
+
+        font-size: .78rem;
+
+        box-shadow: none;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .table-search .form-control::placeholder {
+        color: #a0aec0;
+    }
+
+
+    .table-search .form-control:hover {
+        background: white;
+
+        border-color: #cbd5e1;
+    }
+
+
+    .table-search .form-control:focus {
+        background: white;
+
+        border-color: rgba(67, 137, 184, .45);
+
+        box-shadow:
+            0 0 0 4px rgba(67, 137, 184, .065);
+    }
+
+
+    .table-search:focus-within
+    .table-search-icon {
+        color: var(--pay-primary);
+    }
+
+
+    /* =========================================================
+       CONTADORES
+       ========================================================= */
+
+    .counter-chip {
+        min-height: 37px;
+
+        display: inline-flex;
+        align-items: center;
+
+        gap: .48rem;
+
+        padding: .4rem .72rem;
+
+        border: 1px solid #edf1f6;
+        border-radius: 10px;
+
+        background: #f8fafc;
+
+        color: #64748b;
+
+        font-size: .74rem;
+        font-weight: 550;
+
+        white-space: nowrap;
+    }
+
+
+    .counter-icon {
+        width: 22px;
+        height: 22px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 6px;
+
+        font-size: .67rem;
+    }
+
+
+    .counter-icon.pending {
+        background: var(--pay-warning-soft);
+
+        color: var(--pay-warning);
+    }
+
+
+    .counter-icon.history {
+        background: var(--pay-success-soft);
+
+        color: var(--pay-success);
+    }
+
+
+    /* =========================================================
+       TABLAS
+       ========================================================= */
+
+    .payments-table {
+        width: 100%;
+
+        margin: 0;
+
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+
+    .payments-table thead th {
+        padding: .82rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #edf1f6;
+
+        background: #f8fafc;
+
+        color: #718096;
+
+        font-size: .66rem;
+        font-weight: 750;
+
+        letter-spacing: .05em;
+        text-transform: uppercase;
+
+        white-space: nowrap;
+    }
+
+
+    .payments-table tbody td {
+        padding: .9rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #f0f3f7;
+
+        background: white;
+
+        vertical-align: middle;
+
+        transition:
+            background .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .payments-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    .payments-table tbody tr:hover td {
+        background: #fbfdff;
+    }
+
+
+    .pending-table tbody tr:hover td:first-child {
+        box-shadow:
+            inset 3px 0 0 rgba(200, 149, 69, .56);
+    }
+
+
+    .history-table tbody tr:hover td:first-child {
+        box-shadow:
+            inset 3px 0 0 rgba(77, 157, 120, .56);
+    }
+
+
+    /* =========================================================
+       ASOCIADO
+       ========================================================= */
+
+    .associate-profile {
+        display: flex;
+        align-items: center;
+
+        gap: .68rem;
+
+        min-width: 180px;
+    }
+
+
+    .associate-avatar {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #d9edf6;
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eef9ff,
+                #eaf9f5
+            );
+
+        color: var(--pay-primary);
+
+        font-size: .8rem;
+        font-weight: 750;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .payments-table tbody tr:hover
+    .associate-avatar {
+        transform: scale(1.05);
+
+        box-shadow:
+            0 4px 10px rgba(67, 137, 184, .08);
+    }
+
+
+    .associate-name {
+        display: block;
+
+        max-width: 210px;
+
+        overflow: hidden;
+
+        color: #334155;
+
+        font-size: .79rem;
+        font-weight: 650;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+    .associate-code {
+        display: block;
+
+        margin-top: .12rem;
+
+        color: #94a3b8;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .67rem;
+        font-weight: 550;
+    }
+
+
+    /* =========================================================
+       FACTURA
+       ========================================================= */
+
+    .invoice-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .4rem;
+
+        padding: .37rem .6rem;
+
+        border: 1px solid #dcecf9;
+        border-radius: 8px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f8fcff,
+                #eff8ff
+            );
+
+        color: #3978ad;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .73rem;
+        font-weight: 700;
+    }
+
+
+    .invoice-badge i {
+        color: #669fc7;
+
+        font-size: .67rem;
+    }
+
+
+    /* =========================================================
+       SERVICIO
+       ========================================================= */
+
+    .service-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .35rem;
+
+        padding: .36rem .58rem;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 8px;
+
+        background: #f8fafc;
+
+        color: #475569;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .72rem;
+        font-weight: 650;
+    }
+
+
+    .service-badge i {
+        color: var(--pay-cyan);
+
+        font-size: .65rem;
+    }
+
+
+    /* =========================================================
+       PERIODO
+       ========================================================= */
+
+    .period-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .35rem;
+
+        padding: .36rem .58rem;
+
+        border: 1px solid #d9f2e1;
+        border-radius: 8px;
+
+        background: #f3fcf6;
+
+        color: #46775a;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .72rem;
+        font-weight: 650;
+    }
+
+
+    .period-badge i {
+        color: #6ca681;
+
+        font-size: .65rem;
+    }
+
+
+    /* =========================================================
+       MONTOS
+       ========================================================= */
+
+    .amount-pending,
+    .amount-paid {
+        display: inline-flex;
+        align-items: center;
+
+        white-space: nowrap;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .82rem;
+        font-weight: 750;
+    }
+
+
+    .amount-pending {
+        color: #344256;
+    }
+
+
+    .amount-paid {
+        color: #397c5d;
+    }
+
+
+    /* =========================================================
+       ESTADOS
+       ========================================================= */
+
+    .payment-status {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .4rem;
+
+        padding: .36rem .62rem;
+
+        border: 1px solid transparent;
+        border-radius: 50rem;
+
+        font-size: .68rem;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    .payment-status.pending {
+        color: #a8752f;
+
+        background: var(--pay-warning-soft);
+
+        border-color: #f4e4bf;
+    }
+
+
+    .payment-status.partial {
+        color: #39789f;
+
+        background: var(--pay-info-soft);
+
+        border-color: #d8eaf4;
+    }
+
+
+    .payment-status.completed {
+        color: #397c5d;
+
+        background: var(--pay-success-soft);
+
+        border-color: #d7eee1;
+    }
+
+
+    .status-dot {
+        position: relative;
+
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+
+    .payment-status.completed
+    .status-dot::after {
+        content: "";
+
+        position: absolute;
+        inset: -3px;
+
+        border: 1px solid currentColor;
+        border-radius: 50%;
+
+        opacity: .18;
+    }
+
+
+    /* =========================================================
+       MÉTODO DE PAGO
+       ========================================================= */
+
+    .method-badge {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .35rem;
+
+        padding: .36rem .58rem;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 8px;
+
+        background: #f8fafc;
+
+        color: #475569;
+
+        font-size: .7rem;
+        font-weight: 650;
+    }
+
+
+    .method-badge i {
+        color: var(--pay-primary);
+
+        font-size: .66rem;
+    }
+
+
+    /* =========================================================
+       OPERACIÓN
+       ========================================================= */
+
+    .operation-number {
+        color: #718096;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .72rem;
+        font-weight: 550;
+    }
+
+
+    /* =========================================================
+       FECHA
+       ========================================================= */
+
+    .payment-date {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .42rem;
+
+        color: #64748b;
+
+        font-size: .74rem;
+        font-weight: 550;
+
+        white-space: nowrap;
+    }
+
+
+    .payment-date-icon {
+        width: 25px;
+        height: 25px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 7px;
+
+        background: #eff8ff;
+
+        color: var(--pay-primary);
+
+        font-size: .65rem;
+    }
+
+
+    /* =========================================================
+       REGISTRAR PAGO
+       ========================================================= */
+
+    .register-payment-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .42rem;
+
+        min-height: 36px;
+
+        padding: .45rem .78rem;
+
+        border: none;
+        border-radius: 9px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #55a9c1,
+                #4389b8
+            );
+
+        color: white;
+
+        font-size: .73rem;
+        font-weight: 650;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 4px 10px rgba(67, 137, 184, .13);
+
+        white-space: nowrap;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+
+    .register-payment-button:hover {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #4389b8,
+                #32749f
+            );
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 7px 15px rgba(67, 137, 184, .2);
+    }
+
+
+    .register-payment-button:active {
+        transform: translateY(0);
+    }
+
+
+    /* =========================================================
+       BOTÓN DETALLE
+       ========================================================= */
+
+    .detail-button {
+        width: 35px;
+        height: 35px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 10px;
+
+        background: white;
+
+        color: #64748b;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 1px 2px rgba(15, 23, 42, .02);
+
+        transition:
+            transform .2s ease,
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .detail-button:hover {
+        color: white;
+
+        background: var(--pay-success);
+
+        border-color: var(--pay-success);
+
+        transform: translateX(2px);
+
+        box-shadow:
+            0 5px 12px rgba(77, 157, 120, .18);
+    }
+
+
+    /* =========================================================
+       ESTADOS VACÍOS
+       ========================================================= */
+
+    .empty-state {
+        padding: 3.4rem 1rem;
+    }
+
+
+    .empty-state-icon {
+        width: 60px;
+        height: 60px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto .9rem;
+
+        border-radius: 17px;
+
+        font-size: 1.4rem;
+    }
+
+
+    .empty-state-icon.pending {
+        border: 1px solid #d7eee1;
+
+        background:
+            linear-gradient(
+                135deg,
+                #effaf4,
+                #ecfbfd
+            );
+
+        color: var(--pay-success);
+    }
+
+
+    .empty-state-icon.history {
+        border: 1px solid #d8edf6;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eef8ff,
+                #ecfbfd
+            );
+
+        color: var(--pay-primary);
+    }
+
+
+    /* =========================================================
+       PAGINACIÓN
+       ========================================================= */
+
+    .table-footer {
+        padding: .9rem 1.35rem;
+
+        border-top: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfcfe
+            );
+    }
+
+
+    .page-counter {
+        color: #7c8999;
+
+        font-size: .76rem;
+    }
+
+
+    .page-counter strong {
+        color: #334155;
+
+        font-weight: 650;
+    }
+
+
+    .modern-pagination {
+        gap: .25rem;
+    }
+
+
+    .modern-pagination .page-link {
+        min-width: 33px;
+        height: 33px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0 .55rem;
+
+        border: 1px solid transparent;
+        border-radius: 9px !important;
+
+        background: transparent;
+
+        color: #64748b;
+
+        font-size: .77rem;
+        font-weight: 600;
+
+        box-shadow: none !important;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease,
+            border-color .2s ease;
+    }
+
+
+    .modern-pagination .page-link:hover {
+        color: var(--pay-primary);
+
+        background: var(--pay-primary-soft);
+
+        border-color: #d8edf6;
+
+        transform: translateY(-1px);
+    }
+
+
+    .modern-pagination
+    .page-item.active
+    .page-link {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #55a9c1,
+                #4389b8
+            );
+
+        border-color: var(--pay-primary);
+
+        box-shadow:
+            0 4px 10px rgba(67, 137, 184, .16) !important;
+    }
+
+
+    .modern-pagination
+    .page-item.disabled
+    .page-link {
+        color: #c1c9d4;
+
+        background: transparent;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .payments-header {
+            padding: 1.3rem;
+        }
+
+        .panel-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .panel-tools {
+            width: 100%;
+
+            justify-content: space-between;
+        }
+
+        .table-search {
+            flex: 1;
+
+            width: auto;
+        }
+
+    }
+
+
+    @media (max-width: 767.98px) {
+
+        .payments-header,
+        .payment-panel {
+            border-radius: 18px;
+        }
+
+        .panel-header {
+            padding: 1rem;
+        }
+
+        .panel-tools {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .table-search {
+            width: 100%;
+        }
+
+        .counter-chip {
+            width: 100%;
+
+            justify-content: center;
+        }
+
+        .table-footer {
+            padding: 1rem;
+        }
+
+    }
+
+
+    @media (max-width: 575.98px) {
+
+        .payments-header {
+            padding: 1.15rem;
+        }
+
+        .panel-heading {
+            align-items: flex-start;
+        }
+
+        .register-payment-button span {
+            display: none;
+        }
+
+        .register-payment-button {
+            width: 36px;
+            height: 36px;
+
+            padding: 0;
+        }
+
+    }
+
+</style>
+
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+
+<main class="app-main">
+
+
+    <!-- ===================================================== -->
+    <!-- TOPBAR -->
+    <!-- ===================================================== -->
+
+    <div th:replace="~{fragments/layout :: topbar('Registro de pagos')}"></div>
+
+
+    <section class="content px-3 px-lg-4 py-4">
+
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+
+        <div class="payments-header animate-in">
+
+
+            <div class="d-flex align-items-center gap-3">
+
+
+                <div class="header-icon">
+
+                    <i class="bi bi-wallet2"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="page-eyebrow">
+                        Gestión de pagos
+                    </div>
+
+                    <h2 class="page-title h4">
+                        Registro de pagos
+                    </h2>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- PENDIENTES DE COBRO -->
+        <!-- ================================================= -->
+
+        <div class="payment-panel mb-4 animate-in">
+
+
+            <!-- CABECERA -->
+
+            <div class="panel-header pending-header">
+
+
+                <div class="panel-heading">
+
+
+                    <div class="panel-heading-icon pending">
+
+                        <i class="bi bi-receipt"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h5 class="panel-title">
+                            Pendientes de Cobro
+                        </h5>
+
+                        <span class="panel-description">
+                            Facturas emitidas con saldo pendiente.
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="panel-tools">
+
+
+                    <!-- BUSCADOR -->
+
+                    <div class="table-search">
+
+
+                        <i class="bi bi-search table-search-icon"></i>
+
+
+                        <input type="text"
+                               id="filterPendientes"
+                               class="form-control"
+                               placeholder="Filtrar pendientes...">
+
+
+                    </div>
+
+
+                    <!-- CONTADOR -->
+
+                    <div class="counter-chip">
+
+
+                        <span class="counter-icon pending">
+
+                            <i class="bi bi-clock-history"></i>
+
+                        </span>
+
+
+                        <span th:text="${totalPendientes
+                            + (totalPendientes == 1
+                                ? ' pendiente'
+                                : ' pendientes')}">
+
+                            0 pendientes
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TABLA PENDIENTES -->
+            <!-- ================================================= -->
+
+            <div class="table-responsive">
+
+
+                <table class="table
+                              payments-table
+                              pending-table
+                              align-middle
+                              mb-0"
+
+                       id="tablePendientes">
+
+
+                    <thead>
+
+
+                    <tr>
+
+
+
+                        <th class="ps-4"    >
+                            N° Factura
+                        </th>
+                        <th>
+                            Periodo
+                        </th>
+                        <th>
+                            Asociado
+                        </th>
+
+                        <th>
+                            Servicio
+                        </th>
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <!-- ========================================= -->
+                    <!-- FACTURAS PENDIENTES -->
+                    <!-- ========================================= -->
+
+                    <tr th:each="f : ${facturas}"
+                        class="filterable-pending-row">
+
+
+
+
+
+                        <!-- FACTURA -->
+
+                        <td>
+
+
+                            <span class="invoice-badge">
+
+
+                                <i class="bi bi-file-earmark-text"></i>
+
+
+                                <span th:text="${f.numeroFactura}">
+
+                                    FAC-000
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+                        <!-- PERIODO -->
+
+                        <td>
+
+
+                            <span class="period-badge">
+
+
+                                <i class="bi bi-calendar2-week"></i>
+
+
+                                <span th:text="${#numbers.formatInteger(
+                                    f.periodo.mes,
+                                    2
+                                ) + '/' + f.periodo.anio}">
+
+                                    09/2026
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+                        <!-- ASOCIADO -->
+
+                        <td class="ps-4"
+
+                            th:with="a=${asociadosPorFactura[f.idFactura]}">
+
+
+                            <div class="associate-profile">
+
+
+                                <span class="associate-avatar"
+
+                                      th:text="${a != null
+                                          and a.nombres != null
+                                          and !#strings.isEmpty(a.nombres)
+                                          ? #strings.substring(
+                                              a.nombres,
+                                              0,
+                                              1
+                                            )
+                                          : '?'}">
+
+                                    A
+
+                                </span>
+
+
+                                <div>
+
+
+                                    <span class="associate-name"
+
+                                          th:text="${a != null
+                                              ? a.nombres
+                                                + ' '
+                                                + (a.apellidoPaterno ?: '')
+                                                + ' '
+                                                + (a.apellidoMaterno ?: '')
+                                              : 'Sin asociado'}">
+
+                                        Nombre del asociado
+
+                                    </span>
+
+
+                                    <span class="associate-code"
+
+                                          th:if="${a != null}"
+
+                                          th:text="${a.codigoAsociado}">
+
+                                        ASO-000
+
+                                    </span>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </td>
+
+                        <!-- SERVICIO -->
+
+                        <td>
+
+
+                            <span class="service-badge">
+
+
+                                <i class="bi bi-droplet-fill"></i>
+
+
+                                <span th:text="${f.servicio.codigoServicio}">
+
+                                    SER-000
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+
+
+
+                        <!-- TOTAL -->
+
+                        <td>
+
+
+                            <span class="amount-pending"
+
+                                  th:text="${f.total != null
+                                      ? 'S/ '
+                                        + #numbers.formatDecimal(
+                                            f.total,
+                                            1,
+                                            2
+                                        )
+                                      : 'S/ 0.00'}">
+
+                                S/ 0.00
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ESTADO -->
+
+                        <td>
+
+
+                            <span class="payment-status"
+
+                                  th:classappend="${f.estado == 'PARCIAL'
+                                      ? ' partial'
+                                      : ' pending'}">
+
+
+                                <span class="status-dot"></span>
+
+
+                                <span th:text="${f.estado}">
+
+                                    PENDIENTE
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ACCIÓN -->
+
+                        <td class="text-end pe-4">
+
+
+                            <a class="register-payment-button"
+
+                               th:href="@{/pagos/factura/{id}(
+                                    id=${f.idFactura}
+                               )}">
+
+
+                                <i class="bi bi-cash-coin"></i>
+
+
+                                <span>
+                                    Registrar pago
+                                </span>
+
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    <!-- ========================================= -->
+                    <!-- SIN PENDIENTES -->
+                    <!-- ========================================= -->
+
+                    <tr th:if="${#lists.isEmpty(facturas)}">
+
+
+                        <td colspan="7"
+                            class="text-center border-0">
+
+
+                            <div class="empty-state">
+
+
+                                <div class="empty-state-icon pending">
+
+                                    <i class="bi bi-check2-circle"></i>
+
+                                </div>
+
+
+                                <h6 class="fw-bold
+                                           text-dark
+                                           mb-1">
+
+                                    No existen pendientes
+
+                                </h6>
+
+
+                                <p class="text-muted
+                                          small
+                                          mb-0">
+
+                                    No existen facturas pendientes de cobro
+                                    en este momento.
+
+                                </p>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- PAGINACIÓN PENDIENTES -->
+            <!-- ================================================= -->
+
+            <div th:if="${totalPaginasPendientes > 1}"
+
+                 class="table-footer
+                        d-flex
+                        flex-column flex-md-row
+                        justify-content-between
+                        align-items-center
+                        gap-3">
+
+
+                <div class="page-counter">
+
+
+                    Mostrando página
+
+                    <strong th:text="${paginaPendientes + 1}">
+                        1
+                    </strong>
+
+                    de
+
+                    <strong th:text="${totalPaginasPendientes}">
+                        1
+                    </strong>
+
+
+                </div>
+
+
+                <nav aria-label="Paginación de pendientes">
+
+
+                    <ul class="pagination
+                               pagination-sm
+                               modern-pagination
+                               mb-0">
+
+
+                        <!-- ANTERIOR -->
+
+                        <li class="page-item"
+
+                            th:classappend="${primeraPendientes}
+                                ? ' disabled'">
+
+
+                            <a th:if="${!primeraPendientes}"
+
+                               class="page-link"
+
+                               th:href="@{/pagos(
+                                    paginaPendientes=${paginaPendientes - 1},
+                                    paginaPagos=${paginaPagos}
+                               )}">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </a>
+
+
+                            <span th:if="${primeraPendientes}"
+                                  class="page-link">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- <= 10 PÁGINAS -->
+
+                        <th:block th:if="${totalPaginasPendientes <= 10}">
+
+
+                            <li class="page-item"
+
+                                th:each="n : ${#numbers.sequence(
+                                    inicioPendientes,
+                                    finPendientes
+                                )}"
+
+                                th:classappend="${paginaPendientes == n}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPendientes != n}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=${n},
+                                        paginaPagos=${paginaPagos}
+                                   )}"
+
+                                   th:text="${n + 1}">
+                                </a>
+
+
+                                <span th:if="${paginaPendientes == n}"
+
+                                      class="page-link"
+
+                                      th:text="${n + 1}">
+                                </span>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- > 10 PÁGINAS -->
+
+                        <th:block th:if="${totalPaginasPendientes > 10}">
+
+
+                            <!-- PRIMERA -->
+
+                            <li class="page-item"
+
+                                th:classappend="${paginaPendientes == 0}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPendientes != 0}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=0,
+                                        paginaPagos=${paginaPagos}
+                                   )}">
+
+                                    1
+
+                                </a>
+
+
+                                <span th:if="${paginaPendientes == 0}"
+                                      class="page-link">
+
+                                    1
+
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- PUNTOS IZQUIERDA -->
+
+                            <li th:if="${puntosIzquierdaPendientes}"
+                                class="page-item disabled">
+
+
+                                <span class="page-link">
+                                    …
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- VENTANA -->
+
+                            <li class="page-item"
+
+                                th:each="n : ${#numbers.sequence(
+                                    inicioPendientes,
+                                    finPendientes
+                                )}"
+
+                                th:classappend="${paginaPendientes == n}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPendientes != n}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=${n},
+                                        paginaPagos=${paginaPagos}
+                                   )}"
+
+                                   th:text="${n + 1}">
+                                </a>
+
+
+                                <span th:if="${paginaPendientes == n}"
+
+                                      class="page-link"
+
+                                      th:text="${n + 1}">
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- PUNTOS DERECHA -->
+
+                            <li th:if="${puntosDerechaPendientes}"
+                                class="page-item disabled">
+
+
+                                <span class="page-link">
+                                    …
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- ÚLTIMA -->
+
+                            <li class="page-item"
+
+                                th:classappend="${paginaPendientes
+                                    == totalPaginasPendientes - 1}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPendientes
+                                    != totalPaginasPendientes - 1}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=${totalPaginasPendientes - 1},
+                                        paginaPagos=${paginaPagos}
+                                   )}"
+
+                                   th:text="${totalPaginasPendientes}">
+                                </a>
+
+
+                                <span th:if="${paginaPendientes
+                                    == totalPaginasPendientes - 1}"
+
+                                      class="page-link"
+
+                                      th:text="${totalPaginasPendientes}">
+                                </span>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- SIGUIENTE -->
+
+                        <li class="page-item"
+
+                            th:classappend="${ultimaPendientes}
+                                ? ' disabled'">
+
+
+                            <a th:if="${!ultimaPendientes}"
+
+                               class="page-link"
+
+                               th:href="@{/pagos(
+                                    paginaPendientes=${paginaPendientes + 1},
+                                    paginaPagos=${paginaPagos}
+                               )}">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                            <span th:if="${ultimaPendientes}"
+                                  class="page-link">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </span>
+
+
+                        </li>
+
+
+                    </ul>
+
+
+                </nav>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- HISTORIAL DE COBROS -->
+        <!-- ================================================= -->
+
+        <div class="payment-panel animate-delay">
+
+
+            <!-- CABECERA -->
+
+            <div class="panel-header history-header">
+
+
+                <div class="panel-heading">
+
+
+                    <div class="panel-heading-icon history">
+
+                        <i class="bi bi-clock-history"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h5 class="panel-title">
+                            Historial de Cobros
+                        </h5>
+
+                        <span class="panel-description">
+                            Consulte los comprobantes de cobro completados.
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="panel-tools">
+
+
+                    <!-- BUSCADOR -->
+
+                    <div class="table-search">
+
+
+                        <i class="bi bi-search table-search-icon"></i>
+
+
+                        <input type="text"
+                               id="filterPagos"
+                               class="form-control"
+                               placeholder="Filtrar pagos...">
+
+
+                    </div>
+
+
+                    <!-- CONTADOR -->
+
+                    <div class="counter-chip">
+
+
+                        <span class="counter-icon history">
+
+                            <i class="bi bi-check2"></i>
+
+                        </span>
+
+
+                        <span th:text="${totalPagos
+                            + (totalPagos == 1
+                                ? ' pago'
+                                : ' pagos')}">
+
+                            0 pagos
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TABLA PAGOS -->
+            <!-- ================================================= -->
+
+            <div class="table-responsive">
+
+
+                <table class="table
+                              payments-table
+                              history-table
+                              align-middle
+                              mb-0"
+
+                       id="tablePagos">
+
+
+                    <thead>
+
+
+                    <tr>
+                        <th class="ps-4">
+                            Fecha de Pago
+                        </th>
+
+                        <th>
+                            Asociado
+                        </th>
+
+                        <th>
+                            Monto
+                        </th>
+
+                        <th>
+                            Método
+                        </th>
+
+                        <th>
+                            N° Operación
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Detalle
+                        </th>
+
+                    </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <!-- ========================================= -->
+                    <!-- PAGOS REGISTRADOS -->
+                    <!-- ========================================= -->
+
+                    <tr th:each="p : ${pagos}"
+                        class="filterable-payment-row">
+
+                        <!-- FECHA -->
+
+                        <td>
+
+
+                            <span class="payment-date">
+
+
+                                <span class="payment-date-icon">
+
+                                    <i class="bi bi-calendar3"></i>
+
+                                </span>
+
+
+                                <span th:text="${p.fechaPago != null
+                                    ? #temporals.format(
+                                        p.fechaPago,
+                                        'dd/MM/yyyy HH:mm'
+                                      )
+                                    : '—'}">
+
+                                    —
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ASOCIADO -->
+
+                        <td class="ps-4">
+
+
+                            <div class="associate-profile">
+
+
+                                <span class="associate-avatar"
+
+                                      th:text="${#strings.substring(
+                                          p.asociado.nombres,
+                                          0,
+                                          1
+                                      )}">
+
+                                    A
+
+                                </span>
+
+
+                                <div>
+
+
+                                    <span class="associate-name"
+
+                                          th:text="${p.asociado.nombres
+                                              + ' '
+                                              + (p.asociado.apellidoPaterno ?: '')}">
+
+                                        Asociado
+
+                                    </span>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                        <!-- MONTO -->
+
+                        <td>
+
+
+                            <span class="amount-paid"
+
+                                  th:text="${p.montoTotal != null
+                                      ? 'S/ '
+                                        + #numbers.formatDecimal(
+                                            p.montoTotal,
+                                            1,
+                                            2
+                                        )
+                                      : 'S/ 0.00'}">
+
+                                S/ 0.00
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- MÉTODO -->
+
+                        <td>
+
+
+                            <span class="method-badge">
+
+
+                                <i class="bi bi-credit-card"></i>
+
+
+                                <span th:text="${p.metodoPago}">
+
+                                    EFECTIVO
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- OPERACIÓN -->
+
+                        <td>
+
+
+                            <span class="operation-number"
+
+                                  th:text="${p.numeroOperacion ?: '—'}">
+
+                                —
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ESTADO -->
+
+                        <td>
+
+
+                            <span class="payment-status completed">
+
+
+                                <span class="status-dot"></span>
+
+
+                                <span th:text="${p.estado}">
+
+                                    APLICADO
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+
+
+
+                        <!-- DETALLE -->
+
+                        <td class="text-end pe-4">
+
+
+                            <a class="detail-button"
+
+                               th:href="@{/pagos/{id}(
+                                    id=${p.idPago}
+                               )}"
+
+                               title="Ver detalle"
+
+                               aria-label="Ver detalle">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    <!-- ========================================= -->
+                    <!-- SIN PAGOS -->
+                    <!-- ========================================= -->
+
+                    <tr th:if="${#lists.isEmpty(pagos)}">
+
+
+                        <td colspan="7"
+                            class="text-center border-0">
+
+
+                            <div class="empty-state">
+
+
+                                <div class="empty-state-icon history">
+
+                                    <i class="bi bi-journal-x"></i>
+
+                                </div>
+
+
+                                <h6 class="fw-bold
+                                           text-dark
+                                           mb-1">
+
+                                    Sin historial de pagos
+
+                                </h6>
+
+
+                                <p class="text-muted
+                                          small
+                                          mb-0">
+
+                                    No existen transacciones o pagos registrados.
+
+                                </p>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- PAGINACIÓN PAGOS -->
+            <!-- ================================================= -->
+
+            <div th:if="${totalPaginasPagos > 1}"
+
+                 class="table-footer
+                        d-flex
+                        flex-column flex-md-row
+                        justify-content-between
+                        align-items-center
+                        gap-3">
+
+
+                <div class="page-counter">
+
+
+                    Mostrando página
+
+                    <strong th:text="${paginaPagos + 1}">
+                        1
+                    </strong>
+
+                    de
+
+                    <strong th:text="${totalPaginasPagos}">
+                        1
+                    </strong>
+
+
+                </div>
+
+
+                <nav aria-label="Paginación de pagos">
+
+
+                    <ul class="pagination
+                               pagination-sm
+                               modern-pagination
+                               mb-0">
+
+
+                        <!-- ANTERIOR -->
+
+                        <li class="page-item"
+
+                            th:classappend="${primeraPagos}
+                                ? ' disabled'">
+
+
+                            <a th:if="${!primeraPagos}"
+
+                               class="page-link"
+
+                               th:href="@{/pagos(
+                                    paginaPendientes=${paginaPendientes},
+                                    paginaPagos=${paginaPagos - 1}
+                               )}">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </a>
+
+
+                            <span th:if="${primeraPagos}"
+                                  class="page-link">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- <= 10 PÁGINAS -->
+
+                        <th:block th:if="${totalPaginasPagos <= 10}">
+
+
+                            <li class="page-item"
+
+                                th:each="n : ${#numbers.sequence(
+                                    inicioPagos,
+                                    finPagos
+                                )}"
+
+                                th:classappend="${paginaPagos == n}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPagos != n}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=${paginaPendientes},
+                                        paginaPagos=${n}
+                                   )}"
+
+                                   th:text="${n + 1}">
+                                </a>
+
+
+                                <span th:if="${paginaPagos == n}"
+
+                                      class="page-link"
+
+                                      th:text="${n + 1}">
+                                </span>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- > 10 PÁGINAS -->
+
+                        <th:block th:if="${totalPaginasPagos > 10}">
+
+
+                            <!-- PRIMERA -->
+
+                            <li class="page-item"
+
+                                th:classappend="${paginaPagos == 0}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPagos != 0}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=${paginaPendientes},
+                                        paginaPagos=0
+                                   )}">
+
+                                    1
+
+                                </a>
+
+
+                                <span th:if="${paginaPagos == 0}"
+                                      class="page-link">
+
+                                    1
+
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- PUNTOS IZQUIERDA -->
+
+                            <li th:if="${puntosIzquierdaPagos}"
+                                class="page-item disabled">
+
+
+                                <span class="page-link">
+                                    …
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- VENTANA -->
+
+                            <li class="page-item"
+
+                                th:each="n : ${#numbers.sequence(
+                                    inicioPagos,
+                                    finPagos
+                                )}"
+
+                                th:classappend="${paginaPagos == n}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPagos != n}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=${paginaPendientes},
+                                        paginaPagos=${n}
+                                   )}"
+
+                                   th:text="${n + 1}">
+                                </a>
+
+
+                                <span th:if="${paginaPagos == n}"
+
+                                      class="page-link"
+
+                                      th:text="${n + 1}">
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- PUNTOS DERECHA -->
+
+                            <li th:if="${puntosDerechaPagos}"
+                                class="page-item disabled">
+
+
+                                <span class="page-link">
+                                    …
+                                </span>
+
+
+                            </li>
+
+
+                            <!-- ÚLTIMA -->
+
+                            <li class="page-item"
+
+                                th:classappend="${paginaPagos
+                                    == totalPaginasPagos - 1}
+                                    ? ' active'">
+
+
+                                <a th:if="${paginaPagos
+                                    != totalPaginasPagos - 1}"
+
+                                   class="page-link"
+
+                                   th:href="@{/pagos(
+                                        paginaPendientes=${paginaPendientes},
+                                        paginaPagos=${totalPaginasPagos - 1}
+                                   )}"
+
+                                   th:text="${totalPaginasPagos}">
+                                </a>
+
+
+                                <span th:if="${paginaPagos
+                                    == totalPaginasPagos - 1}"
+
+                                      class="page-link"
+
+                                      th:text="${totalPaginasPagos}">
+                                </span>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- SIGUIENTE -->
+
+                        <li class="page-item"
+
+                            th:classappend="${ultimaPagos}
+                                ? ' disabled'">
+
+
+                            <a th:if="${!ultimaPagos}"
+
+                               class="page-link"
+
+                               th:href="@{/pagos(
+                                    paginaPendientes=${paginaPendientes},
+                                    paginaPagos=${paginaPagos + 1}
+                               )}">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                            <span th:if="${ultimaPagos}"
+                                  class="page-link">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </span>
+
+
+                        </li>
+
+
+                    </ul>
+
+
+                </nav>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ========================================================= -->
+<!-- SCRIPTS -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<!-- ========================================================= -->
+<!-- FILTRADO LOCAL -->
+<!-- ========================================================= -->
+
+<script>
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+
+
+            /* =================================================
+               FILTRO PENDIENTES
+               ================================================= */
+
+            const filterPendientes =
+                document.getElementById(
+                    'filterPendientes'
+                );
+
+
+            if (filterPendientes) {
+
+
+                filterPendientes.addEventListener(
+                    'keyup',
+                    function () {
+
+
+                        const term =
+                            this.value
+                                .toLowerCase()
+                                .trim();
+
+
+                        const rows =
+                            document.querySelectorAll(
+                                '#tablePendientes tbody tr.filterable-pending-row'
+                            );
+
+
+                        rows.forEach(row => {
+
+
+                            const text =
+                                row.innerText
+                                    .toLowerCase();
+
+
+                            row.style.display =
+                                text.includes(term)
+                                    ? ''
+                                    : 'none';
+
+
+                        });
+
+
+                    }
+                );
+
+
+            }
+
+
+            /* =================================================
+               FILTRO PAGOS
+               ================================================= */
+
+            const filterPagos =
+                document.getElementById(
+                    'filterPagos'
+                );
+
+
+            if (filterPagos) {
+
+
+                filterPagos.addEventListener(
+                    'keyup',
+                    function () {
+
+
+                        const term =
+                            this.value
+                                .toLowerCase()
+                                .trim();
+
+
+                        const rows =
+                            document.querySelectorAll(
+                                '#tablePagos tbody tr.filterable-payment-row'
+                            );
+
+
+                        rows.forEach(row => {
+
+
+                            const text =
+                                row.innerText
+                                    .toLowerCase();
+
+
+                            row.style.display =
+                                text.includes(term)
+                                    ? ''
+                                    : 'none';
+
+
+                        });
+
+
+                    }
+                );
+
+
+            }
+
+
+        }
+    );
+
+</script>
+
+
+</body>
+</html>

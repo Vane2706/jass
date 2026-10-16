@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Operación no permitida')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Operación no permitida')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --warning-primary: #4f7cff;
+                --warning-primary-dark: #416ce5;
+                --warning-primary-soft: #eef4ff;
+
+                --warning-cyan: #39b8c9;
+                --warning-cyan-soft: #ecfbfd;
+
+                --warning-amber: #d7a34b;
+                --warning-amber-dark: #be8934;
+                --warning-amber-soft: #fff8e9;
+                --warning-amber-soft-2: #fffaf1;
+
+                --warning-dark: #172033;
+                --warning-text: #536176;
+                --warning-muted: #8491a5;
+
+                --warning-border: #e8edf5;
+                --warning-bg: #f7f9fc;
+
+                --warning-shadow:
+                    0 18px 50px rgba(55, 73, 107, .09);
+
+                --warning-shadow-hover:
+                    0 24px 60px rgba(55, 73, 107, .12);
+            }
+
+
+            /* =====================================================
+               BASE
+            ===================================================== */
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 8% 5%,
+                        rgba(79, 124, 255, .07),
+                        transparent 27%
+                    ),
+                    radial-gradient(
+                        circle at 93% 8%,
+                        rgba(57, 184, 201, .055),
+                        transparent 24%
+                    ),
+                    radial-gradient(
+                        circle at 72% 85%,
+                        rgba(215, 163, 75, .035),
+                        transparent 24%
+                    ),
+                    var(--warning-bg) !important;
+            }
+
+            .warning-page {
+                min-height: calc(100vh - 180px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 1.5rem 0 3rem;
+                animation: warningPageAppear .42s ease both;
+            }
+
+            @keyframes warningPageAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(9px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+
+            /* =====================================================
+               TARJETA PRINCIPAL
+            ===================================================== */
+
+            .warning-card {
+                position: relative;
+                overflow: hidden;
+                width: 100%;
+                max-width: 680px;
+                padding: 2.6rem 2.4rem 2.2rem;
+                text-align: center;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(253, 253, 254, .98)
+                    );
+                border: 1px solid var(--warning-border);
+                border-radius: 24px;
+                box-shadow: var(--warning-shadow);
+                transition:
+                    transform .25s ease,
+                    border-color .25s ease,
+                    box-shadow .25s ease;
+            }
+
+            .warning-card:hover {
+                transform: translateY(-2px);
+                border-color: rgba(215, 163, 75, .16);
+                box-shadow: var(--warning-shadow-hover);
+            }
+
+
+            /* =====================================================
+               DECORACIÓN
+            ===================================================== */
+
+            .warning-decoration {
+                position: absolute;
+                border-radius: 50%;
+                pointer-events: none;
+            }
+
+            .warning-decoration-one {
+                width: 190px;
+                height: 190px;
+                top: -115px;
+                right: -70px;
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(215, 163, 75, .09),
+                        rgba(215, 163, 75, .018) 60%,
+                        transparent 72%
+                    );
+            }
+
+            .warning-decoration-two {
+                width: 155px;
+                height: 155px;
+                bottom: -100px;
+                left: -60px;
+                background:
+                    radial-gradient(
+                        circle,
+                        rgba(79, 124, 255, .07),
+                        rgba(79, 124, 255, .015) 60%,
+                        transparent 72%
+                    );
+            }
+
+            .warning-decoration-three {
+                width: 90px;
+                height: 90px;
+                top: 32px;
+                left: -52px;
+                border: 1px solid rgba(57, 184, 201, .07);
+            }
+
+            .warning-decoration-four {
+                width: 55px;
+                height: 55px;
+                right: 45px;
+                bottom: 25px;
+                border: 1px solid rgba(215, 163, 75, .06);
+            }
+
+
+            /* =====================================================
+               CONTENIDO
+            ===================================================== */
+
+            .warning-content {
+                position: relative;
+                z-index: 2;
+            }
+
+
+            /* =====================================================
+               ICONO
+            ===================================================== */
+
+            .warning-icon-wrapper {
+                position: relative;
+                width: 84px;
+                height: 84px;
+                margin: 0 auto 1.3rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .warning-icon-halo {
+                position: absolute;
+                inset: 0;
+                border-radius: 24px;
+                background: var(--warning-amber-soft);
+                border: 1px solid rgba(215, 163, 75, .11);
+                transform: rotate(7deg);
+                transition:
+                    transform .28s ease,
+                    background-color .28s ease;
+            }
+
+            .warning-card:hover
+            .warning-icon-halo {
+                transform: rotate(12deg) scale(1.03);
+                background: #fff6e3;
+            }
+
+            .warning-icon {
+                position: relative;
+                z-index: 2;
+                width: 65px;
+                height: 65px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--warning-amber);
+                background:
+                    linear-gradient(
+                        145deg,
+                        #fffdf9,
+                        var(--warning-amber-soft)
+                    );
+                border: 1px solid rgba(215, 163, 75, .15);
+                border-radius: 19px;
+                font-size: 1.45rem;
+                box-shadow:
+                    0 8px 22px rgba(215, 163, 75, .10);
+                transition:
+                    transform .25s ease,
+                    box-shadow .25s ease;
+            }
+
+            .warning-card:hover
+            .warning-icon {
+                transform: translateY(-2px);
+                box-shadow:
+                    0 11px 27px rgba(215, 163, 75, .14);
+            }
+
+
+            /* =====================================================
+               IDENTIFICADOR
+            ===================================================== */
+
+            .warning-eyebrow {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: .28rem .62rem;
+                margin-bottom: .8rem;
+                color: #60718d;
+                background:
+                    linear-gradient(
+                        135deg,
+                        #f8faff,
+                        var(--warning-primary-soft)
+                    );
+                border: 1px solid rgba(79, 124, 255, .10);
+                border-radius: 999px;
+                font-size: .56rem;
+                font-weight: 760;
+                letter-spacing: .1em;
+            }
+
+
+            /* =====================================================
+               TEXTO
+            ===================================================== */
+
+            .warning-title {
+                max-width: 530px;
+                margin: 0 auto .65rem;
+                color: var(--warning-dark);
+                font-size: 1.35rem;
+                font-weight: 780;
+                line-height: 1.25;
+                letter-spacing: -.025em;
+            }
+
+            .warning-message {
+                max-width: 510px;
+                margin: 0 auto;
+                color: var(--warning-muted);
+                font-size: .72rem;
+                font-weight: 500;
+                line-height: 1.65;
+            }
+
+
+            /* =====================================================
+               SEPARADOR
+            ===================================================== */
+
+            .warning-divider {
+                width: 46px;
+                height: 3px;
+                margin: 1.35rem auto;
+                background:
+                    linear-gradient(
+                        90deg,
+                        var(--warning-amber),
+                        #e5bc72
+                    );
+                border-radius: 999px;
+                opacity: .62;
+            }
+
+
+            /* =====================================================
+               ACCIONES
+            ===================================================== */
+
+            .warning-actions {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: .65rem;
+            }
+
+            .btn-warning-back,
+            .btn-warning-home {
+                min-height: 40px;
+                padding: .56rem 1.15rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .42rem;
+                border-radius: 11px;
+                font-size: .7rem;
+                font-weight: 680;
+                text-decoration: none;
+                cursor: pointer;
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+
+            /* VOLVER */
+
+            .btn-warning-back {
+                color: #68768b;
+                background: #fff;
+                border: 1px solid #e0e6ee;
+                box-shadow:
+                    0 4px 12px rgba(55, 73, 107, .04);
+            }
+
+            .btn-warning-back:hover {
+                color: #405069;
+                background: #f8fafc;
+                border-color: #d4dde8;
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 16px rgba(55, 73, 107, .07);
+            }
+
+            .btn-warning-back i {
+                transition: transform .18s ease;
+            }
+
+            .btn-warning-back:hover i {
+                transform: translateX(-2px);
+            }
+
+
+            /* INICIO */
+
+            .btn-warning-home {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--warning-primary),
+                        #5e89f7
+                    );
+                border: 1px solid var(--warning-primary);
+                box-shadow:
+                    0 7px 18px rgba(79, 124, 255, .18);
+            }
+
+            .btn-warning-home:hover {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--warning-primary-dark),
+                        var(--warning-primary)
+                    );
+                transform: translateY(-1px);
+                box-shadow:
+                    0 10px 23px rgba(79, 124, 255, .24);
+            }
+
+            .btn-warning-home i {
+                transition: transform .2s ease;
+            }
+
+            .btn-warning-home:hover i {
+                transform: translateY(-1px);
+            }
+
+            .btn-warning-back:active,
+            .btn-warning-home:active {
+                transform: translateY(0);
+            }
+
+
+            /* =====================================================
+               RESPONSIVE
+            ===================================================== */
+
+            @media (max-width: 767.98px) {
+
+                .warning-page {
+                    min-height: calc(100vh - 160px);
+                    padding: 1rem 0 2rem;
+                }
+
+                .warning-card {
+                    max-width: 600px;
+                    padding: 2.2rem 1.5rem 1.8rem;
+                    border-radius: 20px;
+                }
+
+                .warning-title {
+                    font-size: 1.2rem;
+                }
+
+                .warning-icon-wrapper {
+                    width: 76px;
+                    height: 76px;
+                }
+
+                .warning-icon {
+                    width: 59px;
+                    height: 59px;
+                    font-size: 1.3rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+
+                .warning-card {
+                    padding: 2rem 1.1rem 1.3rem;
+                    border-radius: 18px;
+                }
+
+                .warning-title {
+                    font-size: 1.08rem;
+                }
+
+                .warning-message {
+                    font-size: .68rem;
+                }
+
+                .warning-actions {
+                    flex-direction: column-reverse;
+                    width: 100%;
+                }
+
+                .btn-warning-back,
+                .btn-warning-home {
+                    width: 100%;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .warning-page,
+                .warning-card,
+                .warning-icon-halo,
+                .warning-icon,
+                .btn-warning-back,
+                .btn-warning-home,
+                .btn-warning-back i,
+                .btn-warning-home i {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+        </style>
+
+
+        <!-- ===================================================== -->
+        <!-- OPERACIÓN NO PERMITIDA -->
+        <!-- ===================================================== -->
+
+        <div class="warning-page">
+
+            <div class="warning-card">
+
+
+                <!-- DECORACIÓN -->
+
+                <div class="warning-decoration warning-decoration-one"></div>
+                <div class="warning-decoration warning-decoration-two"></div>
+                <div class="warning-decoration warning-decoration-three"></div>
+                <div class="warning-decoration warning-decoration-four"></div>
+
+
+                <!-- CONTENIDO -->
+
+                <div class="warning-content">
+
+
+                    <!-- ICONO -->
+
+                    <div class="warning-icon-wrapper">
+
+                        <div class="warning-icon-halo"></div>
+
+                        <div class="warning-icon">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+
+                    </div>
+
+
+                    <!-- IDENTIFICADOR -->
+
+                    <span class="warning-eyebrow">
+                        JASS MISHQUIYACU
+                    </span>
+
+
+                    <!-- TÍTULO -->
+
+                    <h2 class="warning-title"
+                        th:text="${titulo}">
+                        Operación no permitida
+                    </h2>
+
+
+                    <!-- MENSAJE -->
+
+                    <p class="warning-message"
+                       th:text="${mensaje}">
+                        La operación solicitada no puede completarse.
+                    </p>
+
+
+                    <!-- SEPARADOR -->
+
+                    <div class="warning-divider"></div>
+
+
+                    <!-- ACCIONES -->
+
+                    <div class="warning-actions">
+
+                        <button type="button"
+                                class="btn-warning-back"
+                                onclick="history.back()">
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            <span>Volver</span>
+
+                        </button>
+
+
+                        <a class="btn-warning-home"
+                           th:href="@{/}">
+
+                            <i class="bi bi-house-door"></i>
+
+                            <span>Ir al inicio</span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</body>
+</html>

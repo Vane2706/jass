@@ -1,0 +1,2080 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Detalle de factura')}"></head>
+
+<body>
+
+<style>
+    :root {
+        --inv-primary: #4f7cff;
+        --inv-primary-dark: #416ce5;
+        --inv-primary-soft: #eef4ff;
+
+        --inv-cyan: #39b8c9;
+        --inv-cyan-soft: #ecfbfd;
+
+        --inv-green: #3aaa83;
+        --inv-green-soft: #edf9f5;
+
+        --inv-amber: #d8a64d;
+        --inv-amber-soft: #fff8e9;
+
+        --inv-red: #d96c75;
+        --inv-red-soft: #fff0f2;
+
+        --inv-dark: #172033;
+        --inv-text: #536176;
+        --inv-muted: #8491a5;
+
+        --inv-border: #e8edf5;
+        --inv-border-soft: #f0f3f7;
+        --inv-bg: #f7f9fc;
+
+        --inv-shadow:
+            0 12px 38px rgba(55, 73, 107, .07);
+
+        --inv-shadow-hover:
+            0 18px 48px rgba(55, 73, 107, .10);
+    }
+
+
+    /* =========================================================
+       BASE
+       ========================================================= */
+
+    body {
+        background:
+            radial-gradient(
+                circle at 7% 4%,
+                rgba(79, 124, 255, .07),
+                transparent 26%
+            ),
+            radial-gradient(
+                circle at 94% 8%,
+                rgba(57, 184, 201, .055),
+                transparent 25%
+            ),
+            var(--inv-bg) !important;
+    }
+
+    .invoice-page {
+        max-width: 1180px;
+        margin: 0 auto;
+        animation: invoiceAppear .42s ease both;
+    }
+
+    @keyframes invoiceAppear {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+
+    /* =========================================================
+       ENCABEZADO DE PÁGINA
+       ========================================================= */
+
+    .invoice-page-header {
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+
+        padding: 1.15rem 1.3rem;
+        margin-bottom: 1rem;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255, 255, 255, .99),
+                rgba(247, 250, 255, .98)
+            );
+
+        border: 1px solid var(--inv-border);
+        border-radius: 18px;
+
+        box-shadow:
+            0 7px 25px rgba(55, 73, 107, .055);
+    }
+
+    .invoice-page-header::before {
+        content: "";
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+
+        top: -120px;
+        right: 120px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(79, 124, 255, .045);
+
+        pointer-events: none;
+    }
+
+    .invoice-page-header::after {
+        content: "";
+        position: absolute;
+
+        width: 110px;
+        height: 110px;
+
+        right: -48px;
+        bottom: -72px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(57, 184, 201, .06);
+
+        pointer-events: none;
+    }
+
+    .invoice-page-info {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+        gap: .8rem;
+
+        min-width: 0;
+    }
+
+    .invoice-page-icon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: var(--inv-primary);
+
+        background:
+            linear-gradient(
+                145deg,
+                var(--inv-primary-soft),
+                #f9fbff
+            );
+
+        border:
+            1px solid rgba(79, 124, 255, .11);
+
+        border-radius: 13px;
+
+        font-size: .95rem;
+
+        box-shadow:
+            0 5px 14px rgba(79, 124, 255, .05);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+    .invoice-page-header:hover
+    .invoice-page-icon {
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 7px 17px rgba(79, 124, 255, .09);
+    }
+
+    .invoice-eyebrow {
+        display: block;
+
+        margin-bottom: .12rem;
+
+        color: var(--inv-muted);
+
+        font-size: .56rem;
+        font-weight: 750;
+        letter-spacing: .09em;
+
+        text-transform: uppercase;
+    }
+
+    .invoice-number {
+        margin: 0 0 .16rem;
+
+        color: var(--inv-dark);
+
+        font-size: 1.12rem;
+        font-weight: 780;
+        letter-spacing: -.025em;
+    }
+
+    .service-code {
+        display: inline-flex;
+        align-items: center;
+        gap: .3rem;
+
+        margin: 0;
+        padding: .25rem .52rem;
+
+        color: #60718d;
+
+        background:
+            var(--inv-primary-soft);
+
+        border:
+            1px solid rgba(79, 124, 255, .10);
+
+        border-radius: 7px;
+
+        font-size: .59rem;
+        font-weight: 650;
+    }
+
+    .service-code i {
+        color: var(--inv-primary);
+    }
+
+
+    /* =========================================================
+       ACCIONES
+       ========================================================= */
+
+    .invoice-actions {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+        gap: .55rem;
+    }
+
+    .btn-invoice-back,
+    .btn-invoice-print {
+        min-height: 39px;
+
+        padding: .53rem .95rem;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .4rem;
+
+        border-radius: 10px;
+
+        font-size: .68rem;
+        font-weight: 680;
+
+        text-decoration: none;
+
+        transition:
+            transform .18s ease,
+            color .18s ease,
+            background .18s ease,
+            border-color .18s ease,
+            box-shadow .18s ease;
+    }
+
+    .btn-invoice-back {
+        color: #68768b;
+
+        background: #fff;
+
+        border: 1px solid #e0e6ee;
+
+        box-shadow:
+            0 4px 12px rgba(55, 73, 107, .035);
+    }
+
+    .btn-invoice-back:hover {
+        color: #405069;
+
+        background: #f8fafc;
+
+        border-color: #d4dde8;
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 7px 16px rgba(55, 73, 107, .07);
+    }
+
+    .btn-invoice-back i {
+        transition:
+            transform .18s ease;
+    }
+
+    .btn-invoice-back:hover i {
+        transform:
+            translateX(-2px);
+    }
+
+    .btn-invoice-print {
+        color: #fff;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--inv-primary),
+                #5e89f7
+            );
+
+        border:
+            1px solid var(--inv-primary);
+
+        box-shadow:
+            0 7px 18px rgba(79, 124, 255, .18);
+
+        cursor: pointer;
+    }
+
+    .btn-invoice-print:hover {
+        color: #fff;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--inv-primary-dark),
+                var(--inv-primary)
+            );
+
+        transform:
+            translateY(-1px);
+
+        box-shadow:
+            0 10px 22px rgba(79, 124, 255, .23);
+    }
+
+
+    /* =========================================================
+       FACTURA
+       ========================================================= */
+
+    .invoice-card {
+        position: relative;
+        overflow: hidden;
+
+        padding: 1.6rem;
+
+        background:
+            linear-gradient(
+                145deg,
+                rgba(255, 255, 255, .995),
+                rgba(252, 253, 255, .99)
+            );
+
+        border:
+            1px solid var(--inv-border);
+
+        border-radius:
+            22px;
+
+        box-shadow:
+            var(--inv-shadow);
+
+        transition:
+            transform .22s ease,
+            border-color .22s ease,
+            box-shadow .22s ease;
+    }
+
+    .invoice-card:hover {
+        transform:
+            translateY(-2px);
+
+        border-color:
+            rgba(79, 124, 255, .11);
+
+        box-shadow:
+            var(--inv-shadow-hover);
+    }
+
+    .invoice-card::before {
+        content: "";
+
+        position: absolute;
+
+        width: 220px;
+        height: 220px;
+
+        top: -155px;
+        right: -90px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(79, 124, 255, .055),
+                transparent 68%
+            );
+
+        pointer-events: none;
+    }
+
+
+    /* =========================================================
+       CABECERA DEL COMPROBANTE
+       ========================================================= */
+
+    .invoice-document-header {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+
+        padding-bottom: 1rem;
+
+        border-bottom:
+            1px solid var(--inv-border);
+    }
+
+    .brand-area {
+        display: flex;
+        align-items: center;
+        gap: .7rem;
+    }
+
+    .brand-icon {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color: var(--inv-cyan);
+
+        background:
+            linear-gradient(
+                145deg,
+                var(--inv-cyan-soft),
+                #f9feff
+            );
+
+        border:
+            1px solid rgba(57, 184, 201, .12);
+
+        border-radius: 12px;
+
+        font-size: .95rem;
+
+        box-shadow:
+            0 5px 14px rgba(57, 184, 201, .05);
+    }
+
+    .brand-name {
+        margin: 0 0 .15rem;
+
+        color: var(--inv-dark);
+
+        font-size: 1rem;
+        font-weight: 780;
+        letter-spacing: -.02em;
+    }
+
+    .brand-description {
+        margin: 0;
+
+        color: var(--inv-muted);
+
+        font-size: .62rem;
+        line-height: 1.4;
+    }
+
+    .invoice-status-area {
+        text-align: right;
+    }
+
+
+    /* =========================================================
+       ESTADO
+       ========================================================= */
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: .33rem;
+
+        padding:
+            .31rem .62rem;
+
+        border-radius:
+            999px;
+
+        font-size:
+            .58rem;
+
+        font-weight:
+            730;
+
+        letter-spacing:
+            .025em;
+
+        text-transform:
+            uppercase;
+    }
+
+    .status-badge::before {
+        content: "";
+
+        width: 5px;
+        height: 5px;
+
+        border-radius:
+            50%;
+
+        background:
+            currentColor;
+    }
+
+    .status-pagada {
+        color: #32846a;
+
+        background:
+            var(--inv-green-soft);
+
+        border:
+            1px solid rgba(58, 170, 131, .14);
+    }
+
+    .status-parcial {
+        color: #9a7838;
+
+        background:
+            var(--inv-amber-soft);
+
+        border:
+            1px solid rgba(216, 166, 77, .15);
+    }
+
+    .status-pendiente {
+        color: #bd5962;
+
+        background:
+            var(--inv-red-soft);
+
+        border:
+            1px solid rgba(217, 108, 117, .15);
+    }
+
+    .due-date {
+        margin:
+            .48rem 0 0;
+
+        color:
+            var(--inv-muted);
+
+        font-size:
+            .61rem;
+    }
+
+    .due-date strong {
+        color:
+            #48566a;
+
+        font-weight:
+            680;
+    }
+
+
+    /* =========================================================
+       DATOS GENERALES
+       ========================================================= */
+
+    .invoice-general-data {
+        position: relative;
+        z-index: 2;
+
+        margin:
+            1rem 0;
+    }
+
+    .invoice-data-item {
+        position: relative;
+
+        height: 100%;
+
+        padding:
+            .75rem .85rem;
+
+        background:
+            #fafbfd;
+
+        border:
+            1px solid var(--inv-border-soft);
+
+        border-radius:
+            11px;
+
+        transition:
+            transform .18s ease,
+            background-color .18s ease,
+            border-color .18s ease;
+    }
+
+    .invoice-data-item:hover {
+        transform:
+            translateY(-1px);
+
+        background:
+            #fff;
+
+        border-color:
+            #e2e8f0;
+    }
+
+    .invoice-data-label {
+        display: flex;
+        align-items: center;
+        gap: .3rem;
+
+        margin-bottom:
+            .28rem;
+
+        color:
+            var(--inv-muted);
+
+        font-size:
+            .58rem;
+
+        font-weight:
+            620;
+    }
+
+    .invoice-data-label i {
+        color:
+            var(--inv-primary);
+
+        font-size:
+            .65rem;
+    }
+
+    .invoice-data-value {
+        display: block;
+
+        color:
+            #3f4d62;
+
+        font-size:
+            .7rem;
+
+        font-weight:
+            680;
+    }
+
+
+    /* =========================================================
+       SECCIONES
+       ========================================================= */
+
+    .invoice-section {
+        position: relative;
+        z-index: 2;
+
+        padding-top:
+            1rem;
+
+        margin-top:
+            1rem;
+
+        border-top:
+            1px solid var(--inv-border);
+    }
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+
+        margin-bottom:
+            .8rem;
+    }
+
+    .section-heading-icon {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        color:
+            var(--inv-primary);
+
+        background:
+            var(--inv-primary-soft);
+
+        border:
+            1px solid rgba(79, 124, 255, .10);
+
+        border-radius:
+            9px;
+
+        font-size:
+            .72rem;
+    }
+
+    .section-title {
+        margin:
+            0 0 .08rem;
+
+        color:
+            var(--inv-dark);
+
+        font-size:
+            .76rem;
+
+        font-weight:
+            750;
+    }
+
+    .section-subtitle {
+        margin:
+            0;
+
+        color:
+            var(--inv-muted);
+
+        font-size:
+            .59rem;
+    }
+
+
+    /* =========================================================
+       LECTURAS
+       ========================================================= */
+
+    .reading-kpi {
+        position: relative;
+        overflow: hidden;
+
+        height: 100%;
+
+        padding:
+            .85rem .9rem;
+
+        background:
+            linear-gradient(
+                145deg,
+                #fafbfd,
+                #f8fafc
+            );
+
+        border:
+            1px solid var(--inv-border);
+
+        border-radius:
+            12px;
+
+        transition:
+            transform .18s ease,
+            border-color .18s ease,
+            box-shadow .18s ease;
+    }
+
+    .reading-kpi:hover {
+        transform:
+            translateY(-2px);
+
+        border-color:
+            rgba(79, 124, 255, .13);
+
+        box-shadow:
+            0 7px 18px rgba(55, 73, 107, .055);
+    }
+
+    .reading-kpi::after {
+        content: "";
+
+        position: absolute;
+
+        width: 58px;
+        height: 58px;
+
+        right: -32px;
+        bottom: -34px;
+
+        border-radius:
+            50%;
+
+        background:
+            rgba(79, 124, 255, .035);
+    }
+
+    .reading-kpi-label {
+        display: flex;
+        align-items: center;
+        gap: .3rem;
+
+        margin-bottom:
+            .35rem;
+
+        color:
+            var(--inv-muted);
+
+        font-size:
+            .58rem;
+
+        font-weight:
+            620;
+    }
+
+    .reading-kpi-label i {
+        color:
+            var(--inv-primary);
+
+        font-size:
+            .65rem;
+    }
+
+    .reading-kpi-value {
+        position: relative;
+        z-index: 2;
+
+        display: block;
+
+        color:
+            #3f4d62;
+
+        font-family:
+            ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            monospace;
+
+        font-size:
+            .82rem;
+
+        font-weight:
+            760;
+    }
+
+    .reading-kpi-total {
+        background:
+            linear-gradient(
+                145deg,
+                #f4f8ff,
+                var(--inv-primary-soft)
+            );
+
+        border-color:
+            rgba(79, 124, 255, .13);
+    }
+
+    .reading-kpi-total
+    .reading-kpi-label i {
+        color:
+            var(--inv-cyan);
+    }
+
+    .reading-kpi-total
+    .reading-kpi-value {
+        color:
+            var(--inv-primary-dark);
+    }
+
+
+    /* =========================================================
+       TABLA
+       ========================================================= */
+
+    .invoice-table-wrapper {
+        position: relative;
+        z-index: 2;
+
+        overflow: hidden;
+
+        margin-top:
+            1rem;
+
+        border:
+            1px solid var(--inv-border);
+
+        border-radius:
+            13px;
+    }
+
+    .invoice-table {
+        width:
+            100%;
+
+        margin:
+            0;
+
+        border-collapse:
+            separate;
+
+        border-spacing:
+            0;
+    }
+
+    .invoice-table thead th {
+        padding:
+            .65rem .8rem;
+
+        color:
+            #758298;
+
+        background:
+            #f8fafc;
+
+        border:
+            0;
+
+        border-bottom:
+            1px solid var(--inv-border);
+
+        font-size:
+            .56rem;
+
+        font-weight:
+            700;
+
+        letter-spacing:
+            .045em;
+
+        text-transform:
+            uppercase;
+
+        white-space:
+            nowrap;
+    }
+
+    .invoice-table tbody td {
+        padding:
+            .78rem .8rem;
+
+        color:
+            #536176;
+
+        background:
+            #fff;
+
+        border:
+            0;
+
+        border-bottom:
+            1px solid var(--inv-border-soft);
+
+        font-size:
+            .67rem;
+
+        vertical-align:
+            middle;
+
+        transition:
+            background-color .16s ease;
+    }
+
+    .invoice-table tbody tr:last-child td {
+        border-bottom:
+            0;
+    }
+
+    .invoice-table tbody tr:hover td {
+        background:
+            #fafcff;
+    }
+
+    .invoice-table .consumption-value {
+        color:
+            #3f4d62;
+
+        font-weight:
+            650;
+    }
+
+    .invoice-table .subtotal-value {
+        color:
+            var(--inv-dark);
+
+        font-weight:
+            750;
+    }
+
+
+    /* =========================================================
+       PIE Y TOTAL
+       ========================================================= */
+
+    .invoice-footer {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+
+        margin-top:
+            1rem;
+    }
+
+    .invoice-note {
+        margin:
+            0;
+
+        color:
+            var(--inv-muted);
+
+        font-size:
+            .57rem;
+
+        line-height:
+            1.55;
+    }
+
+    .total-box {
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+
+        padding:
+            .85rem 1rem;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f7faff,
+                var(--inv-primary-soft)
+            );
+
+        border:
+            1px solid rgba(79, 124, 255, .13);
+
+        border-radius:
+            12px;
+
+        transition:
+            transform .18s ease,
+            box-shadow .18s ease;
+    }
+
+    .total-box:hover {
+        transform:
+            translateY(-1px);
+
+        box-shadow:
+            0 7px 18px rgba(79, 124, 255, .07);
+    }
+
+    .total-box::after {
+        content: "";
+
+        position: absolute;
+
+        width: 80px;
+        height: 80px;
+
+        right: -45px;
+        bottom: -50px;
+
+        border-radius:
+            50%;
+
+        background:
+            rgba(79, 124, 255, .05);
+
+        pointer-events:
+            none;
+    }
+
+    .total-label {
+        position: relative;
+        z-index: 2;
+
+        color:
+            #718098;
+
+        font-size:
+            .57rem;
+
+        font-weight:
+            730;
+
+        letter-spacing:
+            .04em;
+
+        text-transform:
+            uppercase;
+    }
+
+    .total-value {
+        position: relative;
+        z-index: 2;
+
+        color:
+            var(--inv-primary-dark);
+
+        font-family:
+            ui-monospace,
+            SFMono-Regular,
+            Menlo,
+            Monaco,
+            Consolas,
+            monospace;
+
+        font-size:
+            1.12rem;
+
+        font-weight:
+            800;
+
+        letter-spacing:
+            -.035em;
+
+        white-space:
+            nowrap;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        .invoice-page-header {
+            align-items:
+                flex-start;
+
+            flex-direction:
+                column;
+
+            padding:
+                1.05rem;
+
+            border-radius:
+                17px;
+        }
+
+        .invoice-actions {
+            width:
+                100%;
+        }
+
+        .btn-invoice-back,
+        .btn-invoice-print {
+            flex:
+                1;
+        }
+
+        .invoice-card {
+            padding:
+                1.2rem;
+
+            border-radius:
+                18px;
+        }
+
+        .invoice-document-header {
+            align-items:
+                flex-start;
+
+            flex-direction:
+                column;
+        }
+
+        .invoice-status-area {
+            width:
+                100%;
+
+            text-align:
+                left;
+        }
+
+        .invoice-footer {
+            gap:
+                .8rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+
+        .invoice-page-info {
+            align-items:
+                flex-start;
+        }
+
+        .invoice-number {
+            font-size:
+                1rem;
+        }
+
+        .invoice-actions {
+            flex-direction:
+                column-reverse;
+        }
+
+        .btn-invoice-back,
+        .btn-invoice-print {
+            width:
+                100%;
+        }
+
+        .invoice-card {
+            padding:
+                1rem;
+        }
+
+        .brand-description {
+            max-width:
+                230px;
+        }
+
+        .invoice-footer {
+            align-items:
+                stretch;
+
+            flex-direction:
+                column;
+        }
+
+        .invoice-footer .col-7,
+        .invoice-footer .col-5 {
+            width:
+                100%;
+        }
+
+        .total-box {
+            margin-top:
+                .5rem;
+        }
+    }
+
+
+    /* =========================================================
+       MOVIMIENTO REDUCIDO
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+
+        .invoice-page,
+        .invoice-page-icon,
+        .invoice-card,
+        .invoice-data-item,
+        .reading-kpi,
+        .total-box,
+        .btn-invoice-back,
+        .btn-invoice-print {
+            animation:
+                none !important;
+
+            transition:
+                none !important;
+        }
+    }
+
+
+    /* =========================================================
+       IMPRESIÓN A4
+       ========================================================= */
+
+    @media print {
+
+        @page {
+            size:
+                A4 portrait;
+
+            margin:
+                10mm 12mm;
+        }
+
+        body {
+            background:
+                #fff !important;
+
+            color:
+                #000 !important;
+
+            font-size:
+                10px !important;
+
+            -webkit-print-color-adjust:
+                exact;
+
+            print-color-adjust:
+                exact;
+        }
+
+        .sidebar,
+        .topbar,
+        .page-actions,
+        .alerts,
+        .no-print {
+            display:
+                none !important;
+        }
+
+        .app-main {
+            margin:
+                0 !important;
+
+            padding:
+                0 !important;
+        }
+
+        .content {
+            padding:
+                0 !important;
+        }
+
+        .invoice-page {
+            max-width:
+                none !important;
+
+            width:
+                100% !important;
+
+            margin:
+                0 !important;
+
+            animation:
+                none !important;
+        }
+
+        .invoice-card {
+            width:
+                100% !important;
+
+            margin:
+                0 !important;
+
+            padding:
+                0 !important;
+
+            background:
+                #fff !important;
+
+            border:
+                0 !important;
+
+            border-radius:
+                0 !important;
+
+            box-shadow:
+                none !important;
+
+            transform:
+                none !important;
+
+            page-break-inside:
+                avoid !important;
+        }
+
+        .invoice-card::before {
+            display:
+                none !important;
+        }
+
+        .invoice-document-header {
+            padding-bottom:
+                7px !important;
+        }
+
+        .brand-icon {
+            width:
+                34px !important;
+
+            height:
+                34px !important;
+
+            min-width:
+                34px !important;
+
+            box-shadow:
+                none !important;
+        }
+
+        .brand-name {
+            font-size:
+                13px !important;
+        }
+
+        .brand-description,
+        .due-date,
+        .section-subtitle,
+        .invoice-note {
+            font-size:
+                8px !important;
+        }
+
+        .status-badge {
+            padding:
+                3px 7px !important;
+
+            font-size:
+                7px !important;
+        }
+
+        .invoice-general-data {
+            margin:
+                7px 0 !important;
+        }
+
+        .invoice-data-item {
+            padding:
+                6px 7px !important;
+
+            background:
+                #fff !important;
+
+            border:
+                1px solid #e2e8f0 !important;
+
+            border-radius:
+                6px !important;
+
+            transform:
+                none !important;
+        }
+
+        .invoice-data-label {
+            margin-bottom:
+                2px !important;
+
+            font-size:
+                7px !important;
+        }
+
+        .invoice-data-value {
+            font-size:
+                9px !important;
+        }
+
+        .invoice-section {
+            padding-top:
+                7px !important;
+
+            margin-top:
+                7px !important;
+        }
+
+        .section-heading {
+            margin-bottom:
+                5px !important;
+        }
+
+        .section-heading-icon {
+            width:
+                27px !important;
+
+            height:
+                27px !important;
+
+            min-width:
+                27px !important;
+
+            border-radius:
+                6px !important;
+        }
+
+        .section-title {
+            font-size:
+                9px !important;
+        }
+
+        .reading-kpi {
+            padding:
+                6px 7px !important;
+
+            background:
+                #fff !important;
+
+            border:
+                1px solid #e2e8f0 !important;
+
+            border-radius:
+                6px !important;
+
+            box-shadow:
+                none !important;
+
+            transform:
+                none !important;
+        }
+
+        .reading-kpi::after {
+            display:
+                none !important;
+        }
+
+        .reading-kpi-label {
+            margin-bottom:
+                2px !important;
+
+            font-size:
+                7px !important;
+        }
+
+        .reading-kpi-value {
+            font-size:
+                9px !important;
+        }
+
+        .invoice-table-wrapper {
+            margin-top:
+                7px !important;
+
+            border-radius:
+                6px !important;
+        }
+
+        .invoice-table thead th {
+            padding:
+                5px 6px !important;
+
+            background:
+                #f1f5f9 !important;
+
+            color:
+                #000 !important;
+
+            font-size:
+                7px !important;
+        }
+
+        .invoice-table tbody td {
+            padding:
+                6px !important;
+
+            color:
+                #000 !important;
+
+            background:
+                #fff !important;
+
+            font-size:
+                8px !important;
+        }
+
+        .invoice-footer {
+            margin-top:
+                7px !important;
+        }
+
+        .total-box {
+            padding:
+                7px 9px !important;
+
+            background:
+                #f8fafc !important;
+
+            border:
+                1px solid #cbd5e1 !important;
+
+            border-radius:
+                6px !important;
+
+            box-shadow:
+                none !important;
+
+            transform:
+                none !important;
+        }
+
+        .total-box::after {
+            display:
+                none !important;
+        }
+
+        .total-label {
+            color:
+                #000 !important;
+
+            font-size:
+                7px !important;
+        }
+
+        .total-value {
+            color:
+                #000 !important;
+
+            font-size:
+                14px !important;
+        }
+
+        .g-3 {
+            --bs-gutter-x:
+                .55rem !important;
+
+            --bs-gutter-y:
+                .4rem !important;
+        }
+    }
+</style>
+
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Detalle de factura')}"></div>
+
+
+    <section class="content container-fluid px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+
+        <div class="invoice-page">
+
+
+            <!-- ================================================= -->
+            <!-- ENCABEZADO -->
+            <!-- ================================================= -->
+
+            <div class="invoice-page-header page-actions">
+
+                <div class="invoice-page-info">
+
+                    <div class="invoice-page-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="invoice-eyebrow">
+                            Comprobante Electrónico
+                        </span>
+
+                        <h3 class="invoice-number"
+                            th:text="${factura.numeroFactura}">
+                            FAC-000
+                        </h3>
+
+                        <span class="service-code">
+
+                            <i class="bi bi-droplet"></i>
+
+                            <span th:text="${'Código Servicio: ' + factura.servicio.codigoServicio}">
+                                Código Servicio: SER-000
+                            </span>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="invoice-actions">
+
+                    <a class="btn-invoice-back"
+                       th:href="@{/facturacion}">
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        <span>
+                            Volver
+                        </span>
+
+                    </a>
+
+
+                    <button type="button"
+                            class="btn-invoice-print"
+                            onclick="window.print()">
+
+                        <i class="bi bi-printer"></i>
+
+                        <span>
+                            Imprimir / PDF
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FACTURA -->
+            <!-- ================================================= -->
+
+            <div class="invoice-card">
+
+
+                <!-- ============================================= -->
+                <!-- CABECERA -->
+                <!-- ============================================= -->
+
+                <div class="invoice-document-header">
+
+                    <div class="brand-area">
+
+                        <div class="brand-icon">
+                            <i class="bi bi-droplet-fill"></i>
+                        </div>
+
+                        <div>
+
+                            <h4 class="brand-name">
+                                JASS Mishquiyacu
+                            </h4>
+
+                            <p class="brand-description">
+                                Servicio Comunitario de Agua Potable y Alcantarillado
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="invoice-status-area">
+
+                        <span class="status-badge"
+                              th:classappend="${factura.estado == 'PAGADA' ? 'status-pagada' : (factura.estado == 'PARCIAL' ? 'status-parcial' : 'status-pendiente')}"
+                              th:text="${factura.estado}">
+                            PENDIENTE
+                        </span>
+
+                        <p class="due-date">
+
+                            Vencimiento:
+
+                            <strong th:text="${factura.fechaVencimiento != null ? #temporals.format(factura.fechaVencimiento, 'dd/MM/yyyy') : '—'}">
+                                —
+                            </strong>
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- DATOS GENERALES -->
+                <!-- ============================================= -->
+
+                <div class="invoice-general-data">
+
+                    <div class="row g-3">
+
+
+                        <!-- PERIODO -->
+
+                        <div class="col-md-4">
+
+                            <div class="invoice-data-item">
+
+                                <span class="invoice-data-label">
+
+                                    <i class="bi bi-calendar3"></i>
+
+                                    Periodo de Facturación
+
+                                </span>
+
+                                <strong class="invoice-data-value"
+                                        th:text="${#numbers.formatInteger(factura.periodo.mes, 2) + '/' + factura.periodo.anio}">
+                                    09/2026
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMISIÓN -->
+
+                        <div class="col-md-4">
+
+                            <div class="invoice-data-item">
+
+                                <span class="invoice-data-label">
+
+                                    <i class="bi bi-calendar-check"></i>
+
+                                    Fecha de Emisión
+
+                                </span>
+
+                                <strong class="invoice-data-value"
+                                        th:text="${factura.fechaEmision != null ? #temporals.format(factura.fechaEmision, 'dd/MM/yyyy') : '—'}">
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SERVICIO -->
+
+                        <div class="col-md-4">
+
+                            <div class="invoice-data-item">
+
+                                <span class="invoice-data-label">
+
+                                    <i class="bi bi-droplet"></i>
+
+                                    Identificador de Servicio
+
+                                </span>
+
+                                <strong class="invoice-data-value"
+                                        th:text="${factura.servicio.codigoServicio}">
+                                    SER-000
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- LECTURA Y CONSUMO -->
+                <!-- ============================================= -->
+
+                <div class="invoice-section">
+
+                    <div class="section-heading">
+
+                        <div class="section-heading-icon">
+                            <i class="bi bi-speedometer2"></i>
+                        </div>
+
+                        <div>
+
+                            <h6 class="section-title">
+                                Detalle de Lectura y Consumo
+                            </h6>
+
+                            <p class="section-subtitle">
+                                Valores registrados en medidor para este periodo.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div th:each="d : ${detalles}"
+                         class="row g-3">
+
+
+                        <!-- LECTURA ANTERIOR -->
+
+                        <div class="col-md-4">
+
+                            <div class="reading-kpi">
+
+                                <span class="reading-kpi-label">
+
+                                    <i class="bi bi-arrow-left-circle"></i>
+
+                                    Lectura Anterior
+
+                                </span>
+
+                                <strong class="reading-kpi-value"
+                                        th:text="${d.lectura != null and d.lectura.lecturaAnterior != null ? #numbers.formatDecimal(d.lectura.lecturaAnterior, 1, 2) + ' m³' : '—'}">
+                                    0.00 m³
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- LECTURA ACTUAL -->
+
+                        <div class="col-md-4">
+
+                            <div class="reading-kpi">
+
+                                <span class="reading-kpi-label">
+
+                                    <i class="bi bi-arrow-right-circle"></i>
+
+                                    Lectura Actual
+
+                                </span>
+
+                                <strong class="reading-kpi-value"
+                                        th:text="${d.lectura != null and d.lectura.lecturaActual != null ? #numbers.formatDecimal(d.lectura.lecturaActual, 1, 2) + ' m³' : '—'}">
+                                    0.00 m³
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CONSUMO -->
+
+                        <div class="col-md-4">
+
+                            <div class="reading-kpi reading-kpi-total">
+
+                                <span class="reading-kpi-label">
+
+                                    <i class="bi bi-droplet-half"></i>
+
+                                    Consumo Total
+
+                                </span>
+
+                                <strong class="reading-kpi-value"
+                                        th:text="${d.consumo != null ? #numbers.formatDecimal(d.consumo, 1, 2) + ' m³' : '—'}">
+                                    0.00 m³
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- DESGLOSE -->
+                <!-- ============================================= -->
+
+                <div class="invoice-table-wrapper">
+
+                    <div class="table-responsive">
+
+                        <table class="table invoice-table align-middle">
+
+                            <thead>
+
+                            <tr>
+
+                                <th>
+                                    Volumen (m³)
+                                </th>
+
+                                <th>
+                                    Importe Fijo
+                                </th>
+
+                                <th>
+                                    Importe Consumo
+                                </th>
+
+                                <th class="text-end">
+                                    Subtotal
+                                </th>
+
+                            </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                            <tr th:each="d : ${detalles}">
+
+                                <td class="consumption-value"
+                                    th:text="${d.consumo != null ? #numbers.formatDecimal(d.consumo, 1, 2) + ' m³' : '—'}">
+                                    0.00 m³
+                                </td>
+
+                                <td th:text="${d.importeFijo != null ? 'S/ ' + #numbers.formatDecimal(d.importeFijo, 1, 2) : 'S/ 0.00'}">
+                                    S/ 0.00
+                                </td>
+
+                                <td th:text="${d.importeConsumo != null ? 'S/ ' + #numbers.formatDecimal(d.importeConsumo, 1, 2) : 'S/ 0.00'}">
+                                    S/ 0.00
+                                </td>
+
+                                <td class="text-end subtotal-value"
+                                    th:text="${d.importeTotal != null ? 'S/ ' + #numbers.formatDecimal(d.importeTotal, 1, 2) : 'S/ 0.00'}">
+                                    S/ 0.00
+                                </td>
+
+                            </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- PIE -->
+                <!-- ============================================= -->
+
+                <div class="row g-3 invoice-footer">
+
+                    <div class="col-7">
+
+                        <p class="invoice-note">
+                            * Conserve este comprobante como constancia oficial. Para dudas sobre lecturas o pagos, contacte con la administración de la JASS.
+                        </p>
+
+                    </div>
+
+
+                    <div class="col-5">
+
+                        <div class="total-box">
+
+                            <span class="total-label">
+                                Total a Pagar
+                            </span>
+
+                            <span class="total-value"
+                                  th:text="${factura.total != null ? 'S/ ' + #numbers.formatDecimal(factura.total, 1, 2) : 'S/ 0.00'}">
+                                S/ 0.00
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+</body>
+
+</html>

@@ -1,0 +1,2552 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Caja')}"></head>
+
+<body>
+
+<style>
+
+    /* =========================================================
+       VARIABLES
+       ========================================================= */
+
+    :root {
+        --cash-primary: #4787ad;
+        --cash-primary-dark: #346f95;
+        --cash-primary-soft: #eef7fc;
+
+        --cash-cyan: #4db5bd;
+        --cash-cyan-soft: #eefbfc;
+
+        --cash-success: #579b78;
+        --cash-success-dark: #3e7e5e;
+        --cash-success-soft: #eff9f4;
+
+        --cash-neutral: #748294;
+        --cash-neutral-soft: #f4f6f8;
+
+        --cash-text: #202c3d;
+        --cash-text-soft: #526071;
+        --cash-muted: #8290a1;
+
+        --cash-border: #e7edf3;
+        --cash-bg: #f7f9fc;
+        --cash-white: #ffffff;
+
+        --cash-shadow:
+            0 1px 2px rgba(15, 23, 42, .02),
+            0 8px 26px rgba(15, 23, 42, .045);
+
+        --cash-shadow-hover:
+            0 12px 32px rgba(15, 23, 42, .07);
+    }
+
+
+    /* =========================================================
+       BASE
+       ========================================================= */
+
+    body {
+        background:
+            radial-gradient(
+                circle at 96% 3%,
+                rgba(71, 135, 173, .06),
+                transparent 25%
+            ),
+            radial-gradient(
+                circle at 76% 10%,
+                rgba(77, 181, 189, .035),
+                transparent 22%
+            ),
+            var(--cash-bg);
+
+        color: var(--cash-text);
+    }
+
+
+    /* =========================================================
+       ANIMACIONES
+       ========================================================= */
+
+    @keyframes fadeUp {
+
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    }
+
+
+    @keyframes cashFloat {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-2px);
+        }
+
+    }
+
+
+    @keyframes openPulse {
+
+        0%,
+        100% {
+            box-shadow:
+                0 0 0 0 rgba(87, 155, 120, 0);
+        }
+
+        50% {
+            box-shadow:
+                0 0 0 4px rgba(87, 155, 120, .06);
+        }
+
+    }
+
+
+    .animate-in {
+        animation: fadeUp .45s ease both;
+    }
+
+
+    /* =========================================================
+       CABECERA PRINCIPAL
+       ========================================================= */
+
+    .cash-header {
+        position: relative;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 1rem;
+
+        margin-bottom: 1.25rem;
+        padding: 1.55rem 1.7rem;
+
+        border: 1px solid rgba(226, 232, 240, .92);
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(255, 255, 255, .99),
+                rgba(240, 249, 255, .94) 52%,
+                rgba(239, 250, 246, .8)
+            );
+
+        box-shadow:
+            0 8px 30px rgba(15, 23, 42, .035);
+    }
+
+
+    .cash-header::before {
+        content: "";
+
+        position: absolute;
+
+        width: 200px;
+        height: 200px;
+
+        right: -75px;
+        top: -115px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(71, 135, 173, .13),
+                transparent 68%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .cash-header::after {
+        content: "";
+
+        position: absolute;
+
+        width: 140px;
+        height: 140px;
+
+        right: 130px;
+        bottom: -115px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(87, 155, 120, .08),
+                transparent 70%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .header-content {
+        position: relative;
+        z-index: 2;
+
+        display: flex;
+        align-items: center;
+
+        gap: .85rem;
+    }
+
+
+    .header-icon {
+        width: 47px;
+        height: 47px;
+        min-width: 47px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #d8ebf5;
+        border-radius: 14px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #edf8fe,
+                #eaf9f4
+            );
+
+        color: var(--cash-primary);
+
+        font-size: 1.15rem;
+    }
+
+
+    .header-icon i {
+        animation: cashFloat 3.2s ease-in-out infinite;
+    }
+
+
+    .header-eyebrow {
+        margin-bottom: .15rem;
+
+        color: var(--cash-primary);
+
+        font-size: .7rem;
+        font-weight: 750;
+
+        letter-spacing: .09em;
+        text-transform: uppercase;
+    }
+
+
+    .header-title {
+        margin: 0;
+
+        color: var(--cash-text);
+
+        font-weight: 750;
+        letter-spacing: -.025em;
+    }
+
+
+    .header-description {
+        display: block;
+
+        margin-top: .22rem;
+
+        color: var(--cash-muted);
+
+        font-size: .76rem;
+    }
+
+
+    /* =========================================================
+       BOTÓN ABRIR CAJA
+       ========================================================= */
+
+    .open-cash-button {
+        position: relative;
+        z-index: 2;
+
+        min-height: 41px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .48rem;
+
+        padding: .52rem .9rem;
+
+        border: none;
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #58a3bf,
+                #4787ad
+            );
+
+        color: white;
+
+        font-size: .76rem;
+        font-weight: 650;
+
+        box-shadow:
+            0 5px 13px rgba(71, 135, 173, .16);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+
+    .open-cash-button:hover {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #4787ad,
+                #346f95
+            );
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 8px 18px rgba(71, 135, 173, .22);
+    }
+
+
+    .open-cash-button:active {
+        transform: translateY(0);
+    }
+
+
+    .open-cash-button i {
+        font-size: .9rem;
+    }
+
+
+    /* =========================================================
+       PANEL PRINCIPAL
+       ========================================================= */
+
+    .cash-panel {
+        overflow: hidden;
+
+        border: 1px solid var(--cash-border);
+        border-radius: 22px;
+
+        background: rgba(255, 255, 255, .97);
+
+        box-shadow: var(--cash-shadow);
+
+        animation: fadeUp .52s ease both;
+
+        transition:
+            box-shadow .25s ease;
+    }
+
+
+    .cash-panel:hover {
+        box-shadow:
+            0 11px 32px rgba(15, 23, 42, .06);
+    }
+
+
+    /* =========================================================
+       CABECERA DEL PANEL
+       ========================================================= */
+
+    .cash-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 1rem;
+
+        padding: 1.15rem 1.35rem;
+
+        border-bottom: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfdff
+            );
+
+        box-shadow:
+            inset 3px 0 0 rgba(71, 135, 173, .52);
+    }
+
+
+    .panel-heading {
+        display: flex;
+        align-items: center;
+
+        gap: .75rem;
+    }
+
+
+    .panel-icon {
+        width: 39px;
+        height: 39px;
+        min-width: 39px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #dcebf4;
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eef8fd,
+                #eefbf9
+            );
+
+        color: var(--cash-primary);
+
+        font-size: .94rem;
+    }
+
+
+    .panel-title {
+        margin: 0;
+
+        color: #334155;
+
+        font-size: .91rem;
+        font-weight: 700;
+    }
+
+
+    .panel-records {
+        display: block;
+
+        margin-top: .13rem;
+
+        color: #8a97a8;
+
+        font-size: .72rem;
+    }
+
+
+    .panel-records strong {
+        color: var(--cash-primary);
+
+        font-weight: 700;
+    }
+
+
+    .page-size-badge {
+        min-height: 36px;
+
+        display: inline-flex;
+        align-items: center;
+
+        gap: .45rem;
+
+        padding: .38rem .7rem;
+
+        border: 1px solid #edf1f6;
+        border-radius: 10px;
+
+        background: #f8fafc;
+
+        color: #748294;
+
+        font-size: .72rem;
+        font-weight: 550;
+    }
+
+
+    .page-size-badge i {
+        color: var(--cash-primary);
+    }
+
+
+    /* =========================================================
+       TABLA
+       ========================================================= */
+
+    .cash-table {
+        width: 100%;
+
+        margin: 0;
+
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+
+    .cash-table thead th {
+        padding: .84rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #edf1f6;
+
+        background: #f8fafc;
+
+        color: #718096;
+
+        font-size: .66rem;
+        font-weight: 750;
+
+        letter-spacing: .05em;
+        text-transform: uppercase;
+
+        white-space: nowrap;
+    }
+
+
+    .cash-table tbody td {
+        padding: .9rem .9rem;
+
+        border: none;
+        border-bottom: 1px solid #f0f3f7;
+
+        background: white;
+
+        vertical-align: middle;
+
+        transition:
+            background .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .cash-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    .cash-table tbody tr:hover td {
+        background: #fbfdff;
+    }
+
+
+    .cash-table tbody tr:hover td:first-child {
+        box-shadow:
+            inset 3px 0 0 rgba(71, 135, 173, .55);
+    }
+
+
+    /* =========================================================
+       INFORMACIÓN DE CAJA
+       ========================================================= */
+
+    .cash-profile {
+        display: flex;
+        align-items: center;
+
+        gap: .68rem;
+
+        min-width: 165px;
+    }
+
+
+    .cash-profile-icon {
+        width: 35px;
+        height: 35px;
+        min-width: 35px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #d8ebf5;
+        border-radius: 10px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eef8fd,
+                #eaf9f5
+            );
+
+        color: var(--cash-primary);
+
+        font-size: .79rem;
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .cash-table tbody tr:hover
+    .cash-profile-icon {
+        transform: scale(1.05);
+
+        box-shadow:
+            0 4px 10px rgba(71, 135, 173, .08);
+    }
+
+
+    .cash-name {
+        display: block;
+
+        max-width: 180px;
+
+        overflow: hidden;
+
+        color: #334155;
+
+        font-size: .79rem;
+        font-weight: 680;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+    .cash-id {
+        display: block;
+
+        margin-top: .1rem;
+
+        color: #94a3b8;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .65rem;
+        font-weight: 550;
+    }
+
+
+    /* =========================================================
+       RESPONSABLE
+       ========================================================= */
+
+    .responsible {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .55rem;
+
+        min-width: 150px;
+    }
+
+
+    .responsible-icon {
+        width: 29px;
+        height: 29px;
+        min-width: 29px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #e6ebf0;
+        border-radius: 9px;
+
+        background: #f7f9fb;
+
+        color: #788698;
+
+        font-size: .7rem;
+    }
+
+
+    .responsible-name {
+        display: block;
+
+        max-width: 180px;
+
+        overflow: hidden;
+
+        color: #475569;
+
+        font-size: .76rem;
+        font-weight: 600;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+    /* =========================================================
+       FECHA
+       ========================================================= */
+
+    .opening-date {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .5rem;
+
+        white-space: nowrap;
+    }
+
+
+    .date-icon {
+        width: 29px;
+        height: 29px;
+        min-width: 29px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 8px;
+
+        background: var(--cash-primary-soft);
+
+        color: var(--cash-primary);
+
+        font-size: .66rem;
+    }
+
+
+    .date-main {
+        display: block;
+
+        color: #475569;
+
+        font-size: .74rem;
+        font-weight: 600;
+    }
+
+
+    .date-time {
+        display: block;
+
+        margin-top: .04rem;
+
+        color: #94a3b8;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .64rem;
+    }
+
+
+    /* =========================================================
+       SALDOS
+       ========================================================= */
+
+    .balance-value {
+        display: inline-block;
+
+        color: #334155;
+
+        font-family:
+            "SFMono-Regular",
+            Consolas,
+            monospace;
+
+        font-size: .79rem;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    .final-balance {
+        color: var(--cash-success-dark);
+    }
+
+
+    .empty-balance {
+        color: #a7b1bf;
+
+        font-size: .8rem;
+    }
+
+
+    /* =========================================================
+       ESTADO
+       ========================================================= */
+
+    .cash-status {
+        display: inline-flex;
+        align-items: center;
+
+        gap: .4rem;
+
+        padding: .36rem .65rem;
+
+        border: 1px solid transparent;
+        border-radius: 50rem;
+
+        font-size: .68rem;
+        font-weight: 700;
+
+        white-space: nowrap;
+    }
+
+
+    .status-dot {
+        position: relative;
+
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: currentColor;
+    }
+
+
+    .cash-status.open {
+        color: #3f805f;
+
+        background: var(--cash-success-soft);
+
+        border-color: #d6ecdf;
+    }
+
+
+    .cash-status.open
+    .status-dot {
+        animation:
+            openPulse 2.6s ease-in-out infinite;
+    }
+
+
+    .cash-status.closed {
+        color: #718096;
+
+        background: var(--cash-neutral-soft);
+
+        border-color: #e3e8ed;
+    }
+
+
+    /* =========================================================
+       BOTÓN DETALLE
+       ========================================================= */
+
+    .detail-button {
+        width: 35px;
+        height: 35px;
+
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #e7ecf2;
+        border-radius: 10px;
+
+        background: white;
+
+        color: #64748b;
+
+        text-decoration: none;
+
+        box-shadow:
+            0 1px 2px rgba(15, 23, 42, .02);
+
+        transition:
+            transform .2s ease,
+            color .2s ease,
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .detail-button:hover {
+        color: white;
+
+        background: var(--cash-primary);
+
+        border-color: var(--cash-primary);
+
+        transform: translateX(2px);
+
+        box-shadow:
+            0 5px 12px rgba(71, 135, 173, .18);
+    }
+
+
+    /* =========================================================
+       ESTADO VACÍO
+       ========================================================= */
+
+    .empty-state {
+        padding: 3.6rem 1rem;
+    }
+
+
+    .empty-state-icon {
+        width: 61px;
+        height: 61px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto .95rem;
+
+        border: 1px solid #dcebf4;
+        border-radius: 17px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eef8fd,
+                #eefbf8
+            );
+
+        color: var(--cash-primary);
+
+        font-size: 1.4rem;
+    }
+
+
+    .empty-state-text {
+        margin: 0;
+
+        color: #8290a1;
+
+        font-size: .78rem;
+        font-weight: 550;
+    }
+
+
+    /* =========================================================
+       PAGINACIÓN
+       ========================================================= */
+
+    .cash-footer {
+        padding: .92rem 1.35rem;
+
+        border-top: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff,
+                #fbfcfe
+            );
+    }
+
+
+    .page-counter {
+        color: #7c8999;
+
+        font-size: .76rem;
+    }
+
+
+    .page-counter strong {
+        color: #334155;
+
+        font-weight: 650;
+    }
+
+
+    .modern-pagination {
+        gap: .25rem;
+    }
+
+
+    .modern-pagination .page-link {
+        min-width: 33px;
+        height: 33px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 0 .55rem;
+
+        border: 1px solid transparent !important;
+        border-radius: 9px !important;
+
+        background: transparent;
+
+        color: #64748b;
+
+        font-size: .77rem;
+        font-weight: 600;
+
+        box-shadow: none !important;
+
+        transition:
+            background .2s ease,
+            color .2s ease,
+            transform .2s ease,
+            border-color .2s ease;
+    }
+
+
+    .modern-pagination .page-link:hover {
+        color: var(--cash-primary);
+
+        background: var(--cash-primary-soft);
+
+        border-color: #dcebf4 !important;
+
+        transform: translateY(-1px);
+    }
+
+
+    .modern-pagination
+    .page-item.active
+    .page-link {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #58a3bf,
+                #4787ad
+            );
+
+        border-color: var(--cash-primary) !important;
+
+        box-shadow:
+            0 4px 10px rgba(71, 135, 173, .16) !important;
+    }
+
+
+    .modern-pagination
+    .page-item.disabled
+    .page-link {
+        color: #c1c9d4;
+
+        background: transparent;
+    }
+
+
+    /* =========================================================
+       OFFCANVAS
+       ========================================================= */
+
+    .cash-offcanvas {
+        width: 420px !important;
+
+        border: none !important;
+        border-left: 1px solid var(--cash-border) !important;
+
+        background:
+            linear-gradient(
+                180deg,
+                #ffffff 0%,
+                #fbfdff 100%
+            );
+
+        box-shadow:
+            -18px 0 45px rgba(15, 23, 42, .08);
+    }
+
+
+    .cash-offcanvas-header {
+        position: relative;
+        overflow: hidden;
+
+        padding: 1.35rem 1.4rem;
+
+        border-bottom: 1px solid #edf1f6;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f8fcff,
+                #f0faf7
+            );
+    }
+
+
+    .cash-offcanvas-header::after {
+        content: "";
+
+        position: absolute;
+
+        width: 120px;
+        height: 120px;
+
+        right: -55px;
+        top: -70px;
+
+        border-radius: 50%;
+
+        background:
+            radial-gradient(
+                circle,
+                rgba(71, 135, 173, .11),
+                transparent 68%
+            );
+
+        pointer-events: none;
+    }
+
+
+    .offcanvas-heading {
+        position: relative;
+        z-index: 1;
+
+        display: flex;
+        align-items: center;
+
+        gap: .75rem;
+    }
+
+
+    .offcanvas-icon {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #d8ebf5;
+        border-radius: 12px;
+
+        background: white;
+
+        color: var(--cash-primary);
+
+        box-shadow:
+            0 4px 12px rgba(15, 23, 42, .04);
+
+        font-size: 1rem;
+    }
+
+
+    .offcanvas-title {
+        margin: 0;
+
+        color: #2f3c4f;
+
+        font-size: .95rem;
+        font-weight: 720;
+    }
+
+
+    .offcanvas-subtitle {
+        display: block;
+
+        margin-top: .12rem;
+
+        color: #8a97a8;
+
+        font-size: .71rem;
+    }
+
+
+    .offcanvas-close {
+        position: relative;
+        z-index: 2;
+
+        width: 32px;
+        height: 32px;
+
+        padding: 0;
+
+        border: 1px solid #e6ebf0;
+        border-radius: 9px;
+
+        background-color: rgba(255, 255, 255, .8);
+
+        background-size: .65rem;
+
+        opacity: .65;
+
+        transition:
+            opacity .2s ease,
+            background-color .2s ease,
+            transform .2s ease;
+    }
+
+
+    .offcanvas-close:hover {
+        opacity: 1;
+
+        background-color: white;
+
+        transform: rotate(4deg);
+    }
+
+
+    .cash-offcanvas-body {
+        padding: 1.4rem;
+    }
+
+
+    /* =========================================================
+       RESPONSABLE OFFCANVAS
+       ========================================================= */
+
+    .form-section-label {
+        display: block;
+
+        margin-bottom: .5rem;
+
+        color: #718096;
+
+        font-size: .66rem;
+        font-weight: 750;
+
+        letter-spacing: .06em;
+        text-transform: uppercase;
+    }
+
+
+    .session-user {
+        padding: .85rem;
+
+        border: 1px solid #e7edf3;
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f8fafc,
+                #f5fafb
+            );
+    }
+
+
+    .session-avatar {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid #d8ebf5;
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #eef8fd,
+                #eaf9f5
+            );
+
+        color: var(--cash-primary);
+
+        font-size: .9rem;
+    }
+
+
+    .session-name {
+        overflow: hidden;
+
+        color: #334155;
+
+        font-size: .78rem;
+        font-weight: 680;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+
+    .session-status {
+        display: flex;
+        align-items: center;
+
+        gap: .35rem;
+
+        margin-top: .12rem;
+
+        color: #8290a1;
+
+        font-size: .67rem;
+    }
+
+
+    .session-status i {
+        color: var(--cash-success);
+    }
+
+
+    /* =========================================================
+       FORMULARIO
+       ========================================================= */
+
+    .cash-form-label {
+        margin-bottom: .42rem;
+
+        color: #475569;
+
+        font-size: .75rem;
+        font-weight: 650;
+    }
+
+
+    .required-mark {
+        color: #c96d72;
+    }
+
+
+    .cash-input-group {
+        overflow: hidden;
+
+        border: 1px solid #e2e8f0;
+        border-radius: 11px;
+
+        background: #f8fafc;
+
+        transition:
+            background .2s ease,
+            border-color .2s ease,
+            box-shadow .2s ease;
+    }
+
+
+    .cash-input-group:hover {
+        background: white;
+
+        border-color: #cbd5e1;
+    }
+
+
+    .cash-input-group:focus-within {
+        background: white;
+
+        border-color: rgba(71, 135, 173, .48);
+
+        box-shadow:
+            0 0 0 4px rgba(71, 135, 173, .065);
+    }
+
+
+    .cash-input-group .input-group-text {
+        min-width: 43px;
+
+        display: flex;
+        justify-content: center;
+
+        padding: .65rem .75rem;
+
+        border: none;
+
+        background: transparent;
+
+        color: #8290a1;
+
+        font-size: .77rem;
+        font-weight: 650;
+    }
+
+
+    .cash-input-group .form-control {
+        padding: .66rem .75rem .66rem .1rem;
+
+        border: none;
+
+        background: transparent;
+
+        color: #334155;
+
+        font-size: .78rem;
+
+        box-shadow: none !important;
+    }
+
+
+    .cash-input-group .form-control::placeholder {
+        color: #a4afbd;
+    }
+
+
+    /* =========================================================
+       BOTÓN CONFIRMAR
+       ========================================================= */
+
+    .confirm-button {
+        width: 100%;
+        min-height: 42px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        gap: .45rem;
+
+        border: none;
+        border-radius: 11px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #58a3bf,
+                #4787ad
+            );
+
+        color: white;
+
+        font-size: .76rem;
+        font-weight: 650;
+
+        box-shadow:
+            0 5px 13px rgba(71, 135, 173, .16);
+
+        transition:
+            transform .2s ease,
+            box-shadow .2s ease,
+            background .2s ease;
+    }
+
+
+    .confirm-button:hover {
+        color: white;
+
+        background:
+            linear-gradient(
+                135deg,
+                #4787ad,
+                #346f95
+            );
+
+        transform: translateY(-1px);
+
+        box-shadow:
+            0 8px 18px rgba(71, 135, 173, .22);
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        .cash-header {
+            padding: 1.3rem;
+        }
+
+    }
+
+
+    @media (max-width: 767.98px) {
+
+        .cash-header {
+            align-items: flex-start;
+            flex-direction: column;
+
+            border-radius: 18px;
+        }
+
+        .open-cash-button {
+            width: 100%;
+        }
+
+        .cash-panel {
+            border-radius: 18px;
+        }
+
+        .cash-panel-header {
+            align-items: flex-start;
+            flex-direction: column;
+
+            padding: 1rem;
+        }
+
+        .cash-footer {
+            padding: 1rem;
+        }
+
+    }
+
+
+    @media (max-width: 575.98px) {
+
+        .cash-header {
+            padding: 1.15rem;
+        }
+
+        .cash-offcanvas {
+            width: 100% !important;
+        }
+
+    }
+
+</style>
+
+
+<!-- ========================================================= -->
+<!-- SIDEBAR -->
+<!-- ========================================================= -->
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+
+<main class="app-main">
+
+
+    <!-- ===================================================== -->
+    <!-- TOPBAR -->
+    <!-- ===================================================== -->
+
+    <div th:replace="~{fragments/layout :: topbar('Caja')}"></div>
+
+
+    <section class="content px-3 px-lg-4 py-4">
+
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+
+        <!-- ================================================= -->
+        <!-- CABECERA -->
+        <!-- ================================================= -->
+
+        <div class="cash-header animate-in">
+
+
+            <div class="header-content">
+
+
+                <div class="header-icon">
+
+                    <i class="bi bi-cash-stack"></i>
+
+                </div>
+
+
+                <div>
+
+                    <div class="header-eyebrow">
+                        CONTROL DE CAJA
+                    </div>
+
+
+                    <h2 class="header-title h4">
+                        Gestión de Cajas
+                    </h2>
+
+
+                    <span class="header-description">
+                        Apertura, supervisión de movimientos y cierres diarios.
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ABRIR CAJA -->
+
+            <button class="open-cash-button"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasAbrirCaja"
+                    aria-controls="offcanvasAbrirCaja">
+
+
+                <i class="bi bi-plus-lg"></i>
+
+
+                <span>
+                    Abrir Nueva Caja
+                </span>
+
+
+            </button>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- HISTORIAL -->
+        <!-- ================================================= -->
+
+        <div class="cash-panel">
+
+
+            <!-- ================================================= -->
+            <!-- CABECERA DEL PANEL -->
+            <!-- ================================================= -->
+
+            <div class="cash-panel-header">
+
+
+                <div class="panel-heading">
+
+
+                    <div class="panel-icon">
+
+                        <i class="bi bi-journal-bookmark"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h5 class="panel-title">
+                            Historial de Cajas
+                        </h5>
+
+
+                        <span class="panel-records">
+
+
+                            <strong th:text="${totalRegistros}">
+                                0
+                            </strong>
+
+                            registros encontrados
+
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="page-size-badge">
+
+
+                    <i class="bi bi-layers"></i>
+
+
+                    <span>
+                        5 por página
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- TABLA -->
+            <!-- ================================================= -->
+
+            <div class="table-responsive">
+
+
+                <table class="table
+                              cash-table
+                              align-middle
+                              mb-0">
+
+
+                    <thead>
+
+
+                    <tr>
+
+                        <th class="ps-4">
+                            Caja
+                        </th>
+
+                        <th>
+                            Responsable
+                        </th>
+
+                        <th>
+                            Apertura
+                        </th>
+
+                        <th class="text-end">
+                            Saldo Inicial
+                        </th>
+
+                        <th class="text-end">
+                            Saldo Final
+                        </th>
+
+                        <th class="text-center">
+                            Estado
+                        </th>
+
+                        <th class="text-end pe-4">
+                            Acción
+                        </th>
+
+                    </tr>
+
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <!-- ========================================= -->
+                    <!-- REGISTROS -->
+                    <!-- ========================================= -->
+
+                    <tr th:each="c : ${cajas}">
+
+
+                        <!-- CAJA -->
+
+                        <td class="ps-4">
+
+
+                            <div class="cash-profile">
+
+
+                                <div class="cash-profile-icon">
+
+                                    <i class="bi bi-cash-stack"></i>
+
+                                </div>
+
+
+                                <div>
+
+
+                                    <span class="cash-name"
+                                          th:text="${c.nombre}">
+
+                                        Caja
+
+                                    </span>
+
+
+                                    <span class="cash-id"
+                                          th:text="${'#' + c.idCaja}">
+
+                                        #1
+
+                                    </span>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                        <!-- RESPONSABLE -->
+
+                        <td>
+
+
+                            <div class="responsible">
+
+
+                                <span class="responsible-icon">
+
+                                    <i class="bi bi-person"></i>
+
+                                </span>
+
+
+                                <span class="responsible-name"
+
+                                      th:text="${c.usuario.nombres
+                                          + ' '
+                                          + (c.usuario.apellidos ?: '')}">
+
+                                    Responsable
+
+                                </span>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                        <!-- FECHA -->
+
+                        <td>
+
+
+                            <div th:if="${c.fechaApertura != null}"
+                                 class="opening-date">
+
+
+                                <span class="date-icon">
+
+                                    <i class="bi bi-calendar3"></i>
+
+                                </span>
+
+
+                                <div>
+
+
+                                    <span class="date-main"
+
+                                          th:text="${#temporals.format(
+                                              c.fechaApertura,
+                                              'dd/MM/yyyy'
+                                          )}">
+
+                                        23/09/2026
+
+                                    </span>
+
+
+                                    <span class="date-time"
+
+                                          th:text="${#temporals.format(
+                                              c.fechaApertura,
+                                              'HH:mm'
+                                          )}">
+
+                                        08:00
+
+                                    </span>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                            <span th:if="${c.fechaApertura == null}"
+                                  class="empty-balance">
+
+                                —
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- SALDO INICIAL -->
+
+                        <td class="text-end">
+
+
+                            <span class="balance-value"
+
+                                  th:text="${'S/ '
+                                      + #numbers.formatDecimal(
+                                          c.saldoInicial != null
+                                              ? c.saldoInicial
+                                              : 0,
+                                          1,
+                                          2
+                                      )}">
+
+                                S/ 0.00
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- SALDO FINAL -->
+
+                        <td class="text-end">
+
+
+                            <span th:if="${c.saldoFinal != null}"
+
+                                  class="balance-value final-balance"
+
+                                  th:text="${'S/ '
+                                      + #numbers.formatDecimal(
+                                          c.saldoFinal,
+                                          1,
+                                          2
+                                      )}">
+
+                                S/ 0.00
+
+                            </span>
+
+
+                            <span th:if="${c.saldoFinal == null}"
+                                  class="empty-balance">
+
+                                —
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ESTADO -->
+
+                        <td class="text-center">
+
+
+                            <span class="cash-status"
+
+                                  th:classappend="${#strings.equalsIgnoreCase(
+                                      c.estado,
+                                      'ABIERTA'
+                                  )}
+                                      ? ' open'
+                                      : ' closed'">
+
+
+                                <span class="status-dot"></span>
+
+
+                                <span th:text="${#strings.equalsIgnoreCase(
+                                    c.estado,
+                                    'ABIERTA'
+                                )
+                                    ? 'Abierta'
+                                    : 'Cerrada'}">
+
+                                    Estado
+
+                                </span>
+
+
+                            </span>
+
+
+                        </td>
+
+
+                        <!-- ACCIÓN -->
+
+                        <td class="text-end pe-4">
+
+
+                            <a class="detail-button"
+
+                               th:href="@{/caja/{id}(
+                                    id=${c.idCaja}
+                               )}"
+
+                               title="Ver"
+
+                               aria-label="Ver">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    <!-- ========================================= -->
+                    <!-- SIN REGISTROS -->
+                    <!-- ========================================= -->
+
+                    <tr th:if="${#lists.isEmpty(cajas)}">
+
+
+                        <td colspan="7"
+                            class="text-center border-0">
+
+
+                            <div class="empty-state">
+
+
+                                <div class="empty-state-icon">
+
+                                    <i class="bi bi-inbox"></i>
+
+                                </div>
+
+
+                                <p class="empty-state-text">
+                                    No existen cajas registradas en el sistema.
+                                </p>
+
+
+                            </div>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- PAGINACIÓN -->
+            <!-- ================================================= -->
+
+            <div th:if="${totalPaginas > 1}"
+
+                 class="cash-footer
+                        d-flex
+                        flex-column flex-md-row
+                        justify-content-between
+                        align-items-center
+                        gap-3">
+
+
+                <!-- INFORMACIÓN -->
+
+                <div class="page-counter">
+
+
+                    Página
+
+                    <strong th:text="${paginaActual + 1}">
+                        1
+                    </strong>
+
+                    de
+
+                    <strong th:text="${totalPaginas}">
+                        1
+                    </strong>
+
+
+                </div>
+
+
+                <!-- NAVEGACIÓN -->
+
+                <nav aria-label="Paginación de cajas">
+
+
+                    <ul class="pagination
+                               pagination-sm
+                               modern-pagination
+                               mb-0">
+
+
+                        <!-- ANTERIOR -->
+
+                        <li class="page-item"
+                            th:classappend="${esPrimera} ? ' disabled'">
+
+
+                            <a class="page-link"
+
+                               th:href="${esPrimera}
+                                   ? '#'
+                                   : @{/caja(
+                                       pagina=${paginaActual - 1}
+                                   )}"
+
+                               aria-label="Anterior">
+
+
+                                <i class="bi bi-chevron-left"></i>
+
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- PRIMERA PÁGINA -->
+
+                        <li class="page-item"
+
+                            th:if="${totalPaginas > 10}"
+
+                            th:classappend="${paginaActual == 0}
+                                ? ' active'">
+
+
+                            <a class="page-link"
+                               th:href="@{/caja(pagina=0)}">
+
+                                1
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- PUNTOS IZQUIERDA -->
+
+                        <li class="page-item disabled"
+
+                            th:if="${totalPaginas > 10
+                                and puntosIzquierda}">
+
+
+                            <span class="page-link">
+                                …
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- ===================================== -->
+                        <!-- 10 PÁGINAS O MENOS -->
+                        <!-- ===================================== -->
+
+                        <th:block th:if="${totalPaginas <= 10}">
+
+
+                            <li class="page-item"
+
+                                th:each="p : ${#numbers.sequence(
+                                    inicioPagina,
+                                    finPagina
+                                )}"
+
+                                th:classappend="${p == paginaActual}
+                                    ? ' active'">
+
+
+                                <a class="page-link"
+
+                                   th:href="@{/caja(
+                                        pagina=${p}
+                                   )}"
+
+                                   th:text="${p + 1}">
+
+                                    1
+
+                                </a>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- ===================================== -->
+                        <!-- MÁS DE 10 PÁGINAS -->
+                        <!-- ===================================== -->
+
+                        <th:block th:if="${totalPaginas > 10}">
+
+
+                            <li class="page-item"
+
+                                th:each="p : ${#numbers.sequence(
+                                    inicioPagina,
+                                    finPagina
+                                )}"
+
+                                th:classappend="${p == paginaActual}
+                                    ? ' active'">
+
+
+                                <a class="page-link"
+
+                                   th:href="@{/caja(
+                                        pagina=${p}
+                                   )}"
+
+                                   th:text="${p + 1}">
+
+                                    2
+
+                                </a>
+
+
+                            </li>
+
+
+                        </th:block>
+
+
+                        <!-- PUNTOS DERECHA -->
+
+                        <li class="page-item disabled"
+
+                            th:if="${totalPaginas > 10
+                                and puntosDerecha}">
+
+
+                            <span class="page-link">
+                                …
+                            </span>
+
+
+                        </li>
+
+
+                        <!-- ÚLTIMA PÁGINA -->
+
+                        <li class="page-item"
+
+                            th:if="${totalPaginas > 10}"
+
+                            th:classappend="${paginaActual
+                                == totalPaginas - 1}
+                                ? ' active'">
+
+
+                            <a class="page-link"
+
+                               th:href="@{/caja(
+                                    pagina=${totalPaginas - 1}
+                               )}"
+
+                               th:text="${totalPaginas}">
+
+                                10
+
+                            </a>
+
+
+                        </li>
+
+
+                        <!-- SIGUIENTE -->
+
+                        <li class="page-item"
+                            th:classappend="${esUltima} ? ' disabled'">
+
+
+                            <a class="page-link"
+
+                               th:href="${esUltima}
+                                   ? '#'
+                                   : @{/caja(
+                                       pagina=${paginaActual + 1}
+                                   )}"
+
+                               aria-label="Siguiente">
+
+
+                                <i class="bi bi-chevron-right"></i>
+
+
+                            </a>
+
+
+                        </li>
+
+
+                    </ul>
+
+
+                </nav>
+
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- OFFCANVAS ABRIR CAJA -->
+        <!-- ================================================= -->
+
+        <div class="offcanvas
+                    offcanvas-end
+                    cash-offcanvas"
+
+             tabindex="-1"
+
+             id="offcanvasAbrirCaja"
+
+             aria-labelledby="offcanvasAbrirCajaLabel">
+
+
+            <!-- ============================================= -->
+            <!-- CABECERA OFFCANVAS -->
+            <!-- ============================================= -->
+
+            <div class="offcanvas-header cash-offcanvas-header">
+
+
+                <div class="offcanvas-heading">
+
+
+                    <div class="offcanvas-icon">
+
+                        <i class="bi bi-cash-register"></i>
+
+                    </div>
+
+
+                    <div>
+
+
+                        <h5 class="offcanvas-title"
+                            id="offcanvasAbrirCajaLabel">
+
+                            Abrir Caja
+
+                        </h5>
+
+
+                        <span class="offcanvas-subtitle">
+                            Inicia una nueva jornada de caja.
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <button type="button"
+                        class="btn-close offcanvas-close"
+                        data-bs-dismiss="offcanvas"
+                        aria-label="Close">
+                </button>
+
+
+            </div>
+
+
+            <!-- ============================================= -->
+            <!-- CUERPO -->
+            <!-- ============================================= -->
+
+            <div class="offcanvas-body cash-offcanvas-body">
+
+
+                <form th:action="@{/caja/abrir}"
+                      method="post"
+                      class="d-flex flex-column h-100">
+
+
+                    <div class="flex-grow-1">
+
+
+                        <!-- ================================= -->
+                        <!-- RESPONSABLE -->
+                        <!-- ================================= -->
+
+                        <div class="mb-4">
+
+
+                            <label class="form-section-label">
+                                Responsable
+                            </label>
+
+
+                            <div class="session-user">
+
+
+                                <div class="d-flex
+                                            align-items-center
+                                            gap-3">
+
+
+                                    <div class="session-avatar">
+
+                                        <i class="bi bi-person-fill"></i>
+
+                                    </div>
+
+
+                                    <div class="overflow-hidden">
+
+
+                                        <div class="session-name"
+
+                                             th:text="${usuarioSesion.nombres
+                                                 + ' '
+                                                 + (usuarioSesion.apellidos ?: '')}">
+
+                                            Usuario
+
+                                        </div>
+
+
+                                        <span class="session-status">
+
+
+                                            <i class="bi bi-shield-check"></i>
+
+
+                                            <span>
+                                                Sesión activa
+                                            </span>
+
+
+                                        </span>
+
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- NOMBRE DE CAJA -->
+                        <!-- ================================= -->
+
+                        <div class="mb-4">
+
+
+                            <label class="cash-form-label">
+
+                                Nombre de caja
+
+                                <span class="required-mark">
+                                    *
+                                </span>
+
+                            </label>
+
+
+                            <div class="input-group cash-input-group">
+
+
+                                <span class="input-group-text">
+
+                                    <i class="bi bi-tag"></i>
+
+                                </span>
+
+
+                                <input class="form-control"
+                                       name="nombre"
+                                       value="Caja Principal"
+                                       readonly
+                                       required>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- ================================= -->
+                        <!-- SALDO INICIAL -->
+                        <!-- ================================= -->
+
+                        <div class="mb-4">
+
+
+                            <label class="cash-form-label">
+                                Saldo inicial
+                            </label>
+
+
+                            <div class="input-group cash-input-group">
+
+
+                                <span class="input-group-text">
+                                    S/
+                                </span>
+
+
+                                <input class="form-control"
+                                       type="number"
+                                       step="0.01"
+                                       min="0"
+                                       name="saldoInicial"
+                                       th:value="${#numbers.formatDecimal(
+           saldoInicialSugerido,
+           1,
+           'POINT',
+           2,
+           'POINT'
+       )}"
+                                       readonly>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- ===================================== -->
+                    <!-- ACCIÓN -->
+                    <!-- ===================================== -->
+
+                    <div class="pt-3 border-top">
+
+
+                        <button type="submit"
+                                class="confirm-button">
+
+
+                            <i class="bi bi-unlock"></i>
+
+
+                            <span>
+                                Confirmar Apertura
+                            </span>
+
+
+                        </button>
+
+
+                    </div>
+
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+</body>
+
+</html>

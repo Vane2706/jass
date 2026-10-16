@@ -1,0 +1,1506 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Detalle del asociado')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Detalle del asociado')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --aso-primary: #4f7cff;
+                --aso-primary-dark: #416ce5;
+                --aso-primary-soft: #eef4ff;
+
+                --aso-cyan: #39b8c9;
+                --aso-cyan-soft: #ecfbfd;
+
+                --aso-green: #3aaa83;
+                --aso-green-soft: #edf9f5;
+
+                --aso-amber: #dca84f;
+                --aso-amber-soft: #fff8e8;
+
+                --aso-slate: #64748b;
+                --aso-muted: #8491a5;
+                --aso-dark: #172033;
+
+                --aso-border: #e8edf5;
+                --aso-bg: #f7f9fc;
+                --aso-surface: rgba(255, 255, 255, .96);
+
+                --aso-shadow: 0 10px 35px rgba(55, 73, 107, .07);
+                --aso-shadow-hover: 0 16px 42px rgba(55, 73, 107, .11);
+            }
+
+            body {
+                background:
+                    radial-gradient(circle at 7% 4%, rgba(79, 124, 255, .07), transparent 26%),
+                    radial-gradient(circle at 94% 8%, rgba(57, 184, 201, .06), transparent 25%),
+                    var(--aso-bg) !important;
+            }
+
+            .associate-page {
+                animation: associateFadeUp .45s ease both;
+            }
+
+            @keyframes associateFadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* =========================================================
+               CABECERA
+            ========================================================= */
+
+            .associate-header {
+                position: relative;
+                overflow: hidden;
+                padding: 1.35rem 1.45rem;
+                margin-bottom: 1.25rem;
+                border: 1px solid var(--aso-border);
+                border-radius: 22px;
+                background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255,255,255,.98),
+                        rgba(247,250,255,.96)
+                    );
+                box-shadow: var(--aso-shadow);
+            }
+
+            .associate-header::before {
+                content: "";
+                position: absolute;
+                width: 185px;
+                height: 185px;
+                right: -75px;
+                top: -105px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .055);
+                pointer-events: none;
+            }
+
+            .associate-header::after {
+                content: "";
+                position: absolute;
+                width: 105px;
+                height: 105px;
+                right: 80px;
+                bottom: -80px;
+                border-radius: 50%;
+                background: rgba(57, 184, 201, .05);
+                pointer-events: none;
+            }
+
+            .associate-header-content {
+                position: relative;
+                z-index: 2;
+            }
+
+            .associate-heading {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                min-width: 0;
+            }
+
+            .back-button {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #69778d;
+                background: #fff;
+                border: 1px solid var(--aso-border);
+                border-radius: 13px;
+                box-shadow: 0 5px 14px rgba(55, 73, 107, .06);
+                transition:
+                    transform .2s ease,
+                    color .2s ease,
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .back-button:hover {
+                color: var(--aso-primary);
+                border-color: rgba(79, 124, 255, .22);
+                transform: translateX(-2px);
+                box-shadow: 0 8px 20px rgba(55, 73, 107, .09);
+            }
+
+            .eyebrow {
+                display: block;
+                margin-bottom: .2rem;
+                color: var(--aso-primary);
+                font-size: .67rem;
+                font-weight: 750;
+                letter-spacing: .07em;
+                text-transform: uppercase;
+            }
+
+            .associate-title {
+                color: var(--aso-dark);
+                font-size: 1.48rem;
+                font-weight: 760;
+                letter-spacing: -.035em;
+                line-height: 1.2;
+                margin: 0;
+            }
+
+            .edit-button {
+                min-height: 42px;
+                padding: .58rem 1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .45rem;
+                color: var(--aso-primary);
+                background: var(--aso-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .15);
+                border-radius: 12px;
+                font-size: .78rem;
+                font-weight: 680;
+                text-decoration: none;
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease,
+                    background-color .2s ease;
+            }
+
+            .edit-button:hover {
+                color: var(--aso-primary-dark);
+                background: #e7f0ff;
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(79, 124, 255, .11);
+            }
+
+            /* =========================================================
+               SUPERFICIES
+            ========================================================= */
+
+            .associate-surface {
+                position: relative;
+                overflow: hidden;
+                background: var(--aso-surface);
+                border: 1px solid var(--aso-border);
+                border-radius: 20px;
+                box-shadow: var(--aso-shadow);
+                transition:
+                    transform .22s ease,
+                    box-shadow .22s ease,
+                    border-color .22s ease;
+            }
+
+            .associate-surface:hover {
+                border-color: rgba(79, 124, 255, .12);
+                box-shadow: var(--aso-shadow-hover);
+            }
+
+            /* =========================================================
+               PERFIL
+            ========================================================= */
+
+            .profile-card {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .profile-card::before {
+                content: "";
+                position: absolute;
+                width: 130px;
+                height: 130px;
+                top: -70px;
+                right: -55px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .045);
+                pointer-events: none;
+            }
+
+            .profile-icon {
+                width: 68px;
+                height: 68px;
+                margin: 0 auto 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 21px;
+                color: var(--aso-primary);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--aso-primary-soft),
+                        #f8fbff
+                    );
+                border: 1px solid rgba(79, 124, 255, .1);
+                box-shadow: 0 9px 22px rgba(79, 124, 255, .09);
+                font-size: 1.6rem;
+            }
+
+            .badge-code {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: .4rem .72rem;
+                color: var(--aso-primary);
+                background: var(--aso-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 10px;
+                font-family: var(--bs-font-monospace);
+                font-size: .72rem;
+                font-weight: 750;
+                letter-spacing: .025em;
+            }
+
+            .badge-state {
+                display: inline-flex;
+                align-items: center;
+                gap: .35rem;
+                padding: .38rem .67rem;
+                border-radius: 999px;
+                border: 1px solid transparent;
+                font-size: .67rem;
+                font-weight: 750;
+            }
+
+            .badge-state.ok {
+                color: #27866a;
+                background: var(--aso-green-soft);
+                border-color: rgba(58, 170, 131, .12);
+            }
+
+            .badge-state.warn {
+                color: #b57d25;
+                background: var(--aso-amber-soft);
+                border-color: rgba(220, 168, 79, .14);
+            }
+
+            .status-form {
+                padding-top: 1rem;
+                margin-top: 1.25rem;
+                border-top: 1px solid var(--aso-border);
+            }
+
+            .status-form-label {
+                color: #8491a4;
+                font-size: .68rem;
+                font-weight: 600;
+                margin-bottom: .5rem;
+            }
+
+            .status-control {
+                padding: .28rem;
+                display: flex;
+                align-items: center;
+                gap: .3rem;
+                background: #f7f9fc;
+                border: 1px solid #edf1f5;
+                border-radius: 12px;
+            }
+
+            .status-control .form-select {
+                min-height: 37px;
+                color: #4e5c72;
+                background-color: transparent;
+                border: 0;
+                box-shadow: none !important;
+                font-size: .73rem;
+                font-weight: 650;
+            }
+
+            .status-update-button {
+                min-height: 37px;
+                padding: 0 .85rem;
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--aso-primary),
+                        #648fff
+                    );
+                border: 0;
+                border-radius: 9px !important;
+                font-size: .71rem;
+                font-weight: 700;
+                box-shadow: 0 5px 13px rgba(79, 124, 255, .17);
+                transition:
+                    transform .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .status-update-button:hover {
+                color: #fff;
+                transform: translateY(-1px);
+                box-shadow: 0 7px 17px rgba(79, 124, 255, .23);
+            }
+
+            /* =========================================================
+               DATOS PERSONALES
+            ========================================================= */
+
+            .personal-card {
+                padding: 1.25rem;
+            }
+
+            .section-heading {
+                display: flex;
+                align-items: center;
+                gap: .65rem;
+                margin-bottom: .9rem;
+            }
+
+            .section-icon {
+                width: 37px;
+                height: 37px;
+                min-width: 37px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--aso-primary);
+                background: var(--aso-primary-soft);
+                border-radius: 11px;
+                font-size: .9rem;
+            }
+
+            .section-title {
+                color: var(--aso-dark);
+                font-size: .88rem;
+                font-weight: 720;
+                margin: 0;
+            }
+
+            .detail-list {
+                margin: 0;
+            }
+
+            .detail-item {
+                padding: .76rem 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                border-bottom: 1px dashed #e7ecf2;
+            }
+
+            .detail-item:last-child {
+                border-bottom: 0;
+            }
+
+            .detail-label {
+                display: flex;
+                align-items: center;
+                gap: .48rem;
+                color: #8a96a8;
+                font-size: .71rem;
+                white-space: nowrap;
+            }
+
+            .detail-label i {
+                width: 18px;
+                color: #94a1b3;
+                text-align: center;
+            }
+
+            .detail-value {
+                min-width: 0;
+                color: #3d495d;
+                font-size: .74rem;
+                font-weight: 650;
+                text-align: right;
+            }
+
+            .address-item {
+                display: block;
+            }
+
+            .address-value {
+                display: block;
+                margin-top: .55rem;
+                padding: .72rem .8rem;
+                color: #536176;
+                background: #f7f9fc;
+                border: 1px solid #edf1f5;
+                border-radius: 11px;
+                font-size: .72rem;
+                font-weight: 600;
+                line-height: 1.5;
+                text-align: left;
+            }
+
+            /* =========================================================
+               PANEL PRINCIPAL
+            ========================================================= */
+
+            .activity-card {
+                min-height: 100%;
+            }
+
+            /* =========================================================
+               TABS
+            ========================================================= */
+
+            .associate-tabs {
+                padding: 1rem 1rem 0;
+                border-bottom: 1px solid var(--aso-border);
+                gap: .35rem;
+            }
+
+            .associate-tabs .nav-item {
+                margin-bottom: -1px;
+            }
+
+            .associate-tabs .nav-link {
+                position: relative;
+                min-height: 43px;
+                padding: .65rem .85rem .72rem;
+                display: inline-flex;
+                align-items: center;
+                gap: .45rem;
+                color: #7a879b;
+                background: transparent;
+                border: 0;
+                border-radius: 11px 11px 0 0;
+                font-size: .74rem;
+                font-weight: 650;
+                transition:
+                    color .2s ease,
+                    background-color .2s ease;
+            }
+
+            .associate-tabs .nav-link::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: 0;
+                width: 0;
+                height: 2px;
+                border-radius: 999px;
+                background: var(--aso-primary);
+                transform: translateX(-50%);
+                transition: width .22s ease;
+            }
+
+            .associate-tabs .nav-link:hover {
+                color: var(--aso-primary);
+                background: #f8faff;
+            }
+
+            .associate-tabs .nav-link.active {
+                color: var(--aso-primary);
+                background: var(--aso-primary-soft);
+            }
+
+            .associate-tabs .nav-link.active::after {
+                width: 58%;
+            }
+
+            .tab-count {
+                min-width: 22px;
+                height: 22px;
+                padding: 0 .4rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 999px;
+                font-size: .63rem;
+                font-weight: 750;
+            }
+
+            .tab-count-primary {
+                color: var(--aso-primary);
+                background: #fff;
+                border: 1px solid rgba(79,124,255,.1);
+            }
+
+            .tab-count-success {
+                color: #27866a;
+                background: var(--aso-green-soft);
+                border: 1px solid rgba(58,170,131,.1);
+            }
+
+            .associate-tab-content {
+                padding: .5rem 0 0;
+            }
+
+            .tab-pane.fade {
+                transition: opacity .18s linear;
+            }
+
+            /* =========================================================
+               TABLAS
+            ========================================================= */
+
+            .associate-table {
+                margin: 0;
+            }
+
+            .associate-table thead th {
+                padding: .8rem 1rem;
+                color: #8491a5;
+                background: #fbfcfe;
+                border-bottom: 1px solid #edf1f6;
+                font-size: .65rem;
+                font-weight: 750;
+                letter-spacing: .055em;
+                text-transform: uppercase;
+                white-space: nowrap;
+            }
+
+            .associate-table tbody td {
+                padding: .9rem 1rem;
+                color: #536176;
+                border-color: #f0f3f7;
+                font-size: .76rem;
+                vertical-align: middle;
+            }
+
+            .associate-table tbody tr {
+                transition:
+                    background-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .associate-table tbody tr:not(.empty-row):hover {
+                background: #f8fbff;
+                box-shadow: inset 3px 0 0 var(--aso-primary);
+            }
+
+            .property-code {
+                display: inline-flex;
+                align-items: center;
+                gap: .42rem;
+                padding: .35rem .58rem;
+                color: var(--aso-primary);
+                background: var(--aso-primary-soft);
+                border-radius: 9px;
+                font-size: .7rem;
+                font-weight: 720;
+                white-space: nowrap;
+            }
+
+            .property-code i {
+                font-size: .72rem;
+            }
+
+            .date-value {
+                display: inline-flex;
+                align-items: center;
+                gap: .38rem;
+                color: #5b687c;
+                white-space: nowrap;
+            }
+
+            .date-value i {
+                color: #98a4b4;
+            }
+
+            .current-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: .33rem .55rem;
+                color: #748196;
+                background: #f3f6f9;
+                border: 1px solid #e9edf2;
+                border-radius: 8px;
+                font-size: .66rem;
+                font-weight: 600;
+            }
+
+            .payment-amount {
+                color: #27866a;
+                font-size: .83rem;
+                font-weight: 750;
+                font-variant-numeric: tabular-nums;
+                white-space: nowrap;
+            }
+
+            .payment-method {
+                display: inline-flex;
+                align-items: center;
+                padding: .34rem .55rem;
+                color: #58667a;
+                background: #f5f7fa;
+                border: 1px solid #e8edf2;
+                border-radius: 8px;
+                font-size: .67rem;
+                font-weight: 600;
+            }
+
+            /* =========================================================
+               ESTADO VACÍO
+            ========================================================= */
+
+            .empty-state {
+                padding: 3rem 1rem !important;
+                color: var(--aso-muted);
+                text-align: center;
+            }
+
+            .empty-icon-wrap {
+                width: 51px;
+                height: 51px;
+                margin: 0 auto .8rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #9ba7b7;
+                background: #f3f6f9;
+                border-radius: 15px;
+                font-size: 1.25rem;
+            }
+
+            .empty-state p {
+                margin: 0;
+                color: #8995a7 !important;
+                font-size: .74rem;
+                font-weight: 550;
+            }
+
+            /* =========================================================
+               PAGINACIÓN
+            ========================================================= */
+
+            .payments-pagination {
+                padding: .85rem 1rem 1rem;
+                border-top: 1px solid var(--aso-border);
+                background: #fcfdff;
+            }
+
+            .page-counter {
+                color: #8995a7;
+                font-size: .69rem;
+            }
+
+            .page-counter strong {
+                color: #536176;
+                font-weight: 700;
+            }
+
+            .associate-pagination {
+                gap: .25rem !important;
+            }
+
+            .associate-pagination .page-link {
+                min-width: 31px;
+                height: 31px;
+                padding: 0 .45rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #6d7b90;
+                background: #fff;
+                border: 1px solid #e8edf3;
+                border-radius: 9px !important;
+                box-shadow: none !important;
+                font-size: .69rem;
+                font-weight: 650;
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background-color .18s ease,
+                    border-color .18s ease;
+            }
+
+            .associate-pagination .page-link:hover {
+                color: var(--aso-primary);
+                background: var(--aso-primary-soft);
+                border-color: rgba(79,124,255,.18);
+                transform: translateY(-1px);
+            }
+
+            .associate-pagination .page-item.active .page-link {
+                color: #fff;
+                background: var(--aso-primary);
+                border-color: var(--aso-primary);
+                box-shadow: 0 5px 12px rgba(79,124,255,.18) !important;
+            }
+
+            .associate-pagination .page-item.disabled .page-link {
+                color: #bcc4cf;
+                background: #f6f8fa;
+            }
+
+            /* =========================================================
+               RESPONSIVE
+            ========================================================= */
+
+            @media (max-width: 991.98px) {
+                .activity-card {
+                    min-height: auto;
+                }
+            }
+
+            @media (max-width: 767.98px) {
+                .associate-header {
+                    padding: 1.1rem;
+                    border-radius: 18px;
+                }
+
+                .associate-header-content {
+                    align-items: stretch !important;
+                }
+
+                .associate-title {
+                    font-size: 1.25rem;
+                }
+
+                .edit-button {
+                    width: 100%;
+                }
+
+                .associate-tabs {
+                    overflow-x: auto;
+                    flex-wrap: nowrap;
+                    scrollbar-width: none;
+                }
+
+                .associate-tabs::-webkit-scrollbar {
+                    display: none;
+                }
+
+                .associate-tabs .nav-link {
+                    white-space: nowrap;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .associate-heading {
+                    align-items: flex-start;
+                }
+
+                .back-button {
+                    width: 40px;
+                    height: 40px;
+                    min-width: 40px;
+                }
+
+                .profile-card,
+                .personal-card {
+                    padding: 1.1rem;
+                }
+
+                .detail-item {
+                    align-items: flex-start;
+                }
+
+                .detail-value {
+                    max-width: 55%;
+                }
+
+                .associate-table thead th,
+                .associate-table tbody td {
+                    padding-left: .8rem;
+                    padding-right: .8rem;
+                }
+            }
+        </style>
+
+
+        <div class="associate-page">
+
+            <!-- =========================================================
+                 ENCABEZADO
+            ========================================================= -->
+
+            <div class="associate-header">
+
+                <div class="associate-header-content d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+
+                    <div class="associate-heading">
+
+                        <a th:href="@{/asociados}"
+                           class="back-button"
+                           title="Volver al listado">
+                            <i class="bi bi-arrow-left"></i>
+                        </a>
+
+                        <div class="min-w-0">
+
+                            <span class="eyebrow">
+                                Expediente del Asociado
+                            </span>
+
+                            <h2 class="associate-title"
+                                th:text="${asociado.nombres + ' ' + (asociado.apellidoPaterno ?: '') + ' ' + (asociado.apellidoMaterno ?: '')}">
+                                Nombre del Asociado
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <a class="edit-button"
+                       th:href="@{/asociados/{id}/editar(id=${asociado.idAsociado})}">
+
+                        <i class="bi bi-pencil-square"></i>
+                        <span>Editar información</span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-4">
+
+                <!-- =====================================================
+                     COLUMNA IZQUIERDA
+                ====================================================== -->
+
+                <div class="col-lg-4">
+
+                    <!-- PERFIL -->
+
+                    <div class="associate-surface profile-card mb-4">
+
+                        <div class="profile-icon">
+                            <i class="bi bi-person"></i>
+                        </div>
+
+                        <span class="badge-code mb-3"
+                              th:text="${asociado.codigoAsociado}">
+                            ASO-000
+                        </span>
+
+                        <div>
+                            <span class="badge-state"
+                                  th:classappend="${asociado.estado == 'ACTIVO'} ? ' ok' : ' warn'">
+
+                                <i class="bi"
+                                   th:classappend="${asociado.estado == 'ACTIVO'} ? ' bi-check-circle-fill' : ' bi-exclamation-triangle-fill'">
+                                </i>
+
+                                <span th:text="${asociado.estado}">
+                                    ESTADO
+                                </span>
+
+                            </span>
+                        </div>
+
+
+                        <!-- CAMBIO DE ESTADO -->
+
+                        <form th:action="@{/asociados/{id}/estado(id=${asociado.idAsociado})}"
+                              method="post"
+                              class="status-form">
+
+                            <label class="status-form-label">
+                                Acción rápida sobre estado
+                            </label>
+
+                            <div class="status-control">
+
+                                <select name="estado"
+                                        class="form-select form-select-sm">
+
+                                    <option value="ACTIVO"
+                                            th:selected="${asociado.estado == 'ACTIVO'}">
+                                        ACTIVO
+                                    </option>
+
+                                    <option value="INACTIVO"
+                                            th:selected="${asociado.estado == 'INACTIVO'}">
+                                        INACTIVO
+                                    </option>
+
+                                </select>
+
+                                <button type="submit"
+                                        class="btn status-update-button">
+                                    Actualizar
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         DATOS PERSONALES
+                    ================================================== -->
+
+                    <div class="associate-surface personal-card">
+
+                        <div class="section-heading">
+
+                            <div class="section-icon">
+                                <i class="bi bi-person-vcard"></i>
+                            </div>
+
+                            <h5 class="section-title">
+                                Datos Personales
+                            </h5>
+
+                        </div>
+
+
+                        <div class="detail-list">
+
+                            <!-- DNI -->
+
+                            <div class="detail-item">
+
+                                <span class="detail-label">
+                                    <i class="bi bi-card-heading"></i>
+                                    DNI / RUC
+                                </span>
+
+                                <strong class="detail-value font-monospace"
+                                        th:text="${asociado.documento ?: '—'}">
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <!-- TELÉFONO -->
+
+                            <div class="detail-item">
+
+                                <span class="detail-label">
+                                    <i class="bi bi-telephone"></i>
+                                    Teléfono
+                                </span>
+
+                                <span class="detail-value"
+                                      th:text="${asociado.telefono ?: '—'}">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <!-- CORREO -->
+
+                            <div class="detail-item">
+
+                                <span class="detail-label">
+                                    <i class="bi bi-envelope"></i>
+                                    Correo
+                                </span>
+
+                                <span class="detail-value text-truncate"
+                                      style="max-width: 180px;"
+                                      th:text="${asociado.correo ?: '—'}">
+                                    —
+                                </span>
+
+                            </div>
+
+
+                            <!-- DIRECCIÓN -->
+
+                            <div class="detail-item address-item">
+
+                                <span class="detail-label">
+                                    <i class="bi bi-geo-alt"></i>
+                                    Dirección / Referencia
+                                </span>
+
+                                <span class="address-value"
+                                      th:text="${asociado.direccionReferencia ?: 'Sin dirección registrada'}">
+                                    —
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================================
+                     COLUMNA DERECHA
+                ====================================================== -->
+
+                <div class="col-lg-8">
+
+                    <div class="associate-surface activity-card">
+
+                        <!-- =============================================
+                             PESTAÑAS
+                        ============================================== -->
+
+                        <ul class="nav associate-tabs"
+                            id="asociadoTab"
+                            role="tablist">
+
+                            <!-- TITULARIDADES -->
+
+                            <li class="nav-item"
+                                role="presentation">
+
+                                <button class="nav-link active"
+                                        id="titularidades-tab"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#titularidades-panel"
+                                        type="button"
+                                        role="tab"
+                                        aria-controls="titularidades-panel"
+                                        aria-selected="true">
+
+                                    <i class="bi bi-house-door"></i>
+
+                                    <span>
+                                        Titularidades
+                                    </span>
+
+                                    <span class="tab-count tab-count-primary"
+                                          th:text="${#lists.size(titularidades)}">
+                                        0
+                                    </span>
+
+                                </button>
+
+                            </li>
+
+
+                            <!-- PAGOS -->
+
+                            <li class="nav-item"
+                                role="presentation">
+
+                                <button class="nav-link"
+                                        id="pagos-tab"
+                                        data-bs-toggle="tab"
+                                        data-bs-target="#pagos-panel"
+                                        type="button"
+                                        role="tab"
+                                        aria-controls="pagos-panel"
+                                        aria-selected="false">
+
+                                    <i class="bi bi-cash-stack"></i>
+
+                                    <span>
+                                        Historial de Pagos
+                                    </span>
+
+                                    <span class="tab-count tab-count-success"
+                                          th:text="${totalPagos}">
+                                        0
+                                    </span>
+
+                                </button>
+
+                            </li>
+
+                        </ul>
+
+
+                        <!-- =============================================
+                             CONTENIDO DE TABS
+                        ============================================== -->
+
+                        <div class="tab-content associate-tab-content"
+                             id="asociadoTabContent">
+
+
+                            <!-- =========================================
+                                 TITULARIDADES
+                            ========================================== -->
+
+                            <div class="tab-pane fade show active"
+                                 id="titularidades-panel"
+                                 role="tabpanel"
+                                 aria-labelledby="titularidades-tab">
+
+                                <div class="table-responsive">
+
+                                    <table class="table associate-table align-middle">
+
+                                        <thead>
+
+                                        <tr>
+                                            <th class="ps-4">
+                                                Código Inmueble
+                                            </th>
+
+                                            <th>
+                                                Fecha Inicio
+                                            </th>
+
+                                            <th>
+                                                Fecha Fin
+                                            </th>
+
+                                            <th class="text-end pe-4">
+                                                Estado
+                                            </th>
+                                        </tr>
+
+                                        </thead>
+
+
+                                        <tbody>
+
+                                        <tr th:each="t : ${titularidades}">
+
+                                            <!-- INMUEBLE -->
+
+                                            <td class="ps-4">
+
+                                                <span class="property-code">
+
+                                                    <i class="bi bi-building"></i>
+
+                                                    <span th:text="${t.inmueble.codigoInmueble}">
+                                                        INM-000
+                                                    </span>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- FECHA INICIO -->
+
+                                            <td>
+
+                                                <span class="date-value">
+
+                                                    <i class="bi bi-calendar-event"></i>
+
+                                                    <span th:text="${#temporals.format(t.fechaInicio, 'dd/MM/yyyy')}">
+                                                        01/01/2026
+                                                    </span>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- FECHA FIN -->
+
+                                            <td>
+
+                                                <span th:if="${t.fechaFin != null}"
+                                                      class="date-value">
+
+                                                    <i class="bi bi-calendar-check"></i>
+
+                                                    <span th:text="${#temporals.format(t.fechaFin, 'dd/MM/yyyy')}">
+                                                        31/12/2026
+                                                    </span>
+
+                                                </span>
+
+
+                                                <span th:unless="${t.fechaFin != null}"
+                                                      class="current-badge">
+                                                    Vigente
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- ESTADO -->
+
+                                            <td class="text-end pe-4">
+
+                                                <span class="badge-state"
+                                                      th:classappend="${t.estado == 'ACTIVO' or t.estado == 'VIGENTE'} ? ' ok' : ' warn'"
+                                                      th:text="${t.estado}">
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+
+                                        <!-- SIN TITULARIDADES -->
+
+                                        <tr th:if="${#lists.isEmpty(titularidades)}"
+                                            class="empty-row">
+
+                                            <td colspan="4"
+                                                class="empty-state">
+
+                                                <div class="empty-icon-wrap">
+                                                    <i class="bi bi-house-x"></i>
+                                                </div>
+
+                                                <p>
+                                                    No existen titularidades de inmuebles registradas.
+                                                </p>
+
+                                            </td>
+
+                                        </tr>
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- =========================================
+                                 HISTORIAL DE PAGOS
+                            ========================================== -->
+
+                            <div class="tab-pane fade"
+                                 id="pagos-panel"
+                                 role="tabpanel"
+                                 aria-labelledby="pagos-tab">
+
+                                <div class="table-responsive">
+
+                                    <table class="table associate-table align-middle">
+
+                                        <thead>
+
+                                        <tr>
+
+                                            <th class="ps-4">
+                                                Fecha y Hora
+                                            </th>
+
+                                            <th>
+                                                Monto
+                                            </th>
+
+                                            <th>
+                                                Método
+                                            </th>
+
+                                            <th class="text-end pe-4">
+                                                Estado
+                                            </th>
+
+                                        </tr>
+
+                                        </thead>
+
+
+                                        <tbody>
+
+                                        <tr th:each="p : ${pagos}">
+
+                                            <!-- FECHA -->
+
+                                            <td class="ps-4">
+
+                                                <span class="date-value">
+
+                                                    <i class="bi bi-clock"></i>
+
+                                                    <span th:text="${#temporals.format(p.fechaPago, 'dd/MM/yyyy HH:mm')}">
+                                                        01/01/2026 10:00
+                                                    </span>
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- MONTO -->
+
+                                            <td>
+
+                                                <span class="payment-amount"
+                                                      th:text="${'S/ ' + #numbers.formatDecimal(p.montoTotal, 1, 2)}">
+                                                    S/ 0.00
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- MÉTODO -->
+
+                                            <td>
+
+                                                <span class="payment-method"
+                                                      th:text="${p.metodoPago}">
+                                                    Efectivo
+                                                </span>
+
+                                            </td>
+
+
+                                            <!-- ESTADO -->
+
+                                            <td class="text-end pe-4">
+
+                                                <span class="badge-state"
+                                                      th:classappend="${p.estado == 'APLICADO'} ? ' ok' : ' warn'"
+                                                      th:text="${p.estado}">
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+
+                                        <!-- SIN PAGOS -->
+
+                                        <tr th:if="${#lists.isEmpty(pagos)}"
+                                            class="empty-row">
+
+                                            <td colspan="4"
+                                                class="empty-state">
+
+                                                <div class="empty-icon-wrap">
+                                                    <i class="bi bi-receipt-cutoff"></i>
+                                                </div>
+
+                                                <p>
+                                                    No se registran transacciones de pago finalizadas.
+                                                </p>
+
+                                            </td>
+
+                                        </tr>
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
+
+
+                                <!-- =====================================
+                                     PAGINACIÓN DE PAGOS
+                                ====================================== -->
+
+                                <div th:if="${totalPaginasPagos > 1}"
+                                     class="payments-pagination d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+
+                                    <small class="page-counter">
+
+                                        Página
+
+                                        <strong th:text="${paginaPagosActual + 1}">
+                                            1
+                                        </strong>
+
+                                        de
+
+                                        <strong th:text="${totalPaginasPagos}">
+                                            1
+                                        </strong>
+
+                                    </small>
+
+
+                                    <nav aria-label="Paginación de pagos">
+
+                                        <ul class="pagination pagination-sm associate-pagination mb-0">
+
+                                            <!-- ANTERIOR -->
+
+                                            <li class="page-item"
+                                                th:classappend="${esPrimeraPaginaPagos} ? ' disabled'">
+
+                                                <a class="page-link"
+                                                   th:href="@{/asociados/{id}(id=${asociado.idAsociado}, paginaPagos=${paginaPagosActual - 1}, tab='pagos')}">
+
+                                                    <i class="bi bi-chevron-left"></i>
+
+                                                </a>
+
+                                            </li>
+
+
+                                            <!-- PÁGINAS -->
+
+                                            <th:block th:each="n : ${#numbers.sequence(0, totalPaginasPagos - 1)}">
+
+                                                <li class="page-item"
+                                                    th:classappend="${paginaPagosActual == n} ? ' active'">
+
+                                                    <a class="page-link"
+                                                       th:href="@{/asociados/{id}(id=${asociado.idAsociado}, paginaPagos=${n}, tab='pagos')}"
+                                                       th:text="${n + 1}">
+                                                        1
+                                                    </a>
+
+                                                </li>
+
+                                            </th:block>
+
+
+                                            <!-- SIGUIENTE -->
+
+                                            <li class="page-item"
+                                                th:classappend="${esUltimaPaginaPagos} ? ' disabled'">
+
+                                                <a class="page-link"
+                                                   th:href="@{/asociados/{id}(id=${asociado.idAsociado}, paginaPagos=${paginaPagosActual + 1}, tab='pagos')}">
+
+                                                    <i class="bi bi-chevron-right"></i>
+
+                                                </a>
+
+                                            </li>
+
+                                        </ul>
+
+                                    </nav>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('tab');
+
+        if (activeTab === 'pagos') {
+            const pagosTab = new bootstrap.Tab(document.querySelector('#pagos-tab'));
+            pagosTab.show();
+        }
+    });
+</script>
+
+</body>
+</html>

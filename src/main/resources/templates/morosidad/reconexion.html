@@ -1,0 +1,1277 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Reconexión')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/layout :: sidebar}"></div>
+
+<main class="app-main">
+
+    <div th:replace="~{fragments/layout :: topbar('Reconexión')}"></div>
+
+    <section class="content px-3 px-lg-4 py-4">
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <style>
+            :root {
+                --re-primary: #4f7cff;
+                --re-primary-dark: #416ce5;
+                --re-primary-soft: #eef4ff;
+
+                --re-cyan: #39b8c9;
+                --re-cyan-dark: #2fa4b4;
+                --re-cyan-soft: #ecfbfd;
+
+                --re-green: #3aaa83;
+                --re-green-dark: #2f9270;
+                --re-green-soft: #edf9f5;
+
+                --re-amber: #d8a64d;
+                --re-amber-soft: #fff8e9;
+
+                --re-red: #d96c75;
+                --re-red-soft: #fff0f2;
+
+                --re-dark: #172033;
+                --re-text: #536176;
+                --re-muted: #8491a5;
+
+                --re-border: #e8edf5;
+                --re-bg: #f7f9fc;
+
+                --re-shadow:
+                    0 10px 35px rgba(55, 73, 107, .07);
+
+                --re-shadow-hover:
+                    0 17px 44px rgba(55, 73, 107, .10);
+            }
+
+
+            /* =====================================================
+               BASE
+            ===================================================== */
+
+            body {
+                background:
+                    radial-gradient(
+                        circle at 7% 4%,
+                        rgba(79, 124, 255, .07),
+                        transparent 26%
+                    ),
+                    radial-gradient(
+                        circle at 94% 8%,
+                        rgba(57, 184, 201, .06),
+                        transparent 25%
+                    ),
+                    var(--re-bg) !important;
+            }
+
+            .reconnection-page {
+                max-width: 1180px;
+                margin: 0 auto;
+                animation: reconnectionAppear .42s ease both;
+            }
+
+            @keyframes reconnectionAppear {
+                from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+
+            /* =====================================================
+               HEADER
+            ===================================================== */
+
+            .reconnection-header {
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 1.2rem 1.35rem;
+                margin-bottom: 1rem;
+                background:
+                    linear-gradient(
+                        135deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(246, 251, 255, .98)
+                    );
+                border: 1px solid var(--re-border);
+                border-radius: 18px;
+                box-shadow:
+                    0 7px 25px rgba(55, 73, 107, .055);
+            }
+
+            .reconnection-header::before {
+                content: "";
+                position: absolute;
+                width: 175px;
+                height: 175px;
+                top: -115px;
+                right: 125px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .045);
+                pointer-events: none;
+            }
+
+            .reconnection-header::after {
+                content: "";
+                position: absolute;
+                width: 110px;
+                height: 110px;
+                right: -50px;
+                bottom: -72px;
+                border-radius: 50%;
+                background: rgba(57, 184, 201, .065);
+                pointer-events: none;
+            }
+
+            .header-main {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                gap: .8rem;
+            }
+
+            .header-icon {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--re-cyan);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--re-cyan-soft),
+                        #f8feff
+                    );
+                border: 1px solid rgba(57, 184, 201, .13);
+                border-radius: 13px;
+                font-size: .95rem;
+                box-shadow:
+                    0 5px 14px rgba(57, 184, 201, .06);
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .reconnection-header:hover .header-icon {
+                transform: rotate(-5deg) translateY(-1px);
+                box-shadow:
+                    0 7px 17px rgba(57, 184, 201, .10);
+            }
+
+            .header-title {
+                margin: 0 0 .18rem;
+                color: var(--re-dark);
+                font-size: 1.15rem;
+                font-weight: 780;
+                letter-spacing: -.025em;
+            }
+
+            .header-description {
+                margin: 0;
+                color: var(--re-muted);
+                font-size: .66rem;
+                font-weight: 510;
+            }
+
+
+            /* =====================================================
+               MÉTRICAS
+            ===================================================== */
+
+            .metrics-row {
+                margin-bottom: 1rem;
+            }
+
+            .metric-card {
+                position: relative;
+                overflow: hidden;
+                height: 100%;
+                min-height: 100px;
+                padding: 1rem 1.05rem;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(251, 253, 255, .98)
+                    );
+                border: 1px solid var(--re-border);
+                border-radius: 16px;
+                box-shadow:
+                    0 6px 22px rgba(55, 73, 107, .055);
+                transition:
+                    transform .2s ease,
+                    border-color .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .metric-card:hover {
+                transform: translateY(-2px);
+                border-color: rgba(79, 124, 255, .13);
+                box-shadow:
+                    0 10px 27px rgba(55, 73, 107, .085);
+            }
+
+            .metric-card::after {
+                content: "";
+                position: absolute;
+                width: 82px;
+                height: 82px;
+                right: -42px;
+                bottom: -47px;
+                border-radius: 50%;
+                background: rgba(79, 124, 255, .035);
+                pointer-events: none;
+            }
+
+            .metric-top {
+                position: relative;
+                z-index: 2;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: .7rem;
+                margin-bottom: .55rem;
+            }
+
+            .metric-label {
+                color: var(--re-muted);
+                font-size: .63rem;
+                font-weight: 650;
+            }
+
+            .metric-icon {
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--re-primary);
+                background: var(--re-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .10);
+                border-radius: 9px;
+                font-size: .72rem;
+            }
+
+            .metric-value {
+                position: relative;
+                z-index: 2;
+                display: block;
+                color: #344258;
+                font-family:
+                    ui-monospace,
+                    SFMono-Regular,
+                    Menlo,
+                    Monaco,
+                    Consolas,
+                    monospace;
+                font-size: 1.05rem;
+                font-weight: 780;
+                letter-spacing: -.03em;
+            }
+
+
+            /* DEUDA */
+
+            .metric-debt .metric-icon {
+                color: var(--re-amber);
+                background: var(--re-amber-soft);
+                border-color: rgba(216, 166, 77, .12);
+            }
+
+            .metric-debt .metric-value {
+                color: #9a7838;
+            }
+
+
+            /* RECONEXIÓN */
+
+            .metric-reconnection .metric-icon {
+                color: var(--re-cyan);
+                background: var(--re-cyan-soft);
+                border-color: rgba(57, 184, 201, .12);
+            }
+
+            .metric-reconnection .metric-value {
+                color: #378797;
+            }
+
+
+            /* TOTAL */
+
+            .metric-total {
+                background:
+                    linear-gradient(
+                        135deg,
+                        #f7faff,
+                        var(--re-primary-soft)
+                    );
+                border-color: rgba(79, 124, 255, .13);
+            }
+
+            .metric-total::after {
+                background: rgba(79, 124, 255, .055);
+            }
+
+            .metric-total .metric-icon {
+                color: var(--re-primary);
+                background: rgba(255, 255, 255, .75);
+                border-color: rgba(79, 124, 255, .13);
+            }
+
+            .metric-total .metric-value {
+                color: var(--re-primary-dark);
+                font-size: 1.15rem;
+            }
+
+
+            /* =====================================================
+               FORM CARDS
+            ===================================================== */
+
+            .reconnection-card {
+                position: relative;
+                overflow: hidden;
+                height: 100%;
+                background:
+                    linear-gradient(
+                        145deg,
+                        rgba(255, 255, 255, .99),
+                        rgba(251, 253, 255, .98)
+                    );
+                border: 1px solid var(--re-border);
+                border-radius: 20px;
+                box-shadow: var(--re-shadow);
+                transition:
+                    transform .22s ease,
+                    border-color .22s ease,
+                    box-shadow .22s ease;
+            }
+
+            .reconnection-card:hover {
+                transform: translateY(-2px);
+                border-color: rgba(79, 124, 255, .12);
+                box-shadow: var(--re-shadow-hover);
+            }
+
+            .card-body-modern {
+                position: relative;
+                z-index: 2;
+                padding: 1.35rem;
+            }
+
+
+            /* =====================================================
+               CARD HEADER
+            ===================================================== */
+
+            .card-header-modern {
+                display: flex;
+                align-items: center;
+                gap: .75rem;
+                padding-bottom: .9rem;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid var(--re-border);
+            }
+
+            .card-header-icon {
+                width: 41px;
+                height: 41px;
+                min-width: 41px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--re-primary);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--re-primary-soft),
+                        #f9fbff
+                    );
+                border: 1px solid rgba(79, 124, 255, .11);
+                border-radius: 12px;
+                font-size: .9rem;
+                box-shadow:
+                    0 5px 14px rgba(79, 124, 255, .05);
+                transition:
+                    transform .2s ease,
+                    box-shadow .2s ease;
+            }
+
+            .reconnection-card:hover
+            .card-header-icon {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 17px rgba(79, 124, 255, .08);
+            }
+
+            .card-title-modern {
+                margin: 0;
+                color: var(--re-dark);
+                font-size: .87rem;
+                font-weight: 750;
+            }
+
+
+            /* =====================================================
+               ESTADO ACTUAL
+            ===================================================== */
+
+            .current-status {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: .8rem;
+                padding: .72rem .8rem;
+                margin-bottom: .9rem;
+                background: #fafbfd;
+                border: 1px solid #edf0f5;
+                border-radius: 10px;
+            }
+
+            .current-status-label {
+                color: var(--re-muted);
+                font-size: .63rem;
+                font-weight: 620;
+            }
+
+            .payment-status {
+                display: inline-flex;
+                align-items: center;
+                gap: .32rem;
+                padding: .3rem .58rem;
+                border-radius: 999px;
+                font-size: .59rem;
+                font-weight: 720;
+            }
+
+            .payment-status::before {
+                content: "";
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: currentColor;
+            }
+
+            .status-paid {
+                color: #32846a;
+                background: var(--re-green-soft);
+                border: 1px solid rgba(58, 170, 131, .14);
+            }
+
+            .status-pending {
+                color: #9a7838;
+                background: var(--re-amber-soft);
+                border: 1px solid rgba(216, 166, 77, .15);
+            }
+
+            .status-default {
+                color: #5d7090;
+                background: var(--re-primary-soft);
+                border: 1px solid rgba(79, 124, 255, .12);
+            }
+
+
+            /* =====================================================
+               LABELS / INPUTS
+            ===================================================== */
+
+            .form-field {
+                margin-top: .85rem;
+            }
+
+            .field-label {
+                display: flex;
+                align-items: center;
+                margin-bottom: .42rem;
+                color: #4a586d;
+                font-size: .68rem;
+                font-weight: 680;
+            }
+
+            .input-wrapper {
+                position: relative;
+                display: flex;
+                align-items: stretch;
+                width: 100%;
+                border-radius: 11px;
+                transition:
+                    transform .18s ease,
+                    box-shadow .2s ease;
+            }
+
+            .input-wrapper:focus-within {
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 18px rgba(79, 124, 255, .08);
+            }
+
+            .input-icon {
+                width: 42px;
+                min-width: 42px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #8995a7;
+                background: #f8fafc;
+                border: 1px solid #e3e9f1;
+                border-right: 0;
+                border-radius: 11px 0 0 11px;
+                font-size: .78rem;
+                transition:
+                    color .2s ease,
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .input-wrapper:focus-within
+            .input-icon {
+                color: var(--re-primary);
+                background: var(--re-primary-soft);
+                border-color: rgba(79, 124, 255, .42);
+            }
+
+            .form-control-modern {
+                min-height: 42px;
+                padding: .6rem .78rem;
+                color: #39475c;
+                background: #fbfcfe;
+                border: 1px solid #e3e9f1;
+                border-left: 0;
+                border-radius: 0 11px 11px 0;
+                outline: none;
+                box-shadow: none !important;
+                font-size: .73rem;
+                font-weight: 540;
+                transition:
+                    background-color .2s ease,
+                    border-color .2s ease;
+            }
+
+            .form-control-modern:hover {
+                background: #fff;
+                border-color: #d8e0ea;
+            }
+
+            .form-control-modern:focus {
+                background: #fff;
+                border-color: rgba(79, 124, 255, .5);
+            }
+
+            select.form-control-modern {
+                cursor: pointer;
+            }
+
+
+            /* =====================================================
+               ACCIONES
+            ===================================================== */
+
+            .form-actions {
+                display: flex;
+                justify-content: flex-end;
+                padding-top: 1rem;
+                margin-top: 1rem;
+                border-top: 1px solid var(--re-border);
+            }
+
+            .btn-update-payment {
+                min-height: 38px;
+                padding: .52rem 1rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .4rem;
+                color: var(--re-primary);
+                background: #fff;
+                border: 1px solid rgba(79, 124, 255, .25);
+                border-radius: 10px;
+                font-size: .69rem;
+                font-weight: 680;
+                transition:
+                    transform .18s ease,
+                    color .18s ease,
+                    background-color .18s ease,
+                    border-color .18s ease,
+                    box-shadow .18s ease;
+            }
+
+            .btn-update-payment:hover {
+                color: #fff;
+                background: var(--re-primary);
+                border-color: var(--re-primary);
+                transform: translateY(-1px);
+                box-shadow:
+                    0 7px 17px rgba(79, 124, 255, .18);
+            }
+
+            .btn-execute-reconnection {
+                min-height: 38px;
+                padding: .52rem 1.05rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: .42rem;
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--re-green),
+                        #45b38d
+                    );
+                border: 1px solid var(--re-green);
+                border-radius: 10px;
+                font-size: .69rem;
+                font-weight: 680;
+                box-shadow:
+                    0 7px 17px rgba(58, 170, 131, .18);
+                transition:
+                    transform .18s ease,
+                    box-shadow .18s ease,
+                    background .18s ease;
+            }
+
+            .btn-execute-reconnection:hover {
+                color: #fff;
+                background:
+                    linear-gradient(
+                        135deg,
+                        var(--re-green-dark),
+                        var(--re-green)
+                    );
+                transform: translateY(-1px);
+                box-shadow:
+                    0 9px 21px rgba(58, 170, 131, .24);
+            }
+
+            .btn-update-payment:active,
+            .btn-execute-reconnection:active {
+                transform: translateY(0);
+            }
+
+
+            /* =====================================================
+               CARD EJECUTAR
+            ===================================================== */
+
+            .execute-card {
+                border-color: rgba(58, 170, 131, .11);
+            }
+
+            .execute-card:hover {
+                border-color: rgba(58, 170, 131, .18);
+            }
+
+            .execute-card .card-header-icon {
+                color: var(--re-green);
+                background:
+                    linear-gradient(
+                        145deg,
+                        var(--re-green-soft),
+                        #f8fdfb
+                    );
+                border-color: rgba(58, 170, 131, .12);
+            }
+
+            .execute-card
+            .input-wrapper:focus-within {
+                box-shadow:
+                    0 7px 18px rgba(58, 170, 131, .08);
+            }
+
+            .execute-card
+            .input-wrapper:focus-within
+            .input-icon {
+                color: var(--re-green);
+                background: var(--re-green-soft);
+                border-color: rgba(58, 170, 131, .4);
+            }
+
+            .execute-card
+            .form-control-modern:focus {
+                border-color: rgba(58, 170, 131, .48);
+            }
+
+
+            /* =====================================================
+               RESPONSIVE
+            ===================================================== */
+
+            @media (max-width: 767.98px) {
+
+                .reconnection-header {
+                    padding: 1.1rem;
+                    border-radius: 17px;
+                }
+
+                .reconnection-card {
+                    border-radius: 17px;
+                }
+
+                .card-body-modern {
+                    padding: 1.15rem;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+
+                .header-title {
+                    font-size: 1rem;
+                }
+
+                .metric-card {
+                    min-height: 90px;
+                }
+
+                .current-status {
+                    align-items: flex-start;
+                    flex-direction: column;
+                    gap: .45rem;
+                }
+
+                .form-actions,
+                .btn-update-payment,
+                .btn-execute-reconnection {
+                    width: 100%;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+
+                .reconnection-page,
+                .reconnection-card,
+                .metric-card,
+                .header-icon,
+                .card-header-icon,
+                .input-wrapper,
+                .btn-update-payment,
+                .btn-execute-reconnection {
+                    animation: none !important;
+                    transition: none !important;
+                }
+            }
+        </style>
+
+
+        <div class="reconnection-page">
+
+
+            <!-- ================================================= -->
+            <!-- ENCABEZADO -->
+            <!-- ================================================= -->
+
+            <div class="reconnection-header">
+
+                <div class="header-main">
+
+                    <div class="header-icon">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+
+                    <div>
+
+                        <h2 class="header-title"
+                            th:text="${'Reconexión'}">
+                        </h2>
+
+                        <p class="header-description">
+                            Regularización y restablecimiento del servicio.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- MÉTRICAS -->
+            <!-- ================================================= -->
+
+            <div class="row g-3 metrics-row">
+
+
+                <!-- DEUDA -->
+
+                <div class="col-md-4">
+
+                    <div class="metric-card metric-debt">
+
+                        <div class="metric-top">
+
+                            <span class="metric-label">
+                                Deuda pendiente
+                            </span>
+
+                            <div class="metric-icon">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+
+                        </div>
+
+                        <b class="metric-value"
+                           th:text="${'S/ ' + reconexion.deudaPendiente}">
+                            S/ 0.00
+                        </b>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MONTO RECONEXIÓN -->
+
+                <div class="col-md-4">
+
+                    <div class="metric-card metric-reconnection">
+
+                        <div class="metric-top">
+
+                            <span class="metric-label">
+                                Reconexión
+                            </span>
+
+                            <div class="metric-icon">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </div>
+
+                        </div>
+
+                        <b class="metric-value"
+                           th:text="${'S/ ' + reconexion.montoReconexion}">
+                            S/ 0.00
+                        </b>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TOTAL -->
+
+                <div class="col-md-4">
+
+                    <div class="metric-card metric-total">
+
+                        <div class="metric-top">
+
+                            <span class="metric-label">
+                                Total requerido
+                            </span>
+
+                            <div class="metric-icon">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+
+                        </div>
+
+                        <b class="metric-value"
+                           th:text="${'S/ ' + reconexion.montoTotalRequerido}">
+                            S/ 0.00
+                        </b>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================================= -->
+            <!-- FORMULARIOS -->
+            <!-- ================================================= -->
+
+            <div class="row g-3">
+
+
+                <!-- ============================================= -->
+                <!-- ESTADO DE PAGO -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-6">
+
+                    <form class="reconnection-card"
+                          th:action="@{/morosidad/reconexion/{id}/pagar(
+                id=${reconexion.idReconexion}
+          )}"
+                          method="post">
+
+                        <div class="card-body-modern">
+
+                            <div class="card-header-modern">
+
+                                <div class="card-header-icon">
+                                    <i class="bi bi-cash-coin"></i>
+                                </div>
+
+                                <div>
+                                    <h3 class="card-title-modern">
+                                        Registrar pago
+                                    </h3>
+
+                                    <small style="
+                        color: var(--re-muted);
+                        font-size: .62rem;
+                    ">
+                                        Deuda pendiente + derecho de reconexión
+                                    </small>
+                                </div>
+
+                            </div>
+
+
+                            <!-- ESTADO ACTUAL -->
+
+                            <div class="current-status">
+
+                <span class="current-status-label">
+                    Estado del pago
+                </span>
+
+                                <b class="payment-status"
+                                   th:classappend="${reconexion.estadoPago == 'PAGADO'}
+                        ? ' status-paid'
+                        : ' status-pending'"
+                                   th:text="${reconexion.estadoPago}">
+                                    PENDIENTE
+                                </b>
+
+                            </div>
+
+
+                            <!-- TOTAL A COBRAR -->
+
+                            <div class="current-status">
+
+                <span class="current-status-label">
+                    Total a cobrar
+                </span>
+
+                                <b style="
+                    color: var(--re-primary-dark);
+                    font-size: .9rem;
+                "
+                                   th:text="${'S/ ' + reconexion.montoTotalRequerido}">
+                                    S/ 0.00
+                                </b>
+
+                            </div>
+
+
+                            <!-- SOLO SI NO ESTÁ PAGADO -->
+
+                            <div th:if="${reconexion.estadoPago != 'PAGADO'}">
+
+
+                                <!-- MÉTODO -->
+
+                                <div class="form-field">
+
+                                    <label class="field-label"
+                                           for="metodoPago">
+                                        Método de pago
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            <i class="bi bi-wallet2"></i>
+                        </span>
+
+                                        <select class="form-select form-control-modern"
+                                                id="metodoPago"
+                                                name="metodoPago"
+                                                required>
+
+                                            <option value="">
+                                                Seleccionar...
+                                            </option>
+
+                                            <option value="EFECTIVO">
+                                                Efectivo
+                                            </option>
+
+                                            <option value="YAPE">
+                                                Yape
+                                            </option>
+
+                                            <option value="PLIN">
+                                                Plin
+                                            </option>
+
+                                            <option value="TRANSFERENCIA">
+                                                Transferencia
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- NÚMERO OPERACIÓN -->
+
+                                <div class="form-field"
+                                     id="contenedorOperacion">
+
+                                    <label class="field-label"
+                                           for="numeroOperacion">
+                                        Número de operación
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            <i class="bi bi-hash"></i>
+                        </span>
+
+                                        <input class="form-control form-control-modern"
+                                               id="numeroOperacion"
+                                               type="text"
+                                               name="numeroOperacion"
+                                               placeholder="Número de operación">
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- OBSERVACIONES -->
+
+                                <div class="form-field">
+
+                                    <label class="field-label"
+                                           for="observacionesPago">
+                                        Observaciones
+                                    </label>
+
+                                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            <i class="bi bi-chat-left-text"></i>
+                        </span>
+
+                                        <input class="form-control form-control-modern"
+                                               id="observacionesPago"
+                                               type="text"
+                                               name="observaciones"
+                                               placeholder="Opcional">
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- BOTÓN -->
+
+                                <div class="form-actions">
+
+                                    <button class="btn-execute-reconnection"
+                                            type="submit"
+                                            data-confirm="¿Confirmar el pago total de la deuda y la reconexión?">
+
+                                        <i class="bi bi-cash-coin"></i>
+
+                                        <span>
+                            Registrar pago
+                        </span>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- YA PAGADO -->
+
+                            <div th:if="${reconexion.estadoPago == 'PAGADO'}"
+                                 style="
+                    padding: .85rem;
+                    margin-top: .8rem;
+                    border-radius: 10px;
+                    background: var(--re-green-soft);
+                    color: #32846a;
+                    font-size: .68rem;
+                    font-weight: 650;
+                 ">
+
+                                <i class="bi bi-check-circle me-1"></i>
+
+                                Deuda y derecho de reconexión pagados correctamente.
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- ============================================= -->
+                <!-- EJECUTAR RECONEXIÓN -->
+                <!-- ============================================= -->
+
+                <div class="col-lg-6">
+
+                    <form class="reconnection-card execute-card"
+                          th:action="@{/morosidad/reconexion/{id}/ejecutar(id=${reconexion.idReconexion})}"
+                          method="post">
+
+                        <div class="card-body-modern">
+
+
+                            <div class="card-header-modern">
+
+                                <div class="card-header-icon">
+                                    <i class="bi bi-droplet-half"></i>
+                                </div>
+
+                                <h3 class="card-title-modern">
+                                    Ejecutar reconexión
+                                </h3>
+
+                            </div>
+
+
+                            <!-- FECHA -->
+
+                            <div class="form-field">
+
+                                <label class="field-label"
+                                       for="fechaReconexion">
+                                    Fecha
+                                </label>
+
+                                <div class="input-wrapper">
+
+                                    <span class="input-icon">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </span>
+
+                                    <input class="form-control form-control-modern"
+                                           id="fechaReconexion"
+                                           type="date"
+                                           name="fecha">
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ACCIÓN -->
+
+                            <div class="form-actions">
+
+                                <button class="btn-execute-reconnection"
+                                        type="submit"
+
+                                        th:disabled="${reconexion.estadoPago != 'PAGADO'}"
+
+                                        th:style="${reconexion.estadoPago != 'PAGADO'}
+            ? 'opacity:.45; cursor:not-allowed;'
+            : ''"
+
+                                        data-confirm="¿Confirmar reconexión del servicio?">
+
+                                    <i class="bi bi-droplet-half"></i>
+
+                                    <span th:text="${reconexion.estadoPago == 'PAGADO'}
+            ? 'Reconectar servicio'
+            : 'Pago pendiente'">
+        Reconectar servicio
+    </span>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const metodo =
+            document.getElementById("metodoPago");
+
+        const contenedor =
+            document.getElementById("contenedorOperacion");
+
+        const operacion =
+            document.getElementById("numeroOperacion");
+
+
+        if (!metodo || !contenedor || !operacion) {
+            return;
+        }
+
+
+        function actualizarOperacion() {
+
+            const efectivo =
+                metodo.value === "EFECTIVO";
+
+
+            contenedor.style.display =
+                efectivo ? "none" : "block";
+
+
+            operacion.required =
+                !efectivo;
+
+
+            if (efectivo) {
+                operacion.value = "";
+            }
+        }
+
+
+        metodo.addEventListener(
+            "change",
+            actualizarOperacion
+        );
+
+
+        actualizarOperacion();
+    });
+</script>
+
+</body>
+</html>
